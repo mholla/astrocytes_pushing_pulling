@@ -13,6 +13,7 @@ Code to reproduce the results of pre-print *"Astrocytes in white matter respond 
   - `Image_analysis`: Contains python script to calculate the GI values from extracted points and create figures for convex hulls on the raw images.
 - `manuscript-figures`: Contains python scripts used to generate subplots in Figures 1 and 2 in the manuscript.
  - `GI_compare_model_images.py`: Python script that takes the .csv files from sub-folder `sim-analysis-GI` and values from the python code in `Image_analysis` to generate Figure 8 in the manuscript, which is stored in `manuscript-figures`. 
+ - `python_requirements.txt`: A list of python libraries used to postprocess the results.
 
 
 
@@ -24,8 +25,8 @@ Code to reproduce the results of pre-print *"Astrocytes in white matter respond 
 - [ImageJ](https://imagej.net/ij/)
 
 
-## Running the files
 
+## Running the files
 
 ### Abaqus python scripts
 
@@ -38,6 +39,12 @@ The python scripts in subfolders `Abaqus-scripts` and `odb-data-files` can be ru
 The python script to postprocess the .csv files, can be run on your preferred python IDE or on the terminal as
 
     ./<script_name>.py 
+
+
+### Note: Install the python dependencies if needed
+
+The python libraries mentioned in `python_requirements.txt` can be installed on your machine by going to the terminal and running the following command
+    python -m pip install -r python_requirements.txt
 
 
 ## Authors
