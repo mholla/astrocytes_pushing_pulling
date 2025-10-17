@@ -1,6 +1,6 @@
 # Astrocytes based white matter growth during cortical folding
 
-Code to reproduce the results of pre-print *"Astrocytes in white matter respond to tensile cues during cortical folding: a numerical study"* by Karan Taneja, Kengo Saito, Hiroshi Kawasaki and Maria Holland.
+Code to reproduce the results of pre-print *"Astrocytes in white matter respond to tensile cues during cortical folding: a numerical study"* by Karan Taneja, Kengo Saito, Hiroshi Kawasaki and Maria Holland (submitted).
 
 ### Folder defintions
 - `simulation-files`:  
