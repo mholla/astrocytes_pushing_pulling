@@ -109,19 +109,7 @@ c Read only extra arguments -
 
       use GlobalStorage
 
-
-c$$$        implicit none ! This is used during compilation testing to make
       include 'vaba_param.inc'
-
-c$$$!        When implicit none is used during compilation testing, all the following
-c$$$!        variables need to be defined.
-c$$$        integer nblock, ndir, nshr, nstatev, nfieldv, nprops, lanneal
-c$$$        real*8  stepTime, totalTime, dt, coordMp,charLength,  props,
-c$$$     +          density, strainInc, relSpinInc, tempOld, stretchOld,
-c$$$     +          defgradOld, fieldOld, stressOld, stateOld, 
-c$$$     +          enerInternOld, enerInelasOld, tempNew, stretchNew,
-c$$$     +          defgradNew, fieldNew, stressNew, stateNew, 
-c$$$     +          enerInternNew, enerInelasNew
 
       dimension props(nprops), density(nblock), coordMp(nblock,*),
      +     charLength(nblock), strainInc(nblock,ndir+nshr),
@@ -147,11 +135,11 @@ c  nSecPoint: Section point number within the current layer
 c
       character*80 cmname
 
-      integer i,j,l,i1,j1,ii,jj,kk,ll,km,ifail
+      integer i,km
 
       real*8 Iden(3,3),F_t(3,3),F_tau(3,3),U_tau(3,3)
       real*8 T_tau(3,3),R_tau(3,3),U_inv(3,3),detF
-      real*8 Ue_tau(3,3),Fe_tau(3,3)
+      real*8 Fe_tau(3,3)
       real*8 pwrinct,stress_power
       real*8 rot_stress(3,3),rot_matrix(3,3),normal_vector(2,1)
       real*8 matProps(nprops),rad_stress,tan_stress
@@ -404,19 +392,10 @@ c Write only -
 c Read only extra arguments -
      +     nElement, nMatPoint, nLayer, nSecPoint )
 
-c$$$        implicit none ! This is used during compilation testing to make
+
       use GlobalStorage
       include 'vaba_param.inc'
 
-c$$$!        When implicit none is used during compilation testing, all the following
-c$$$!        variables need to be defined.
-c$$$        integer nblock, ndir, nshr, nstatev, nfieldv, nprops, lanneal
-c$$$        real*8  stepTime, totalTime, dt, coordMp,charLength,  props,
-c$$$     +          density, strainInc, relSpinInc, tempOld, stretchOld,
-c$$$     +          defgradOld, fieldOld, stressOld, stateOld, 
-c$$$     +          enerInternOld, enerInelasOld, tempNew, stretchNew,
-c$$$     +          defgradNew, fieldNew, stressNew, stateNew, 
-c$$$     +          enerInternNew, enerInelasNew
 
       dimension props(nprops), density(nblock), coordMp(nblock,*),
      +     charLength(nblock), strainInc(nblock,ndir+nshr),
@@ -442,11 +421,11 @@ c
 
       character*80 cmname
 
-      integer i,j,l,i1,j1,ii,jj,kk,ll,km,ifail,CurrentElement
+      integer i,km
 
       real*8 Iden(3,3),F_t(3,3),F_tau(3,3),U_tau(3,3)
       real*8 T_tau(3,3),R_tau(3,3),U_inv(3,3),detF
-      real*8 Ue_tau(3,3),Fe_tau(3,3)
+      real*8 Fe_tau(3,3)
       real*8 pwrinct,stress_power
       real*8 matProps(nprops)
       real*8 thetag_t,thetag_tau
@@ -552,12 +531,6 @@ c
           coordz = inicoord(nElement(km),3)
 
 
-         ! calculate the current element 
-         ! 
-         CurrentElement  = nElement(km)-BaseElement
-
-
-
 
          !---------------------------------------------------------------
          ! Perform the time integration and compute the 
@@ -655,11 +628,9 @@ c
      +                       white_growth,ang_factor)
       implicit none
 
+      character*256 ,fileName
 
-      character*80 cmname,file1
-      character*256 jobName,outDir,fileName
-
-      integer i,j,k,l,a,b,c,d,iterError,lenJobName,lenOutDir,nargs,nprops
+      integer i,j,k,l,nargs,nprops
       parameter(nargs=5)
 
       real*8 Iden(3,3),F_t(3,3),F_tau(3,3),T_tau(3,3)
@@ -671,12 +642,12 @@ c
       real*8 props(nprops),dtime,Jg
       real*8 alpha_growth, coordiff
       real*8 tmp
-      real*8 Fginv(3,3),Cinv(3,3)
+      real*8 Fginv(3,3)
       real*8 coordx,coordy,coordz,white_growth,Gctx,scale_fac,gauss_fac
       real*8 smoothening,progen_grow_time,totalTime
       real*8 majoraxis_reduced,minoraxis_reduced
       real*8 maj_min_ratio,maj_axis,min_axis
-      real*8 majorT,minorT,push_grow_time,hside_fac
+      real*8 push_grow_time,hside_fac
       real*8 rad,phi,R_prime,scaled_r,scaled_thresh,reduction_major
       real*8 ang_factor,N_gyri,scale_fac_push,gauss_std
       real*8 reduction_minor,periods       
@@ -928,18 +899,16 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
       implicit none
 
 
-      character*80 cmname,file1
-      character*256 jobName,outDir,fileName
 
-      integer i,j,k,l,iterError,lenJobName,lenOutDir,nargs,nprops
+      integer nargs,nprops
       parameter(nargs=5)
 
-      real*8 Iden(3,3),F_t(3,3),F_tau(3,3),T_tau(3,3)
+      real*8 Iden(3,3),F_tau(3,3),T_tau(3,3)
       real*8 detF
       real*8 Finv(3,3),B_tau(3,3)
-      real*8 a0(3,1),ac(3,1)
+      real*8 a0(3,1)
       real*8 Be_tau(3,3),Fg_tau(3,3),Fe_tau(3,3),Je
-      real*8 thetag_tau,args(nargs),fac,thetag_t
+      real*8 thetag_tau,args(nargs),thetag_t
       real*8 props(nprops),dtime,Jg
       real*8 mu_g,lambda_g,Gctx
       real*8 coordx,coordy,coordz,tmp
@@ -974,7 +943,7 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
       call m3inv(F_tau,Finv)
 
 
-      ! obtain referential surface outnormal of an elliptical surface
+      ! obtain referential surf(ac)e outnormal of an elliptical surf(ac)e
       a0(1,1) = 2.0*coordx/1.2**2.0
       a0(2,1) = 2.0*coordy/1.0**2.0
       a0(3,1) = 0.0
@@ -1013,7 +982,7 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
       Be_tau = matmul(Fe_tau,transpose(Fe_tau)) 
  
 
-      ! Jacobian of the Fg
+      ! J(ac)obian of the Fg
       ! 
       call mdet(Fg_tau,Jg)
 
