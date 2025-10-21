@@ -136,7 +136,7 @@ c  nSecPoint: Section point number within the current layer
 c
       character*80 cmname
 
-      integer i,j,l,i1,j1,ii,jj,kk,ll,km,ifail
+      integer i,km
 
       real*8 Iden(3,3),F_t(3,3),F_tau(3,3),U_tau(3,3)
       real*8 T_tau(3,3),R_tau(3,3),U_inv(3,3),detF
@@ -147,7 +147,6 @@ c
       real*8 white_growth,ang_factor,rot_angle,ctheta,stheta
       real*8 coordx,coordy,coordz,thetag_t,thetag_tau,maj_axis,min_axis
       real*8 maj_min_ratio  
-
 
 
       ! Parameters
@@ -434,7 +433,7 @@ c
 
       character*80 cmname
 
-      integer i,j,l,i1,j1,ii,jj,kk,ll,km,ifail,CurrentElement
+      integer i,km
 
       real*8 Iden(3,3),F_t(3,3),F_tau(3,3),U_tau(3,3)
       real*8 T_tau(3,3),R_tau(3,3),U_inv(3,3),detF
@@ -544,9 +543,6 @@ c
           coordz = inicoord(nElement(km),3)
 
 
-         ! calculate the current element 
-         ! 
-         CurrentElement  = nElement(km)-BaseElement
 
 
          !---------------------------------------------------------------
@@ -650,12 +646,12 @@ c
       character*80 cmname,file1
       character*256 jobName,outDir,fileName
 
-      integer i,j,k,l,a,b,c,d,iterError,lenJobName,lenOutDir,nargs,nprops
+      integer i,nargs,nprops
       parameter(nargs=5)
 
       real*8 Iden(3,3),F_tau(3,3),T_tau(3,3)
       real*8 detF
-      real*8 Finv(3,3),B_tau(3,3)
+      real*8 B_tau(3,3)
       real*8 lambda,mu
       real*8 Be_tau(3,3),Fg_tau(3,3),Fe_tau(3,3),Je
       real*8 thetag_tau,args(nargs),thetag_t
@@ -720,12 +716,6 @@ c
       ! Compute the relative volume change
       !
       call mdet(F_tau,detF)
-
-
-      ! Compute the inverse of the deformation gradient
-      !
-      call m3inv(F_tau,Finv)
-
 
 
        phi = atan(coordy/coordx)
@@ -971,15 +961,14 @@ c
       character*80 cmname,file1
       character*256 jobName,outDir,fileName
 
-      integer i,j,k,l,iterError,lenJobName,lenOutDir,nargs,nprops
+      integer nargs,nprops
       parameter(nargs=5)
 
       real*8 Iden(3,3),F_tau(3,3),T_tau(3,3)
       real*8 detF
-      real*8 Finv(3,3),B_tau(3,3)
       real*8 a0(3,1)
       real*8 Be_tau(3,3),Fg_tau(3,3),Fe_tau(3,3),Je
-      real*8 thetag_tau,args(nargs),fac,thetag_t
+      real*8 thetag_tau,args(nargs),thetag_t
       real*8 props(nprops),dtime,Jg
       real*8 mu_g,lambda_g,Gctx
       real*8 coordx,coordy,coordz,tmp

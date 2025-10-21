@@ -633,9 +633,8 @@ c
       integer i,j,k,l,nargs,nprops
       parameter(nargs=5)
 
-      real*8 Iden(3,3),F_t(3,3),F_tau(3,3),T_tau(3,3)
+      real*8 Iden(3,3),F_tau(3,3),T_tau(3,3)
       real*8 detF
-      real*8 Finv(3,3)
       real*8 lambda,mu
       real*8 Be_tau(3,3),Fg_tau(3,3),Fe_tau(3,3),Je
       real*8 thetag_tau,args(nargs),thetag_t
@@ -701,11 +700,6 @@ c
       call mdet(F_tau,detF)
 
 
-      ! Compute the inverse of the deformation gradient
-      !
-      call m3inv(F_tau,Finv)
-
-
        alpha_growth = smoothening*one 
 
 
@@ -743,8 +737,6 @@ c
       ! iso 
       Fg_tau  = (thetag_tau**third)*Iden
       
-
-
 
       ! inverse of the growth Fg
       ! 
@@ -905,7 +897,6 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
 
       real*8 Iden(3,3),F_tau(3,3),T_tau(3,3)
       real*8 detF
-      real*8 Finv(3,3),B_tau(3,3)
       real*8 a0(3,1)
       real*8 Be_tau(3,3),Fg_tau(3,3),Fe_tau(3,3),Je
       real*8 thetag_tau,args(nargs),thetag_t
@@ -938,9 +929,6 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
       call mdet(F_tau,detF)
 
 
-      ! Compute the inverse of the deformation gradient
-      !
-      call m3inv(F_tau,Finv)
 
 
       ! obtain referential surf(ac)e outnormal of an elliptical surf(ac)e
