@@ -399,15 +399,6 @@ c$$$        implicit none ! This is used during compilation testing to make
       use GlobalStorage
       include 'vaba_param.inc'
 
-c$$$!        When implicit none is used during compilation testing, all the following
-c$$$!        variables need to be defined.
-c$$$        integer nblock, ndir, nshr, nstatev, nfieldv, nprops, lanneal
-c$$$        real*8  stepTime, totalTime, dt, coordMp,  props,
-c$$$     +          density, strainInc, relSpinInc, tempOld, stretchOld,
-c$$$     +          defgradOld, fieldOld, stressOld, stateOld, 
-c$$$     +          enerInternOld, enerInelasOld, tempNew, stretchNew,
-c$$$     +          defgradNew, fieldNew, stressNew, stateNew, 
-c$$$     +          enerInternNew, enerInelasNew
 
       dimension props(nprops), density(nblock), coordMp(nblock,*),
      +     charLength(nblock), strainInc(nblock,ndir+nshr),
@@ -643,9 +634,6 @@ c
       implicit none
 
 
-      character*80 cmname,file1
-      character*256 jobName,outDir,fileName
-
       integer i,nargs,nprops
       parameter(nargs=5)
 
@@ -662,7 +650,7 @@ c
       real*8 majoraxis_reduced,minoraxis_reduced,growth_crit
       real*8 nitl, thetag_dum, lnJe, trMe,reduction_major,reduction_minor
       real*8 res, dres, phig, dphig, xtol
-      real*8 majorT,minorT,white_growth_tensile
+      real*8 white_growth_tensile
       real*8 rad,phi,R_prime,scaled_r,scaled_thresh,maj_axis,min_axis
       real*8 ang_factor,N_gyri,scale_fac_pull
       real*8 periods,maj_min_ratio,gauss_std       
@@ -957,9 +945,6 @@ c
 
       implicit none
 
-
-      character*80 cmname,file1
-      character*256 jobName,outDir,fileName
 
       integer nargs,nprops
       parameter(nargs=5)
