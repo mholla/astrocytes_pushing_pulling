@@ -139,9 +139,9 @@ c
       real*8 T_tau(3,3),R_tau(3,3),U_inv(3,3),detF
       real*8 Fe_tau(3,3)
       real*8 pwrinct,stress_power
-      real*8 rot_stress(3,3),rot_matrix(3,3),normal_vector(2,1)
+      real*8 rot_stress(3,3),rot_matrix(3,3),N_R(2,1)
       real*8 matProps(nprops),rad_stress,tan_stress
-      real*8 white_growth,ang_factor,rot_angle,ctheta,stheta
+      real*8 theta_dot_1,f_2,zeta,ctheta,stheta
       real*8 coordx,coordy,coordz,thetag_t,thetag_tau,maj_axis,min_axis
       real*8 maj_min_ratio      
 
@@ -260,7 +260,7 @@ c
             !
             call integ_white(matProps,nprops,F_tau,-1.0,T_tau,thetag_t,thetag_tau,
      +                       coordx,coordy,coordz,totalTime,
-     +                       white_growth,ang_factor)     
+     +                       theta_dot_1,f_2)     
 
          else
             !
@@ -268,7 +268,7 @@ c
             !
             call integ_white(matProps,nprops,F_tau,dt,T_tau,thetag_t,thetag_tau,
      +                       coordx,coordy,coordz,totalTime,
-     +                       white_growth,ang_factor)     
+     +                       theta_dot_1,f_2)     
 
          endif
          !---------------------------------------------------------------
@@ -302,13 +302,13 @@ c
 
          maj_min_ratio = maj_axis/min_axis
 
-         normal_vector(1,1) = 2.0*coordx/(maj_min_ratio**2.0)
-         normal_vector(2,1) = 2.0*coordy
-         rot_angle = atan(normal_vector(2,1)/normal_vector(1,1))
+         N_R(1,1) = 2.0*coordx/maj_axis**2.0
+         N_R(2,1) = 2.0*coordy/min_axis**2.0
+         zeta = atan(N_R(2,1)/N_R(1,1))
 
          ! Create rotation matrix
-         ctheta = cos(rot_angle)
-         stheta = sin(rot_angle)
+         ctheta = cos(zeta)
+         stheta = sin(zeta)
          rot_matrix(1,1) = ctheta
          rot_matrix(1,2) = stheta
          rot_matrix(1,3) = 0.0
@@ -337,8 +337,8 @@ c
          call mdet(F_tau,detF)
          stateNew(km,5) = detF   
          stateNew(km,6) = (T_tau(1,1)+T_tau(2,2)+T_tau(3,3))/three
-         stateNew(km,7) = white_growth
-         stateNew(km,8) = ang_factor   
+         stateNew(km,7) = theta_dot_1
+         stateNew(km,8) = f_2   
          stateNew(km,9) = rad_stress
          stateNew(km,10) = tan_stress   
 
@@ -428,7 +428,7 @@ c
       real*8 matProps(nprops)
       real*8 thetag_t,thetag_tau
       real*8 coordx,coordy,coordz
-      real*8 a0(3,1)
+      real*8 N_R(3,1)
  
 
       ! Parameters
@@ -542,14 +542,14 @@ c
             !  into the integ subroutine
             !
             call integ_gray(matProps,nprops,F_tau,-1.0,T_tau,thetag_t,thetag_tau,
-     +                     coordx,coordy,coordz,a0,totalTime)
+     +                     coordx,coordy,coordz,N_R,totalTime)
 
          else
             !
             ! Perform explicit time integration procedure
             !
             call integ_gray(matProps,nprops,F_tau,dt,T_tau,thetag_t,thetag_tau,
-     +                     coordx,coordy,coordz,a0,totalTime)
+     +                     coordx,coordy,coordz,N_R,totalTime)
 
          endif
          !---------------------------------------------------------------
@@ -623,7 +623,7 @@ c
 ***********************************************************************
       subroutine integ_white(Props,nprops,F_tau,dtime,T_tau,
      +                       thetag_t,thetag_tau,coordx,coordy,coordz,totalTime,
-     +                       white_growth,ang_factor)
+     +                       theta_dot_1,f_2)
       implicit none
 
       character*256 ,fileName
@@ -637,17 +637,17 @@ c
       real*8 Be_tau(3,3),Fg_tau(3,3),Fe_tau(3,3),Je
       real*8 thetag_tau,args(nargs),thetag_t
       real*8 props(nprops),dtime,Jg
-      real*8 alpha_growth, coordiff
+      real*8 alpha_bar, coordiff
       real*8 tmp
       real*8 Fginv(3,3)
-      real*8 coordx,coordy,coordz,white_growth,Gctx,scale_fac,gauss_fac
-      real*8 smoothening,progen_grow_time,totalTime
+      real*8 coordx,coordy,coordz,theta_dot_1,G_GM,gamma_1,f_phi
+      real*8 T_1,totalTime
       real*8 majoraxis_reduced,minoraxis_reduced
       real*8 maj_min_ratio,maj_axis,min_axis
-      real*8 push_grow_time,hside_fac
-      real*8 rad,psi,R_prime,scaled_r,scaled_thresh,reduction_major
-      real*8 ang_factor,N_gyri,scale_fac_push,gauss_std
-      real*8 reduction_minor,periods       
+      real*8 T_2,hside_fac
+      real*8 rad,psi,scaled_r,delta_bar,reduction_major
+      real*8 f_2,N_gyri,gamma,alpha
+      real*8 b_tilde,periods       
 
 
 
@@ -658,32 +658,32 @@ c
      +     third=1.d0/3.d0,nine=9.d0,ten=10.d0)
 
       ! standard deviation of gauss growth rate function
-      gauss_std = 0.4d0
+      alpha = 0.4d0
 
       ! Obtain WM material properties 
       !
        mu        = props(1)
        lambda    = props(2)
-       Gctx      = props(3) ! grey matter growth
-       scaled_thresh = props(4) ! used to calculate parameter scaled_thresh \bar{\delta}
-       smoothening = props(5) ! Smoothening for heaviside function used in Phase 3
-       scale_fac =  props(6) ! G_wm/G_gm used in Phase 1
-       progen_grow_time = props(7) ! progenitor grow before this time
-       N_gyri = props(8)! Number of proliferation zones
-       scale_fac_push = props(9) !scale_factor for pushing (gamma)
-       reduction_minor = props(10) ! Reducing from edge of WM (\tilde{b})
-       push_grow_time = props(11) ! Phase3 push effect starting after this time.
-       maj_axis = props(12) ! WM major axis (a)
-       min_axis = props(13) ! WM minor axis (b)
+       G_GM      = props(3) ! grey matter growth rate
+       delta_bar = props(4) ! scaled threshold for heaviside function
+       alpha_bar = props(5) ! Smoothening for heaviside function used in Phase 3
+       gamma_1   = props(6) ! G_wm/G_gm used in Phase 1
+       T_1       = props(7) ! end of Phase 1
+       N_gyri    = props(8) ! Number of proliferation zones
+       gamma     = props(9) ! G_wm/G_gm in Phase 3 (pushing)
+       b_tilde   = props(10) ! scaling factor used in calculating r_tilde
+       T_2       = props(11) ! end of Phase 2
+       maj_axis  = props(12) ! WM major axis (a)
+       min_axis  = props(13) ! WM minor axis (b)
 
 !! Setting up the growth rate calculations
        maj_min_ratio = maj_axis/min_axis
 
-       reduction_major = reduction_minor*maj_min_ratio
+       reduction_major = b_tilde*maj_min_ratio
 
        ! For progenitor push effect
        majoraxis_reduced = maj_axis - reduction_major !white matter reduced to bring in the progenitor effect
-       minoraxis_reduced = min_axis - reduction_minor 
+       minoraxis_reduced = min_axis - b_tilde 
 
 
       ! Identity matrix
@@ -695,29 +695,23 @@ c
       !
       call mdet(F_tau,detF)
 
-
-       alpha_growth = smoothening*one 
-
-
        psi = atan(coordy/coordx)
        rad = sqrt(coordx**2.0 + coordy**2.0)
-       R_prime = sqrt((majoraxis_reduced*cos(psi))**2.0 + (minoraxis_reduced*sin(psi))**2.0)
-       scaled_r = rad/R_prime
+       scaled_r = rad/sqrt((majoraxis_reduced*cos(psi))**2.0 + (minoraxis_reduced*sin(psi))**2.0)
 
 
-       coordiff = (scaled_r - scaled_thresh)*one
-       periods = two*(two*N_gyri - one) !Periodic presence of progenitor growth
-
-       ang_factor = sin(periods*psi)
-
-       call gauss(scaled_r,scaled_thresh,gauss_std,gauss_fac)
+       coordiff = (scaled_r - delta_bar)*one
        
-       white_growth = half*(Gctx*scale_fac*one)*gauss_fac*(ang_factor + one) ! Scaled so that growth rate is highest at the grey matter layer
+       f_2 = sin(four*psi*(N_gyri - half)) + one
+
+       call gauss(scaled_r,delta_bar,alpha,f_phi)
+       
+       theta_dot_1 = (G_GM*gamma_1)*half*f_phi*f_2 ! Scaled so that growth rate is highest at the grey matter layer
 
 
 
 
-      if ((totalTime.le.progen_grow_time)) then !Push effect BEFORE grow time
+      if ((totalTime.le.T_1)) then !Push effect BEFORE grow time
 
 
      !!!!!!!!!!!!!!!!!!!!!!!!!!! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -767,7 +761,7 @@ c
       !!!!!!!!!!!!!!!!!!!!!!!!!!! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-       thetag_tau = thetag_t + (white_growth)*dtime 
+       thetag_tau = thetag_t + (theta_dot_1)*dtime 
 
 
       ! update  kinematics 
@@ -799,7 +793,7 @@ c
       ! 
       T_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
 
-      else if ((totalTime.le.push_grow_time).and.(totalTime.ge.progen_grow_time)) then ! Between the two push phases
+      else if ((totalTime.le.T_2).and.(totalTime.ge.T_1)) then ! Between the two push phases
 
       thetag_tau = thetag_t 
 
@@ -837,17 +831,17 @@ c
 
       endif
 
-      if ((totalTime.ge.push_grow_time)) then !Push effect after grow time
+      if ((totalTime.ge.T_2)) then !Push effect after grow time
       
-C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes is in play 
+C       ! KT: If the totalTime is > T_2, push effect from astrocytes is in play 
 
 
-       call Hhat(coordiff,alpha_growth,hside_fac)
+       call Hhat(coordiff,alpha_bar,hside_fac)
        
-       white_growth = half*(Gctx*scale_fac_push*one)*hside_fac*(ang_factor + one) ! Scaled so that growth rate is highest at the grey matter layer
+       theta_dot_1 = (G_GM*gamma*one)*half**hside_fac*(ang_factor + one) ! Scaled so that growth rate is highest at the grey matter layer
 
 
-       thetag_tau = thetag_t + (white_growth)*dtime 
+       thetag_tau = thetag_t + (theta_dot_1)*dtime 
 
 
       Fg_tau  = (thetag_tau**third)*Iden
@@ -882,7 +876,7 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
 ****************************************************************************
       subroutine integ_gray(Props,nprops,F_tau,dtime,T_tau,
      +                       thetag_t,thetag_tau,coordx,coordy,coordz,
-     +                      a0,totalTime)
+     +                      N_R,totalTime)
 
       implicit none
 
@@ -893,14 +887,14 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
 
       real*8 Iden(3,3),F_tau(3,3),T_tau(3,3)
       real*8 detF
-      real*8 a0(3,1)
+      real*8 N_R(3,1)
       real*8 Be_tau(3,3),Fg_tau(3,3),Fe_tau(3,3),Je
       real*8 thetag_tau,args(nargs),thetag_t
       real*8 props(nprops),dtime,Jg
-      real*8 mu_g,lambda_g,Gctx
+      real*8 mu,lambda,G_GM
       real*8 coordx,coordy,coordz,tmp
       real*8 Fginv(3,3)
-      real*8 grow_time,totalTime
+      real*8 T_1,totalTime
       real*8 maj_axis,min_axis
 
       ! Parameters
@@ -911,10 +905,10 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
 
       ! Obtain material properties
       !
-       mu_g      = props(1)
-       lambda_g  = props(2)
-       Gctx      = props(3)
-       grow_time = props(4) ! Time after which gray matter starts to grow in Phase 2.
+       mu        = props(1)
+       lambda    = props(2)
+       G_GM      = props(3) ! grey matter growth rate
+       T_1       = props(4) ! Time after which gray matter starts to grow in Phase 2.
        maj_axis  = props(5) ! WM major axis (a)
        min_axis  = props(6) ! WM minor axis (b)
 
@@ -931,13 +925,13 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
 
 
       ! obtain referential surface outnormal of an elliptical surface
-      a0(1,1) = 2.0*coordx/maj_axis**2.0
-      a0(2,1) = 2.0*coordy/min_axis**2.0
-      a0(3,1) = 0.0
+      N_R(1,1) = 2.0*coordx/maj_axis**2.0
+      N_R(2,1) = 2.0*coordy/min_axis**2.0
+      N_R(3,1) = 0.0
 
-      tmp = sqrt(a0(1,1)**2.0 + a0(2,1)**2.0 + a0(3,1)**2.0)
+      tmp = sqrt(N_R(1,1)**2.0 + N_R(2,1)**2.0 + N_R(3,1)**2.0)
 
-      a0 = a0/tmp   
+      N_R = N_R/tmp   
   
 
       !!!!!!!!!!!!!!!!!!!!!!!!!!! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -952,7 +946,7 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
       ! 
       ! area growth 
       Fg_tau  = dsqrt(thetag_tau)*Iden 
-     +          +(1.0 - dsqrt(thetag_tau))*matmul(a0,transpose(a0))
+     +          +(1.0 - dsqrt(thetag_tau))*matmul(N_R,transpose(N_R))
 
       ! inverse of the growth Fg
       ! 
@@ -977,7 +971,7 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
       
       ! compute Cauchy stress 
       ! 
-      T_tau = ((lambda_g*dlog(Je) - mu_g)*Iden  + mu_g*Be_tau)/Je
+      T_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
 
 
          return
@@ -987,19 +981,19 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
 
 
 
-      ! KT: GM grows only after grow_time to allow progenitors to grow in WM
+      ! KT: GM grows only after T_1 to allow progenitors to grow in WM
 
-       if (totalTime.le.grow_time) then
+       if (totalTime.le.T_1) then
            thetag_tau = one
        else
-           thetag_tau = thetag_t + (Gctx)*dtime 
+           thetag_tau = thetag_t + (G_GM)*dtime 
        endif
 
 
       ! update  kinematics 
       ! area 
       Fg_tau  = dsqrt(thetag_tau)*Iden 
-     +          +(1.0 - dsqrt(thetag_tau))*matmul(a0,transpose(a0))
+     +          +(1.0 - dsqrt(thetag_tau))*matmul(N_R,transpose(N_R))
 
       ! inverse of the growth Fg
       ! 
@@ -1024,7 +1018,7 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
       
       ! compute Cauchy stress 
       ! 
-      T_tau = ((lambda_g*dlog(Je) - mu_g)*Iden  + mu_g*Be_tau)/Je
+      T_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
 
 
       end subroutine integ_gray

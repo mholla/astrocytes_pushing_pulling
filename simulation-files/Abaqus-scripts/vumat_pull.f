@@ -140,11 +140,10 @@ c
       real*8 T_tau(3,3),R_tau(3,3),U_inv(3,3),detF
       real*8 Fe_tau(3,3)
       real*8 pwrinct,stress_power
-      real*8 rot_stress(3,3),rot_matrix(3,3),normal_vector(2,1)
+      real*8 rot_stress(3,3),rot_matrix(3,3),N_R(2,1)
       real*8 matProps(nprops),rad_stress,tan_stress
-      real*8 white_growth,ang_factor,rot_angle,ctheta,stheta
+      real*8 theta_dot_1,f_2,zeta,ctheta,stheta
       real*8 coordx,coordy,coordz,thetag_t,thetag_tau,maj_axis,min_axis
-      real*8 maj_min_ratio  
 
 
       ! Parameters
@@ -261,7 +260,7 @@ c
             !
             call integ_white(matProps,nprops,F_tau,-1.0,T_tau,thetag_t,thetag_tau,
      +                       coordx,coordy,coordz,totalTime,
-     +                       white_growth,ang_factor)     
+     +                       theta_dot_1,f_2)     
 
          else
             !
@@ -269,7 +268,7 @@ c
             !
             call integ_white(matProps,nprops,F_tau,dt,T_tau,thetag_t,thetag_tau,
      +                       coordx,coordy,coordz,totalTime,
-     +                       white_growth,ang_factor)     
+     +                       theta_dot_1,f_2)     
 
          endif
          !---------------------------------------------------------------
@@ -303,13 +302,13 @@ c
 
          maj_min_ratio = maj_axis/min_axis
 
-         normal_vector(1,1) = 2.0*coordx/(maj_min_ratio**2.0)
-         normal_vector(2,1) = 2.0*coordy
-         rot_angle = atan(normal_vector(2,1)/normal_vector(1,1))
+         N_R(1,1) = 2.0*coordx/maj_axis**2.0
+         N_R(2,1) = 2.0*coordy/min_axis**2.0
+         zeta = atan(N_R(2,1)/N_R(1,1))
 
          ! Create rotation matrix
-         ctheta = cos(rot_angle)
-         stheta = sin(rot_angle)
+         ctheta = cos(zeta)
+         stheta = sin(zeta)
          rot_matrix(1,1) = ctheta
          rot_matrix(1,2) = stheta
          rot_matrix(1,3) = 0.0
@@ -338,8 +337,8 @@ c
          call mdet(F_tau,detF)
          stateNew(km,5) = detF   
          stateNew(km,6) = (T_tau(1,1)+T_tau(2,2)+T_tau(3,3))/three
-         stateNew(km,7) = white_growth
-         stateNew(km,8) = ang_factor   
+         stateNew(km,7) = theta_dot_1
+         stateNew(km,8) = f_2   
          stateNew(km,9) = rad_stress
          stateNew(km,10) = tan_stress   
 
@@ -431,7 +430,7 @@ c
       real*8 matProps(nprops)
       real*8 thetag_t,thetag_tau
       real*8 coordx,coordy,coordz
-      real*8 a0(3,1)
+      real*8 N_R(3,1)
  
 
       ! Parameters
@@ -546,14 +545,14 @@ c
             !  into the integ subroutine
             !
             call integ_gray(matProps,nprops,F_tau,-1.0,T_tau,thetag_t,thetag_tau,
-     +                     coordx,coordy,coordz,a0,totalTime)
+     +                     coordx,coordy,coordz,N_R,totalTime)
 
          else
             !
             ! Perform explicit time integration procedure
             !
             call integ_gray(matProps,nprops,F_tau,dt,T_tau,thetag_t,thetag_tau,
-     +                     coordx,coordy,coordz,a0,totalTime)
+     +                     coordx,coordy,coordz,N_R,totalTime)
 
          endif
          !---------------------------------------------------------------
@@ -628,7 +627,7 @@ c
 ***********************************************************************
       subroutine integ_white(Props,nprops,F_tau,dtime,T_tau,
      +                       thetag_t,thetag_tau,coordx,coordy,coordz,totalTime,
-     +                       white_growth,ang_factor)
+     +                       theta_dot_1,f_2)
       implicit none
 
 
@@ -643,14 +642,14 @@ c
       real*8 thetag_tau,args(nargs),thetag_t
       real*8 props(nprops),dtime,Jg
       real*8 Fginv(3,3)
-      real*8 coordx,coordy,coordz,white_growth,Gctx,scale_fac,gauss_fac
-      real*8 threshold,progen_grow_time,totalTime,pull_grow_time
+      real*8 coordx,coordy,coordz,theta_dot_1,G_GM,gamma_1,f_phi
+      real*8 threshold,T_1,totalTime,T_2
       real*8 majoraxis_reduced,minoraxis_reduced,growth_crit
-      real*8 nitl, thetag_dum, lnJe, trMe,reduction_major,reduction_minor
+      real*8 nitl, thetag_dum, lnJe, trMe,reduction_major,b_tilde
       real*8 res, dres, phig, dphig, xtol
-      real*8 white_growth_tensile
-      real*8 rad,psi,R_prime,scaled_r,scaled_thresh,maj_axis,min_axis
-      real*8 ang_factor,N_gyri,scale_fac_pull
+      real*8 theta_dot_3_fac
+      real*8 rad,psi,scaled_r,delta_bar,maj_axis,min_axis
+      real*8 f_2,N_gyri,gamma_hat
       real*8 periods,maj_min_ratio,gauss_std       
 
 
@@ -671,23 +670,23 @@ c
       !
        mu        = props(1)
        lambda    = props(2)
-       Gctx      = props(3) ! grey matter growth
-       scaled_thresh = props(4) ! used to calculate parameter scaled_thresh \bar{\delta}
-       scale_fac =  props(5) ! G_wm/G_gm used in Phase 1
-       progen_grow_time = props(6) ! Time before which white matter grows in Phase1.
-       N_gyri = props(7)! Number of proliferation zones
-       scale_fac_pull = props(8) !scale_factor for pulling (gammahat)
-       reduction_minor = props(9) ! Reducing from edge of WM (\tilde{b})
-       pull_grow_time = props(10) !  Phase 3 pull effect starting after this time.
-       maj_axis = props(11) ! WM major axis (a)
-       min_axis = props(12) ! WM minor axis (b)
+       G_GM      = props(3) ! grey matter growth rate
+       delta_bar = props(4) ! scaled threshold for heaviside function
+       gamma_1   = props(5) ! G_wm/G_gm used in Phase 1
+       T_1       = props(6) ! end of Phase 1.
+       N_gyri    = props(7) ! Number of proliferation zones
+       gamma_hat = props(8) ! G_wm/G_gm in Phase 3 (pulling)
+       b_tilde   = props(9) ! scaling factor used in calculating r_tilde
+       T_2       = props(10) ! end of Phase 2
+       maj_axis  = props(11) ! WM major axis (a)
+       min_axis  = props(12) ! WM minor axis (b)
 
        maj_min_ratio = maj_axis/min_axis
 
-       reduction_major = reduction_minor*maj_min_ratio
+       reduction_major = b_tilde*maj_min_ratio
 
        majoraxis_reduced = maj_axis - reduction_major !white matter reduced to bring in the progenitor effect
-       minoraxis_reduced = min_axis - reduction_minor 
+       minoraxis_reduced = min_axis - b_tilde 
 
 
 
@@ -703,21 +702,17 @@ c
 
        psi = atan(coordy/coordx)
        rad = sqrt(coordx**2.0 + coordy**2.0)
-       R_prime = sqrt((majoraxis_reduced*cos(psi))**2.0 + (minoraxis_reduced*sin(psi))**2.0)
-       scaled_r = rad/R_prime
+       scaled_r = rad/sqrt((majoraxis_reduced*cos(psi))**2.0 + (minoraxis_reduced*sin(psi))**2.0)
 
-
-       periods = two*(two*N_gyri - one) !Periodic presence of progenitor growth
-
-       ang_factor = sin(periods*psi)
+       f_2 = sin(four*psi*(N_gyri - half)) + one
        
-       call gauss(scaled_r,scaled_thresh,gauss_std,gauss_fac)
+       call gauss(scaled_r,delta_bar,gauss_std,f_phi)
        
-       white_growth = half*(Gctx*scale_fac*one)*gauss_fac*(ang_factor+one) ! WM growth rate in Phase 1   
-       white_growth_tensile = Gctx*scale_fac_pull*1000.0 !scaling with 1/mu_W, WM growth rate in Phase 3 
+       theta_dot_1 = (G_GM*gamma_1)*half*f_phi*f_2 ! WM growth rate in Phase 1   
+       theta_dot_3_fac = gamma_hat*G_GM/mu !scaling with 1/mu_W, WM growth rate in Phase 3 
 
 
-      if ((totalTime.le.progen_grow_time)) then !Push effect BEFORE grow time, Phase 1
+      if ((totalTime.le.T_1)) then !Push effect BEFORE grow time, Phase 1
 
 
      !!!!!!!!!!!!!!!!!!!!!!!!!!! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -799,7 +794,7 @@ c
       ! 
       T_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
 
-      else if ((totalTime.le.pull_grow_time).and.(totalTime.ge.progen_grow_time)) then 
+      else if ((totalTime.le.T_2).and.(totalTime.ge.T_1)) then 
       ! Between the progenitor push and astro pull phases,
       ! WM doesn't grow so theta_g doesn't change
       thetag_tau = thetag_t 
@@ -836,10 +831,10 @@ c
 
       endif
 
-      if ((totalTime.ge.pull_grow_time)) then !Pull effect after grow time
+      if ((totalTime.ge.T_2)) then !Pull effect after grow time
 
       
-      ! KT: If the totalTime is > pull_grow_time, tensile stress based growth 
+      ! KT: If the totalTime is > T_2, tensile stress based growth 
       ! KT: Mandel stress derived growth criterion function
       ! KT: Taken from Ch 6 of Hitchhikers and associted code on Github
 
@@ -893,8 +888,8 @@ c
             dphig = -1.d0/3.d0/thetag_dum*(2.d0*mu*(Be_tau(1,1) + Be_tau(2,2) + Be_tau(3,3)) + 9.d0*lambda)
 
             ! Non-linear residual
-            res = thetag_dum - thetag_t - (white_growth_tensile)*phig*dtime
-            dres = one - ((white_growth_tensile)*dphig)*dtime
+            res = thetag_dum - thetag_t - (theta_dot_3_fac)*phig*dtime
+            dres = one - ((theta_dot_3_fac)*dphig)*dtime
 
             ! updated thetag
             thetag_tau = thetag_dum - res / dres
@@ -936,7 +931,7 @@ c
 ****************************************************************************
       subroutine integ_gray(Props,nprops,F_tau,dtime,T_tau,
      +                       thetag_t,thetag_tau,coordx,coordy,coordz,
-     +                      a0,totalTime)
+     +                      N_R,totalTime)
 
       implicit none
 
@@ -946,14 +941,14 @@ c
 
       real*8 Iden(3,3),F_tau(3,3),T_tau(3,3)
       real*8 detF
-      real*8 a0(3,1)
+      real*8 N_R(3,1)
       real*8 Be_tau(3,3),Fg_tau(3,3),Fe_tau(3,3),Je
       real*8 thetag_tau,args(nargs),thetag_t
       real*8 props(nprops),dtime,Jg
-      real*8 mu_g,lambda_g,Gctx
+      real*8 mu,lambda,G_GM
       real*8 coordx,coordy,coordz,tmp
       real*8 Fginv(3,3)
-      real*8 grow_time,totalTime
+      real*8 T_1,totalTime
       real*8 maj_axis,min_axis
 
       ! Parameters
@@ -964,10 +959,10 @@ c
 
       ! Obtain material properties
       !
-       mu_g      = props(1)
-       lambda_g  = props(2)
-       Gctx      = props(3)
-       grow_time = props(4) ! Time after which gray matter starts to grow in Phase 2.
+       mu        = props(1)
+       lambda    = props(2)
+       G_GM      = props(3) ! grey matter growth rate
+       T_1       = props(4) ! Time after which gray matter starts to grow in Phase 2.
        maj_axis  = props(5) ! WM major axis (a)
        min_axis  = props(6) ! WM minor axis (b)
 
@@ -987,13 +982,13 @@ c
 
 
       ! obtain referential surface outnormal of an elliptical surface
-      a0(1,1) = 2.0*coordx/maj_axis**2.0
-      a0(2,1) = 2.0*coordy/min_axis**2.0
-      a0(3,1) = 0.0
+      N_R(1,1) = 2.0*coordx/maj_axis**2.0
+      N_R(2,1) = 2.0*coordy/min_axis**2.0
+      N_R(3,1) = 0.0
 
-      tmp = sqrt(a0(1,1)**2.0 + a0(2,1)**2.0 + a0(3,1)**2.0)
+      tmp = sqrt(N_R(1,1)**2.0 + N_R(2,1)**2.0 + N_R(3,1)**2.0)
 
-      a0 = a0/tmp   
+      N_R = N_R/tmp   
   
 
       !!!!!!!!!!!!!!!!!!!!!!!!!!! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1008,7 +1003,7 @@ c
       ! 
       ! area growth 
       Fg_tau  = dsqrt(thetag_tau)*Iden 
-     +          +(1.0 - dsqrt(thetag_tau))*matmul(a0,transpose(a0))
+     +          +(1.0 - dsqrt(thetag_tau))*matmul(N_R,transpose(N_R))
 
       ! inverse of the growth Fg
       ! 
@@ -1033,7 +1028,7 @@ c
       
       ! compute Cauchy stress 
       ! 
-      T_tau = ((lambda_g*dlog(Je) - mu_g)*Iden  + mu_g*Be_tau)/Je
+      T_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
 
 
          return
@@ -1043,19 +1038,19 @@ c
 
 
 
-      ! KT: GM grows only after grow_time to allow progenitors to grow in WM
+      ! KT: GM grows only after T_1 to allow progenitors to grow in WM
 
-       if (totalTime.le.grow_time) then
+       if (totalTime.le.T_1) then
            thetag_tau = one
        else
-           thetag_tau = thetag_t + (Gctx)*dtime 
+           thetag_tau = thetag_t + (G_GM)*dtime 
        endif
 
 
       ! update  kinematics 
       ! area 
       Fg_tau  = dsqrt(thetag_tau)*Iden 
-     +          +(1.0 - dsqrt(thetag_tau))*matmul(a0,transpose(a0))
+     +          +(1.0 - dsqrt(thetag_tau))*matmul(N_R,transpose(N_R))
 
       ! inverse of the growth Fg
       ! 
@@ -1080,7 +1075,7 @@ c
       
       ! compute Cauchy stress 
       ! 
-      T_tau = ((lambda_g*dlog(Je) - mu_g)*Iden  + mu_g*Be_tau)/Je
+      T_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
 
 
       end subroutine integ_gray
