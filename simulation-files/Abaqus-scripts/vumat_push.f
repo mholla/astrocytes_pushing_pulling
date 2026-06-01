@@ -159,7 +159,7 @@ c
 
       ! Pour initial coordinates into the global variable matrix 
       !
-      if (totaltime.lt. 0.1) then
+      if (totalTime.lt. 0.1) then
           do km=1,nblock
              inicoord(nElement(km),1) = coordMp(km,1)
              inicoord(nElement(km),2) = coordMp(km,2)
@@ -347,23 +347,23 @@ c
          stress_power = 0.d0
          do i = 1,ndir
             stress_power = stress_power +
-     +           0.5*((StressOld(km,i)+StressNew(km,i))*
-     +           StrainInc(km,i))
+     +           0.5*((stressOld(km,i)+stressNew(km,i))*
+     +           strainInc(km,i))
          enddo
          
          select case (nshr)
          case(1)
             stress_power = stress_power + 
-     +           0.5*((StressOld(km,ndir+1)+StressNew(km,ndir+1))*
-     +           StrainInc(km,ndir+1))
+     +           0.5*((stressOld(km,ndir+1)+stressNew(km,ndir+1))*
+     +           strainInc(km,ndir+1))
          case(3)
             stress_power = stress_power + 
-     +           0.5*(((StressOld(km,ndir+1) + StressNew(km,ndir+1))*
-     +           StrainInc(km,ndir+1)) +
-     +           ((StressOld(km,ndir+2)+ StressNew(km,ndir+2)) *
-     +           StrainInc(km,ndir+2))+
-     +           ((StressOld(km,ndir+3) + StressNew(km,ndir+3))*
-     +           StrainInc(km,ndir+3)))
+     +           0.5*(((stressOld(km,ndir+1) + stressNew(km,ndir+1))*
+     +           strainInc(km,ndir+1)) +
+     +           ((stressOld(km,ndir+2)+ stressNew(km,ndir+2)) *
+     +           strainInc(km,ndir+2))+
+     +           ((stressOld(km,ndir+3) + stressNew(km,ndir+3))*
+     +           strainInc(km,ndir+3)))
          end select
            
          enerInternNew(km) = enerInternOld(km) + 
@@ -439,7 +439,7 @@ c
 
 
       ! pour initial coordinates into the global variable
-      if (totaltime.lt. 0.1) then
+      if (totalTime.lt. 0.1) then
           do km=1,nblock
              inicoord(nElement(km),1) = coordMp(km,1)
              inicoord(nElement(km),2) = coordMp(km,2)
@@ -591,23 +591,23 @@ c
          stress_power = 0.d0
          do i = 1,ndir
             stress_power = stress_power +
-     +           0.5*((StressOld(km,i)+StressNew(km,i))*
-     +           StrainInc(km,i))
+     +           0.5*((stressOld(km,i)+stressNew(km,i))*
+     +           strainInc(km,i))
          enddo
          
          select case (nshr)
          case(1)
             stress_power = stress_power + 
-     +           0.5*((StressOld(km,ndir+1)+StressNew(km,ndir+1))*
-     +           StrainInc(km,ndir+1))
+     +           0.5*((stressOld(km,ndir+1)+stressNew(km,ndir+1))*
+     +           strainInc(km,ndir+1))
          case(3)
             stress_power = stress_power + 
-     +           0.5*(((StressOld(km,ndir+1) + StressNew(km,ndir+1))*
-     +           StrainInc(km,ndir+1)) +
-     +           ((StressOld(km,ndir+2)+ StressNew(km,ndir+2)) *
-     +           StrainInc(km,ndir+2))+
-     +           ((StressOld(km,ndir+3) + StressNew(km,ndir+3))*
-     +           StrainInc(km,ndir+3)))
+     +           0.5*(((stressOld(km,ndir+1) + stressNew(km,ndir+1))*
+     +           strainInc(km,ndir+1)) +
+     +           ((stressOld(km,ndir+2)+ stressNew(km,ndir+2)) *
+     +           strainInc(km,ndir+2))+
+     +           ((stressOld(km,ndir+3) + stressNew(km,ndir+3))*
+     +           strainInc(km,ndir+3)))
          end select
            
          enerInternNew(km) = enerInternOld(km) + 
@@ -645,7 +645,7 @@ c
       real*8 majoraxis_reduced,minoraxis_reduced
       real*8 maj_min_ratio,maj_axis,min_axis
       real*8 push_grow_time,hside_fac
-      real*8 rad,phi,R_prime,scaled_r,scaled_thresh,reduction_major
+      real*8 rad,psi,R_prime,scaled_r,scaled_thresh,reduction_major
       real*8 ang_factor,N_gyri,scale_fac_push,gauss_std
       real*8 reduction_minor,periods       
 
@@ -701,16 +701,16 @@ c
        alpha_growth = smoothening*one 
 
 
-       phi = atan(coordy/coordx)
+       psi = atan(coordy/coordx)
        rad = sqrt(coordx**2.0 + coordy**2.0)
-       R_prime = sqrt((majoraxis_reduced*cos(phi))**2.0 + (minoraxis_reduced*sin(phi))**2.0)
+       R_prime = sqrt((majoraxis_reduced*cos(psi))**2.0 + (minoraxis_reduced*sin(psi))**2.0)
        scaled_r = rad/R_prime
 
 
        coordiff = (scaled_r - scaled_thresh)*one
        periods = two*(two*N_gyri - one) !Periodic presence of progenitor growth
 
-       ang_factor = sin(periods*phi)
+       ang_factor = sin(periods*psi)
 
        call gauss(scaled_r,scaled_thresh,gauss_std,gauss_fac)
        
