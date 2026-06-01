@@ -644,8 +644,8 @@ c
       real*8 T_1,totalTime
       real*8 majoraxis_reduced,minoraxis_reduced
       real*8 maj_min_ratio,maj_axis,min_axis
-      real*8 T_2,hside_fac
-      real*8 rad,psi,scaled_r,delta_bar,reduction_major
+      real*8 T_2,f_H
+      real*8 rad,psi,r_tilde,delta_bar,a_tilde
       real*8 f_2,N_gyri,gamma,alpha
       real*8 b_tilde,periods       
 
@@ -679,10 +679,10 @@ c
 !! Setting up the growth rate calculations
        maj_min_ratio = maj_axis/min_axis
 
-       reduction_major = b_tilde*maj_min_ratio
+       a_tilde = b_tilde*maj_min_ratio
 
        ! For progenitor push effect
-       majoraxis_reduced = maj_axis - reduction_major !white matter reduced to bring in the progenitor effect
+       majoraxis_reduced = maj_axis - a_tilde !white matter reduced to bring in the progenitor effect
        minoraxis_reduced = min_axis - b_tilde 
 
 
@@ -697,14 +697,14 @@ c
 
        psi = atan(coordy/coordx)
        rad = sqrt(coordx**2.0 + coordy**2.0)
-       scaled_r = rad/sqrt((majoraxis_reduced*cos(psi))**2.0 + (minoraxis_reduced*sin(psi))**2.0)
+       r_tilde = rad/sqrt((majoraxis_reduced*cos(psi))**2.0 + (minoraxis_reduced*sin(psi))**2.0)
 
 
-       coordiff = (scaled_r - delta_bar)*one
+       coordiff = (r_tilde - delta_bar)*one
        
        f_2 = sin(four*psi*(N_gyri - half)) + one
 
-       call gauss(scaled_r,delta_bar,alpha,f_phi)
+       call gauss(r_tilde,delta_bar,alpha,f_phi)
        
        theta_dot_1 = (G_GM*gamma_1)*half*f_phi*f_2 ! Scaled so that growth rate is highest at the grey matter layer
 
@@ -836,9 +836,9 @@ c
 C       ! KT: If the totalTime is > T_2, push effect from astrocytes is in play 
 
 
-       call Hhat(coordiff,alpha_bar,hside_fac)
+       call Hhat(coordiff,alpha_bar,f_H)
        
-       theta_dot_1 = (G_GM*gamma*one)*half**hside_fac*(ang_factor + one) ! Scaled so that growth rate is highest at the grey matter layer
+       theta_dot_1 = (G_GM*gamma)*half*f_H*f_2 ! Scaled so that growth rate is highest at the grey matter layer
 
 
        thetag_tau = thetag_t + (theta_dot_1)*dtime 

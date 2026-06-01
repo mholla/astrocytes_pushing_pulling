@@ -300,8 +300,6 @@ c
 
          ! Find normal vector
 
-         maj_min_ratio = maj_axis/min_axis
-
          N_R(1,1) = 2.0*coordx/maj_axis**2.0
          N_R(2,1) = 2.0*coordy/min_axis**2.0
          zeta = atan(N_R(2,1)/N_R(1,1))
@@ -645,12 +643,12 @@ c
       real*8 coordx,coordy,coordz,theta_dot_1,G_GM,gamma_1,f_phi
       real*8 threshold,T_1,totalTime,T_2
       real*8 majoraxis_reduced,minoraxis_reduced,growth_crit
-      real*8 nitl, thetag_dum, lnJe, trMe,reduction_major,b_tilde
+      real*8 nitl, thetag_dum, lnJe, trMe,a_tilde,b_tilde
       real*8 res, dres, phig, dphig, xtol
       real*8 theta_dot_3_fac
-      real*8 rad,psi,scaled_r,delta_bar,maj_axis,min_axis
+      real*8 rad,psi,r_tilde,delta_bar,maj_axis,min_axis
       real*8 f_2,N_gyri,gamma_hat
-      real*8 periods,maj_min_ratio,gauss_std       
+      real*8 periods,maj_min_ratio,alpha       
 
 
 
@@ -662,7 +660,7 @@ c
 
 
       xtol = 1.d-10 ! Tolerance for local newton iterations in growth parameter calculations 
-      gauss_std = 0.4d0 ! Standard deviation of gauss function in Phase 1 growth rate
+      alpha = 0.4d0 ! Standard deviation of gauss function in Phase 1 growth rate
 
       growth_crit = zero ! critical growth criterion, Purely tensile growth in this study
 
@@ -683,9 +681,9 @@ c
 
        maj_min_ratio = maj_axis/min_axis
 
-       reduction_major = b_tilde*maj_min_ratio
+       a_tilde = b_tilde*maj_min_ratio
 
-       majoraxis_reduced = maj_axis - reduction_major !white matter reduced to bring in the progenitor effect
+       majoraxis_reduced = maj_axis - a_tilde !white matter reduced to bring in the progenitor effect
        minoraxis_reduced = min_axis - b_tilde 
 
 
@@ -702,11 +700,11 @@ c
 
        psi = atan(coordy/coordx)
        rad = sqrt(coordx**2.0 + coordy**2.0)
-       scaled_r = rad/sqrt((majoraxis_reduced*cos(psi))**2.0 + (minoraxis_reduced*sin(psi))**2.0)
+       r_tilde = rad/sqrt((majoraxis_reduced*cos(psi))**2.0 + (minoraxis_reduced*sin(psi))**2.0)
 
        f_2 = sin(four*psi*(N_gyri - half)) + one
        
-       call gauss(scaled_r,delta_bar,gauss_std,f_phi)
+       call gauss(r_tilde,delta_bar,alpha,f_phi)
        
        theta_dot_1 = (G_GM*gamma_1)*half*f_phi*f_2 ! WM growth rate in Phase 1   
        theta_dot_3_fac = gamma_hat*G_GM/mu !scaling with 1/mu_W, WM growth rate in Phase 3 
