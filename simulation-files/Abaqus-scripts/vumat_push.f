@@ -154,8 +154,8 @@ c
      +     third=1.d0/3.d0,two_third=2.d0/3.d0,four=4.d0,Pi=3.1415926d0)
 
 !! WM Ellipse params
-      maj_axis = 3.45 !mm, defined as a in the text
-      min_axis = 2.85 !mm, defined as b in the text
+      maj_axis = props(12) ! WM major axis (mm)
+      min_axis = props(13) ! WM minor axis (mm)
 
       ! Pour initial coordinates into the global variable matrix 
       !
@@ -657,10 +657,6 @@ c
       parameter(zero=0.d0,one=1.d0,two=2.d0,half=0.5d0,three=3.d0,
      +     third=1.d0/3.d0,nine=9.d0,ten=10.d0)
 
-!! WM ellipse dimension
-      maj_axis = 3.45 !mm, defined as a in the text
-      min_axis = 2.85 !mm, defined as b in the text
-
       ! standard deviation of gauss growth rate function
       gauss_std = 0.4d0
 
@@ -677,6 +673,8 @@ c
        scale_fac_push = props(9) !scale_factor for pushing (gamma)
        reduction_minor = props(10) ! Reducing from edge of WM (\tilde{b})
        push_grow_time = props(11) ! Phase3 push effect starting after this time.
+       maj_axis = props(12) ! WM major axis (a)
+       min_axis = props(13) ! WM minor axis (b)
 
 !! Setting up the growth rate calculations
        maj_min_ratio = maj_axis/min_axis
@@ -903,6 +901,7 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
       real*8 coordx,coordy,coordz,tmp
       real*8 Fginv(3,3)
       real*8 grow_time,totalTime
+      real*8 maj_axis,min_axis
 
       ! Parameters
       !
@@ -910,12 +909,14 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
       parameter(zero=0.d0,one=1.d0,two=2.d0,half=0.5d0,three=3.d0,
      +     third=1.d0/3.d0,nine=9.d0,Pi=3.1415926d0)
 
-      ! Obtain material properties 
+      ! Obtain material properties
       !
        mu_g      = props(1)
        lambda_g  = props(2)
        Gctx      = props(3)
-       grow_time = props(4) ! Time after which gray matter starts to grow in H2. 
+       grow_time = props(4) ! Time after which gray matter starts to grow in Phase 2.
+       maj_axis  = props(5) ! WM major axis (a)
+       min_axis  = props(6) ! WM minor axis (b)
 
       ! Identity matrix
       !
@@ -930,8 +931,8 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
 
 
       ! obtain referential surface outnormal of an elliptical surface
-      a0(1,1) = 2.0*coordx/1.2**2.0
-      a0(2,1) = 2.0*coordy/1.0**2.0
+      a0(1,1) = 2.0*coordx/maj_axis**2.0
+      a0(2,1) = 2.0*coordy/min_axis**2.0
       a0(3,1) = 0.0
 
       tmp = sqrt(a0(1,1)**2.0 + a0(2,1)**2.0 + a0(3,1)**2.0)

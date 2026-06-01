@@ -153,8 +153,8 @@ c
       parameter(zero=0.d0,one=1.d0,two=2.d0,three=3.d0,half=0.5d0,
      +     third=1.d0/3.d0,two_third=2.d0/3.d0,four=4.d0,Pi=3.1415926d0)
 !! WM Ellipse params
-      maj_axis = 3.45 !mm, defined as a in the text
-      min_axis = 2.85 !mm, defined as b in the text
+      maj_axis = props(11) ! WM major axis (mm)
+      min_axis = props(12) ! WM minor axis (mm)
 
       ! Pour initial coordinates into the global variable matrix 
       !
@@ -662,11 +662,6 @@ c
      +     third=1.d0/3.d0,nine=9.d0,ten=10.d0)
 
 
-!! WM ellipse dimension
-      maj_axis = 3.45 !mm, defined as a in the text
-      min_axis = 2.85 !mm, defined as b in the text
-
-
       xtol = 1.d-10 ! Tolerance for local newton iterations in growth parameter calculations 
       gauss_std = 0.4d0 ! Standard deviation of gauss function in Phase 1 growth rate
 
@@ -684,10 +679,12 @@ c
        scale_fac_pull = props(8) !scale_factor for pulling (gammahat)
        reduction_minor = props(9) ! Reducing from edge of WM (\tilde{b})
        pull_grow_time = props(10) !  Phase 3 pull effect starting after this time.
-   
+       maj_axis = props(11) ! WM major axis (a)
+       min_axis = props(12) ! WM minor axis (b)
 
+       maj_min_ratio = maj_axis/min_axis
 
-       reduction_major = reduction_minor*maj_min_ratio 
+       reduction_major = reduction_minor*maj_min_ratio
 
        majoraxis_reduced = maj_axis - reduction_major !white matter reduced to bring in the progenitor effect
        minoraxis_reduced = min_axis - reduction_minor 
@@ -957,6 +954,7 @@ c
       real*8 coordx,coordy,coordz,tmp
       real*8 Fginv(3,3)
       real*8 grow_time,totalTime
+      real*8 maj_axis,min_axis
 
       ! Parameters
       !
@@ -964,12 +962,14 @@ c
       parameter(zero=0.d0,one=1.d0,two=2.d0,half=0.5d0,three=3.d0,
      +     third=1.d0/3.d0,nine=9.d0,Pi=3.1415926d0)
 
-      ! Obtain material properties 
+      ! Obtain material properties
       !
        mu_g      = props(1)
        lambda_g  = props(2)
        Gctx      = props(3)
-       grow_time = props(4) ! Time after which gray matter starts to grow in Phase 2. 
+       grow_time = props(4) ! Time after which gray matter starts to grow in Phase 2.
+       maj_axis  = props(5) ! WM major axis (a)
+       min_axis  = props(6) ! WM minor axis (b)
 
       ! Identity matrix
       !
@@ -987,8 +987,8 @@ c
 
 
       ! obtain referential surface outnormal of an elliptical surface
-      a0(1,1) = 2.0*coordx/1.2**2.0
-      a0(2,1) = 2.0*coordy/1.0**2.0
+      a0(1,1) = 2.0*coordx/maj_axis**2.0
+      a0(2,1) = 2.0*coordy/min_axis**2.0
       a0(3,1) = 0.0
 
       tmp = sqrt(a0(1,1)**2.0 + a0(2,1)**2.0 + a0(3,1)**2.0)

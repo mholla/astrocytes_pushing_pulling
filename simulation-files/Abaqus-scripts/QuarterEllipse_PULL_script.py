@@ -138,12 +138,12 @@ def Create_Material(ModelName, Materials):
     mdb.models[ModelName].Material(name='WHIT')
     mdb.models[ModelName].materials['WHIT'].Density(table=((density, ), ))
     mdb.models[ModelName].materials['WHIT'].Depvar(n=10)
-    mdb.models[ModelName].materials['WHIT'].UserMaterial(mechanicalConstants=(shear_w, lambda_w,Gctx,scaled_thresh,GwByGgr,progen_grow_time,N_gyri,gamma_hat_pull,reduction,pull_grow_time))
+    mdb.models[ModelName].materials['WHIT'].UserMaterial(mechanicalConstants=(shear_w, lambda_w,Gctx,scaled_thresh,GwByGgr,progen_grow_time,N_gyri,gamma_hat_pull,reduction,pull_grow_time,MajorAxis_W,MinorAxis_W))
 
     mdb.models[ModelName].Material(name='GRAY')
     mdb.models[ModelName].materials['GRAY'].Density(table=((density, ), ))
     mdb.models[ModelName].materials['GRAY'].Depvar(n=7)
-    mdb.models[ModelName].materials['GRAY'].UserMaterial(mechanicalConstants=(shear_g,lambda_g,Gctx,progen_grow_time))
+    mdb.models[ModelName].materials['GRAY'].UserMaterial(mechanicalConstants=(shear_g,lambda_g,Gctx,progen_grow_time,MajorAxis_W,MinorAxis_W))
 #######################################################################################
 #######################################################################################
 def Create_Section(ModelName, PartName, Dimensions, Materials):
