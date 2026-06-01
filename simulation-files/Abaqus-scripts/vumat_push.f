@@ -1,9 +1,7 @@
-************************************************************************
-!  
-! A vumat for manuscript: 'Astrocytes in white matter respond to tensile
-! cues during cortical folding: a numerical study'
-! 
-! 
+! author: Karan Taneja
+! unit system: mm-N-MPa
+! dimension: plane strain
+! documentation: 'Astrocytes in white matter respond to tensile cues during cortical folding: a numerical study'
 
 !**********************************************************************
       module GlobalStorage
@@ -156,8 +154,8 @@ c
      +     third=1.d0/3.d0,two_third=2.d0/3.d0,four=4.d0,Pi=3.1415926d0)
 
 !! WM Ellipse params
-      maj_axis = 34.5
-      min_axis = 28.5
+      maj_axis = 3.45 !mm, defined as a in the text
+      min_axis = 2.85 !mm, defined as b in the text
 
       ! Pour initial coordinates into the global variable matrix 
       !
@@ -660,8 +658,8 @@ c
      +     third=1.d0/3.d0,nine=9.d0,ten=10.d0)
 
 !! WM ellipse dimension
-      maj_axis = 34.5d0 ! WM major axis
-      min_axis = 28.5d0 ! WM minor axis
+      maj_axis = 3.45 !mm, defined as a in the text
+      min_axis = 2.85 !mm, defined as b in the text
 
       ! standard deviation of gauss growth rate function
       gauss_std = 0.4d0
@@ -931,7 +929,7 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
 
 
 
-      ! obtain referential surf(ac)e outnormal of an elliptical surf(ac)e
+      ! obtain referential surface outnormal of an elliptical surface
       a0(1,1) = 2.0*coordx/1.2**2.0
       a0(2,1) = 2.0*coordy/1.0**2.0
       a0(3,1) = 0.0
@@ -970,7 +968,7 @@ C       ! KT: If the totalTime is > push_grow_time, push effect from astrocytes 
       Be_tau = matmul(Fe_tau,transpose(Fe_tau)) 
  
 
-      ! J(ac)obian of the Fg
+      ! Jacobian of the Fg
       ! 
       call mdet(Fg_tau,Jg)
 

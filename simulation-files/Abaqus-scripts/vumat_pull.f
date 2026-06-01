@@ -1,9 +1,7 @@
-************************************************************************
-!  
-!  
-! A vumat for manuscript: 'Astrocytes in white matter respond to tensile
-! cues during cortical folding: a numerical study'
-! 
+! author: Karan Taneja
+! unit system: mm-N-MPa
+! dimension: plane strain
+! documentation: 'Astrocytes in white matter respond to tensile cues during cortical folding: a numerical study'
 
 !**********************************************************************
       module GlobalStorage
@@ -155,8 +153,8 @@ c
       parameter(zero=0.d0,one=1.d0,two=2.d0,three=3.d0,half=0.5d0,
      +     third=1.d0/3.d0,two_third=2.d0/3.d0,four=4.d0,Pi=3.1415926d0)
 !! WM Ellipse params
-      maj_axis = 34.5
-      min_axis = 28.5
+      maj_axis = 3.45 !mm, defined as a in the text
+      min_axis = 2.85 !mm, defined as b in the text
 
       ! Pour initial coordinates into the global variable matrix 
       !
@@ -665,8 +663,8 @@ c
 
 
 !! WM ellipse dimension
-      maj_axis = 34.5d0 ! WM major axis
-      min_axis = 28.5d0 ! WM minor axis
+      maj_axis = 3.45 !mm, defined as a in the text
+      min_axis = 2.85 !mm, defined as b in the text
 
 
       xtol = 1.d-10 ! Tolerance for local newton iterations in growth parameter calculations 
