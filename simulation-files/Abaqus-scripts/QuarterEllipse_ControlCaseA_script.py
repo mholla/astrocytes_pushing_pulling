@@ -141,7 +141,7 @@ def Create_Material(ModelName, Materials):
     mdb.models[ModelName].Material(name='GRAY')
     mdb.models[ModelName].materials['GRAY'].Density(table=((density, ), ))
     mdb.models[ModelName].materials['GRAY'].Depvar(n=7)
-    mdb.models[ModelName].materials['GRAY'].UserMaterial(mechanicalConstants=(shear_g,lambda_g,Gctx,progen_grow_time,MajorAxis_W,MinorAxis_W))
+    mdb.models[ModelName].materials['GRAY'].UserMaterial(mechanicalConstants=(shear_g,lambda_g,Gctx,progen_grow_time,MajorAxis_G,MinorAxis_G))
 
 #######################################################################################
 #######################################################################################
