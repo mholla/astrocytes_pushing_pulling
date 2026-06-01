@@ -137,11 +137,11 @@ c
       integer i,km
 
       real*8 Iden(3,3),F_t(3,3),F_tau(3,3),U_tau(3,3)
-      real*8 T_tau(3,3),R_tau(3,3),U_inv(3,3),detF
+      real*8 sigma_tau(3,3),R_tau(3,3),U_inv(3,3),detF
       real*8 Fe_tau(3,3)
       real*8 pwrinct,stress_power
-      real*8 rot_stress(3,3),rot_matrix(3,3),N_R(2,1)
-      real*8 matProps(nprops),rad_stress,tan_stress
+      real*8 sigma_rot(3,3),rot_matrix(3,3),N_R(2,1)
+      real*8 matProps(nprops),sigma_rad,sigma_tan
       real*8 theta_dot_1,f_2,zeta,ctheta,stheta
       real*8 coordx,coordy,coordz,thetag_t,thetag_tau,maj_axis,min_axis
 
@@ -258,7 +258,7 @@ c
             ! dummy step, call elastic response, note dt=-1.0 is sent
             !  into the integ subroutine
             !
-            call integ_white(matProps,nprops,F_tau,-1.0,T_tau,thetag_t,thetag_tau,
+            call integ_white(matProps,nprops,F_tau,-1.0,sigma_tau,thetag_t,thetag_tau,
      +                       coordx,coordy,coordz,totalTime,
      +                       theta_dot_1,f_2)     
 
@@ -266,7 +266,7 @@ c
             !
             ! Perform explicit time integration procedure
             !
-            call integ_white(matProps,nprops,F_tau,dt,T_tau,thetag_t,thetag_tau,
+            call integ_white(matProps,nprops,F_tau,dt,sigma_tau,thetag_t,thetag_tau,
      +                       coordx,coordy,coordz,totalTime,
      +                       theta_dot_1,f_2)     
 
@@ -280,17 +280,17 @@ c
          !
          call m3inv(U_tau,U_inv)
          R_tau = matmul(F_tau,U_inv)
-         T_tau = matmul(transpose(R_tau),matmul(T_tau,R_tau))
+         sigma_tau = matmul(transpose(R_tau),matmul(sigma_tau,R_tau))
 
          do i=1,ndir
-            stressNew(km,i) = T_tau(i,i)
+            stressNew(km,i) = sigma_tau(i,i)
          end do
          if(nshr.ne.0) then
-            stressNew(km,ndir+1) = T_tau(1,2)
+            stressNew(km,ndir+1) = sigma_tau(1,2)
             if(nshr.ne.1) then
-               stressNew(km, ndir+2) = T_tau(2,3)
+               stressNew(km, ndir+2) = sigma_tau(2,3)
                if(nshr.ne.2) then
-                  stressNew(km,ndir+3) = T_tau(1,3)
+                  stressNew(km,ndir+3) = sigma_tau(1,3)
                endif
             endif
          endif
@@ -318,11 +318,11 @@ c
          rot_matrix(3,3) = 1.0
 
          ! Rotate the stress tensor
-         rot_stress = matmul(matmul(rot_matrix,T_tau),transpose(rot_matrix))
+         sigma_rot = matmul(matmul(rot_matrix,sigma_tau),transpose(rot_matrix))
 
          ! Get radial and tangential components
-         rad_stress = rot_stress(1,1)
-         tan_stress = rot_stress(2,2)
+         sigma_rad = sigma_rot(1,1)
+         sigma_tan = sigma_rot(2,2)
 
 
          ! Update state variables
@@ -334,11 +334,11 @@ c
          stateNew(km,4) = coordz !
          call mdet(F_tau,detF)
          stateNew(km,5) = detF   
-         stateNew(km,6) = (T_tau(1,1)+T_tau(2,2)+T_tau(3,3))/three
+         stateNew(km,6) = (sigma_tau(1,1)+sigma_tau(2,2)+sigma_tau(3,3))/three
          stateNew(km,7) = theta_dot_1
          stateNew(km,8) = f_2   
-         stateNew(km,9) = rad_stress
-         stateNew(km,10) = tan_stress   
+         stateNew(km,9) = sigma_rad
+         stateNew(km,10) = sigma_tan   
 
 
 
@@ -422,7 +422,7 @@ c
       integer i,km
 
       real*8 Iden(3,3),F_t(3,3),F_tau(3,3),U_tau(3,3)
-      real*8 T_tau(3,3),R_tau(3,3),U_inv(3,3),detF
+      real*8 sigma_tau(3,3),R_tau(3,3),U_inv(3,3),detF
       real*8 Fe_tau(3,3)
       real*8 pwrinct,stress_power
       real*8 matProps(nprops)
@@ -542,14 +542,14 @@ c
             ! dummy step, call elastic response, note dt=-1.0 is sent
             !  into the integ subroutine
             !
-            call integ_gray(matProps,nprops,F_tau,-1.0,T_tau,thetag_t,thetag_tau,
+            call integ_gray(matProps,nprops,F_tau,-1.0,sigma_tau,thetag_t,thetag_tau,
      +                     coordx,coordy,coordz,N_R,totalTime)
 
          else
             !
             ! Perform explicit time integration procedure
             !
-            call integ_gray(matProps,nprops,F_tau,dt,T_tau,thetag_t,thetag_tau,
+            call integ_gray(matProps,nprops,F_tau,dt,sigma_tau,thetag_t,thetag_tau,
      +                     coordx,coordy,coordz,N_R,totalTime)
 
          endif
@@ -572,21 +572,21 @@ c
          !
          call m3inv(U_tau,U_inv)
          R_tau = matmul(F_tau,U_inv)
-         T_tau = matmul(transpose(R_tau),matmul(T_tau,R_tau))
+         sigma_tau = matmul(transpose(R_tau),matmul(sigma_tau,R_tau))
 
          do i=1,ndir
-            stressNew(km,i) = T_tau(i,i)
+            stressNew(km,i) = sigma_tau(i,i)
          end do
          if(nshr.ne.0) then
-            stressNew(km,ndir+1) = T_tau(1,2)
+            stressNew(km,ndir+1) = sigma_tau(1,2)
             if(nshr.ne.1) then
-               stressNew(km, ndir+2) = T_tau(2,3)
+               stressNew(km, ndir+2) = sigma_tau(2,3)
                if(nshr.ne.2) then
-                  stressNew(km,ndir+3) = T_tau(1,3)
+                  stressNew(km,ndir+3) = sigma_tau(1,3)
                endif
             endif
          endif
-         stateNew(km,6) = (T_tau(1,1)+T_tau(2,2)+T_tau(3,3))/three
+         stateNew(km,6) = (sigma_tau(1,1)+sigma_tau(2,2)+sigma_tau(3,3))/three
 
          ! Update the specific internal energy
          !
@@ -623,7 +623,7 @@ c
 
       end subroutine vumatXtrArg_gray
 ***********************************************************************
-      subroutine integ_white(Props,nprops,F_tau,dtime,T_tau,
+      subroutine integ_white(Props,nprops,F_tau,dtime,sigma_tau,
      +                       thetag_t,thetag_tau,coordx,coordy,coordz,totalTime,
      +                       theta_dot_1,f_2)
       implicit none
@@ -632,7 +632,7 @@ c
       integer i,nargs,nprops
       parameter(nargs=5)
 
-      real*8 Iden(3,3),F_tau(3,3),T_tau(3,3)
+      real*8 Iden(3,3),F_tau(3,3),sigma_tau(3,3)
       real*8 detF
       real*8 B_tau(3,3)
       real*8 lambda,mu
@@ -750,7 +750,7 @@ c
       
       ! compute Cauchy stress 
       ! 
-      T_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
+      sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
 
 
 
@@ -790,7 +790,7 @@ c
       
       ! compute Cauchy stress 
       ! 
-      T_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
+      sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
 
       else if ((totalTime.le.T_2).and.(totalTime.ge.T_1)) then 
       ! Between the progenitor push and astro pull phases,
@@ -825,7 +825,7 @@ c
       
       ! compute Cauchy stress 
       ! 
-      T_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
+      sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
 
       endif
 
@@ -919,7 +919,7 @@ c
       
       ! compute Cauchy stress 
       ! 
-      T_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
+      sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
 
 
       endif
@@ -927,7 +927,7 @@ c
 
       end subroutine integ_white
 ****************************************************************************
-      subroutine integ_gray(Props,nprops,F_tau,dtime,T_tau,
+      subroutine integ_gray(Props,nprops,F_tau,dtime,sigma_tau,
      +                       thetag_t,thetag_tau,coordx,coordy,coordz,
      +                      N_R,totalTime)
 
@@ -937,7 +937,7 @@ c
       integer nargs,nprops
       parameter(nargs=5)
 
-      real*8 Iden(3,3),F_tau(3,3),T_tau(3,3)
+      real*8 Iden(3,3),F_tau(3,3),sigma_tau(3,3)
       real*8 detF
       real*8 N_R(3,1)
       real*8 Be_tau(3,3),Fg_tau(3,3),Fe_tau(3,3),Je
@@ -1026,7 +1026,7 @@ c
       
       ! compute Cauchy stress 
       ! 
-      T_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
+      sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
 
 
          return
@@ -1073,7 +1073,7 @@ c
       
       ! compute Cauchy stress 
       ! 
-      T_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
+      sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
 
 
       end subroutine integ_gray
