@@ -5,7 +5,8 @@
 
 !**********************************************************************
       module GlobalStorage
-      ! number of nodes in the input file   
+      ! this number must >= the number of elements in the mesh
+      ! otherwise, the simulation will crash   
           real*8 inicoord(46000,3) 
       end module  
 
@@ -157,7 +158,7 @@ c
 
       ! Pour initial coordinates into the global variable matrix 
       !
-      if (totalTime.lt. 0.1) then
+      if (totalTime.lt. dt) then
           do km=1,nblock
              inicoord(nElement(km),1) = coordMp(km,1)
              inicoord(nElement(km),2) = coordMp(km,2)
@@ -258,7 +259,7 @@ c
             ! dummy step, call elastic response, note dt=-1.0 is sent
             !  into the integ subroutine
             !
-            call integ_white(matProps,nprops,F_tau,-1.0,sigma_tau,thetag_t,thetag_tau,
+            call integ_white(matProps,nprops,F_tau,-one,sigma_tau,thetag_t,thetag_tau,
      +                       coordx,coordy,coordz,totalTime,
      +                       theta_dot_1,f_2)     
 
@@ -300,8 +301,8 @@ c
 
          ! Find normal vector
 
-         N_R(1,1) = 2.0*coordx/maj_axis**2.0
-         N_R(2,1) = 2.0*coordy/min_axis**2.0
+         N_R(1,1) = two*coordx/maj_axis**two
+         N_R(2,1) = two*coordy/min_axis**two
          zeta = atan(N_R(2,1)/N_R(1,1))
 
          ! Create rotation matrix
@@ -309,13 +310,13 @@ c
          stheta = sin(zeta)
          rot_matrix(1,1) = ctheta
          rot_matrix(1,2) = stheta
-         rot_matrix(1,3) = 0.0
+         rot_matrix(1,3) = zero
          rot_matrix(2,1) = -stheta
          rot_matrix(2,2) = ctheta
-         rot_matrix(2,3) = 0.0
-         rot_matrix(3,1) = 0.0
-         rot_matrix(3,2) = 0.0
-         rot_matrix(3,3) = 1.0
+         rot_matrix(2,3) = zero
+         rot_matrix(3,1) = zero
+         rot_matrix(3,2) = zero
+         rot_matrix(3,3) = one
 
          ! Rotate the stress tensor
          sigma_rot = matmul(matmul(rot_matrix,sigma_tau),transpose(rot_matrix))
@@ -344,21 +345,21 @@ c
 
          ! Update the specific internal energy
          !
-         stress_power = 0.d0
+         stress_power = zero
          do i = 1,ndir
             stress_power = stress_power +
-     +           0.5*((stressOld(km,i)+stressNew(km,i))*
+     +           half*((stressOld(km,i)+stressNew(km,i))*
      +           strainInc(km,i))
          enddo
          
          select case (nshr)
          case(1)
             stress_power = stress_power + 
-     +           0.5*((stressOld(km,ndir+1)+stressNew(km,ndir+1))*
+     +           half*((stressOld(km,ndir+1)+stressNew(km,ndir+1))*
      +           strainInc(km,ndir+1))
          case(3)
             stress_power = stress_power + 
-     +           0.5*(((stressOld(km,ndir+1) + stressNew(km,ndir+1))*
+     +           half*(((stressOld(km,ndir+1) + stressNew(km,ndir+1))*
      +           strainInc(km,ndir+1)) +
      +           ((stressOld(km,ndir+2)+ stressNew(km,ndir+2)) *
      +           strainInc(km,ndir+2))+
@@ -439,7 +440,7 @@ c
 
 
       ! pour initial coordinates into the global variable
-      if (totalTime.lt. 0.1) then
+      if (totalTime.lt. dt) then
           do km=1,nblock
              inicoord(nElement(km),1) = coordMp(km,1)
              inicoord(nElement(km),2) = coordMp(km,2)
@@ -590,21 +591,21 @@ c
 
          ! Update the specific internal energy
          !
-         stress_power = 0.d0
+         stress_power = zero
          do i = 1,ndir
             stress_power = stress_power +
-     +           0.5*((stressOld(km,i)+stressNew(km,i))*
+     +           half*((stressOld(km,i)+stressNew(km,i))*
      +           strainInc(km,i))
          enddo
          
          select case (nshr)
          case(1)
             stress_power = stress_power + 
-     +           0.5*((stressOld(km,ndir+1)+stressNew(km,ndir+1))*
+     +           half*((stressOld(km,ndir+1)+stressNew(km,ndir+1))*
      +           strainInc(km,ndir+1))
          case(3)
             stress_power = stress_power + 
-     +           0.5*(((stressOld(km,ndir+1) + stressNew(km,ndir+1))*
+     +           half*(((stressOld(km,ndir+1) + stressNew(km,ndir+1))*
      +           strainInc(km,ndir+1)) +
      +           ((stressOld(km,ndir+2)+ stressNew(km,ndir+2)) *
      +           strainInc(km,ndir+2))+
@@ -699,8 +700,8 @@ c
 
 
        psi = atan(coordy/coordx)
-       rad = sqrt(coordx**2.0 + coordy**2.0)
-       r_tilde = rad/sqrt((majoraxis_reduced*cos(psi))**2.0 + (minoraxis_reduced*sin(psi))**2.0)
+       rad = sqrt(coordx**two + coordy**two)
+       r_tilde = rad/sqrt((majoraxis_reduced*cos(psi))**two + (minoraxis_reduced*sin(psi))**two)
 
        f_2 = sin(four*psi*(N_gyri - half)) + one
        
@@ -883,7 +884,7 @@ c
             nitl = nitl + 1
             ! Growth criterion
 
-            dphig = -1.d0/3.d0/thetag_dum*(2.d0*mu*(Be_tau(1,1) + Be_tau(2,2) + Be_tau(3,3)) + 9.d0*lambda)
+            dphig = -third/thetag_dum*(two*mu*(Be_tau(1,1) + Be_tau(2,2) + Be_tau(3,3)) + nine*lambda)
 
             ! Non-linear residual
             res = thetag_dum - thetag_t - (theta_dot_3_fac)*phig*dtime
@@ -980,11 +981,11 @@ c
 
 
       ! obtain referential surface outnormal of an elliptical surface
-      N_R(1,1) = 2.0*coordx/maj_axis**2.0
-      N_R(2,1) = 2.0*coordy/min_axis**2.0
-      N_R(3,1) = 0.0
+      N_R(1,1) = two*coordx/maj_axis**two
+      N_R(2,1) = two*coordy/min_axis**two
+      N_R(3,1) = zero
 
-      tmp = sqrt(N_R(1,1)**2.0 + N_R(2,1)**2.0 + N_R(3,1)**2.0)
+      tmp = sqrt(N_R(1,1)**two + N_R(2,1)**two + N_R(3,1)**two)
 
       N_R = N_R/tmp   
   
@@ -1001,7 +1002,7 @@ c
       ! 
       ! area growth 
       Fg_tau  = dsqrt(thetag_tau)*Iden 
-     +          +(1.0 - dsqrt(thetag_tau))*matmul(N_R,transpose(N_R))
+     +          +(one - dsqrt(thetag_tau))*matmul(N_R,transpose(N_R))
 
       ! inverse of the growth Fg
       ! 
@@ -1048,7 +1049,7 @@ c
       ! update  kinematics 
       ! area 
       Fg_tau  = dsqrt(thetag_tau)*Iden 
-     +          +(1.0 - dsqrt(thetag_tau))*matmul(N_R,transpose(N_R))
+     +          +(one - dsqrt(thetag_tau))*matmul(N_R,transpose(N_R))
 
       ! inverse of the growth Fg
       ! 
@@ -1091,7 +1092,7 @@ C C**********************************************************************
       parameter(half=0.5d0,two=2.d0,Pi=3.1415926d0)
       
 
-      y = exp(-half * ((x - mean) / sigma)**2) / (sigma * dsqrt(two*Pi))
+      y = exp(-half * ((x - mean) / sigma)**two) / (sigma * dsqrt(two*Pi))
 
       end subroutine gauss      
 
