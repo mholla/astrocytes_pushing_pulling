@@ -40,7 +40,6 @@
      +     enerInternNew(*), enerInelasNew(*)
       !
       character*80 cmname
-      character*256 WHIT,GRAY
 
       parameter (     
      +     i_umt_nblock = 1,
@@ -56,26 +55,24 @@
       ! this is white matter 
       call  vumatXtrArg_white (jblock(i_umt_nblock),
      +     ndir, nshr, nstatev, nfieldv, nprops, lanneal,
-     +     stepTime, totalTime, dt, cmname, coordMp,charLength, 
+     +     stepTime, totalTime, dt, coordMp,charLength,
      +     props, density, strainInc, relSpinInc,
      +     tempOld, stretchOld, defgradOld, fieldOld,
      +     stressOld, stateOld, enerInternOld, enerInelasOld,
      +     tempNew, stretchNew, defgradNew, fieldNew,
      +     stressNew, stateNew, enerInternNew, enerInelasNew,
-     +     jblock(i_umt_noel), jblock(i_umt_npt),
-     +     jblock(i_umt_layer), jblock(i_umt_kspt))
+     +     jblock(i_umt_noel))
       ELSE IF(CMNAME(1:4) .EQ. 'GRAY') THEN
-      ! this is gray matter 
+      ! this is gray matter
       call  vumatXtrArg_gray (jblock(i_umt_nblock),
      +     ndir, nshr, nstatev, nfieldv, nprops, lanneal,
-     +     stepTime, totalTime, dt, cmname, coordMp,charLength, 
+     +     stepTime, totalTime, dt, coordMp,charLength,
      +     props, density, strainInc, relSpinInc,
      +     tempOld, stretchOld, defgradOld, fieldOld,
      +     stressOld, stateOld, enerInternOld, enerInelasOld,
      +     tempNew, stretchNew, defgradNew, fieldNew,
      +     stressNew, stateNew, enerInternNew, enerInelasNew,
-     +     jblock(i_umt_noel), jblock(i_umt_npt),
-     +     jblock(i_umt_layer), jblock(i_umt_kspt))
+     +     jblock(i_umt_noel))
       Endif
 
       end subroutine vumat
@@ -83,7 +80,7 @@
       subroutine vumatXtrArg_white (
       ! Read only -
      +     nblock, ndir, nshr, nstatev, nfieldv, nprops,lanneal, 
-     +     stepTime, totalTime, dt, cmname, coordMp,charLength, 
+     +     stepTime, totalTime, dt, coordMp,charLength,
      +     props, density, strainInc, relSpinInc,
      +     tempOld, stretchOld, defgradOld, fieldOld,
      +     stressOld, stateOld, enerInternOld, enerInelasOld,
@@ -91,7 +88,7 @@
       ! Write only -
      +     stressNew, stateNew, enerInternNew, enerInelasNew,
       ! Read only extra arguments -
-     +     nElement, nMatPoint, nLayer, nSecPoint )
+     +     nElement )
 
       use GlobalStorage
 
@@ -115,23 +112,17 @@
       ! Documentation of extra arguments:
       !  nElement: Array of internal element numbers
       dimension nElement(nblock)
-      !  nMatPoint: Integration point number
-      !  nLayer   : Layer number for composite shells and layered solids
-      !  nSecPoint: Section point number within the current layer
       !
-      character*80 cmname
 
       integer i,km
 
-      real*8 Iden(3,3),F_t(3,3),F_tau(3,3),U_tau(3,3)
+      real*8 Iden(3,3),F_tau(3,3),U_tau(3,3)
       real*8 sigma_tau(3,3),R_tau(3,3),U_inv(3,3),detF
-      real*8 Fe_tau(3,3)
-      real*8 pwrinct,stress_power
+      real*8 stress_power
       real*8 sigma_rot(3,3),rot_matrix(3,3),N_R(2,1)
       real*8 matProps(nprops),sigma_rad,sigma_tan
       real*8 theta_dot_1,f_2,zeta,ctheta,stheta
       real*8 coordx,coordy,coordz,thetag_t,thetag_tau,maj_axis,min_axis
-      real*8 maj_min_ratio      
 
       ! Parameters
       real*8 zero,one,two,three,half,third,four,Pi,two_third
@@ -156,11 +147,7 @@
 
       ! START LOOP OVER MATERIAL POINTS:
       do km=1,nblock
-         ! Copy old and new deformation gradients
-         F_t(1,1) = defgradOld(km,1)
-         F_t(2,2) = defgradOld(km,2)
-         F_t(3,3) = defgradOld(km,3)
-         F_t(1,2) = defgradOld(km,4)
+         ! Copy new deformation gradient
          F_tau(1,1) = defgradNew(km,1)
          F_tau(2,2) = defgradNew(km,2)
          F_tau(3,3) = defgradNew(km,3)
@@ -171,11 +158,6 @@
          U_tau(1,2) = stretchNew(km,4)
          if(nshr .lt. 2) then
             ! 2D case
-            F_t(2,1) = defgradOld(km,5)
-            F_t(1,3) = zero
-            F_t(2,3) = zero
-            F_t(3,1) = zero
-            F_t(3,2) = zero
             F_tau(2,1) = defgradNew(km,5)
             F_tau(1,3) = zero
             F_tau(2,3) = zero
@@ -188,11 +170,6 @@
             U_tau(3,2) = zero
          else
             ! 3D case
-            F_t(2,3) = defgradOld(km,5)
-            F_t(3,1) = defgradOld(km,6)
-            F_t(2,1) = defgradOld(km,7)
-            F_t(3,2) = defgradOld(km,8)
-            F_t(1,3) = defgradOld(km,9)
             F_tau(2,3) = defgradNew(km,5)
             F_tau(3,1) = defgradNew(km,6)
             F_tau(2,1) = defgradNew(km,7)
@@ -207,12 +184,12 @@
 
          if((totalTime.eq.zero).and.(stepTime.eq.zero)) then
             ! Dummy step, initalize state variables
-            
+
             stateOld(km,1)   = one ! growth parameter at t=0
          endif
 
          ! Read old state variables
-         
+
          thetag_t = stateOld(km,1) ! growth parameter at time t
 
          coordx = inicoord(nElement(km),1)
@@ -263,8 +240,6 @@
          ! S' = R.S.R^T
 
          ! Find normal vector
-
-         maj_min_ratio = maj_axis/min_axis
 
          N_R(1,1) = two*coordx/maj_axis**two
          N_R(2,1) = two*coordy/min_axis**two
@@ -330,17 +305,16 @@
          enerInternNew(km) = enerInternOld(km) + 
      +        stress_power/density(km)
            
-         enerInelasNew(km) = enerInelasOld(km) + 
-     +        pwrinct/density(km)
-           
+         enerInelasNew(km) = enerInelasOld(km)
+
       enddo ! end loop over material points
 
       end subroutine vumatXtrArg_white
       !***********************************************************************
       subroutine vumatXtrArg_gray (
       ! Read only -
-     +     nblock, ndir, nshr, nstatev, nfieldv, nprops, lanneal, 
-     +     stepTime, totalTime, dt, cmname, coordMp, charLength, 
+     +     nblock, ndir, nshr, nstatev, nfieldv, nprops, lanneal,
+     +     stepTime, totalTime, dt, coordMp, charLength,
      +     props, density, strainInc, relSpinInc,
      +     tempOld, stretchOld, defgradOld, fieldOld,
      +     stressOld, stateOld, enerInternOld, enerInelasOld,
@@ -348,7 +322,7 @@
       ! Write only -
      +     stressNew, stateNew, enerInternNew, enerInelasNew,
       ! Read only extra arguments -
-     +     nElement, nMatPoint, nLayer, nSecPoint )
+     +     nElement )
 
       use GlobalStorage
       include 'vaba_param.inc'
@@ -370,19 +344,12 @@
       ! Documentation of extra arguments:
       !  nElement: Array of internal element numbers
       dimension nElement(nblock)
-      !  nMatPoint: Integration point number
-      !  nLayer   : Layer number for composite shells and layered solids
-      !  nSecPoint: Section point number within the current layer
-      !
-
-      character*80 cmname
 
       integer i,km
 
-      real*8 Iden(3,3),F_t(3,3),F_tau(3,3),U_tau(3,3)
+      real*8 Iden(3,3),F_tau(3,3),U_tau(3,3)
       real*8 sigma_tau(3,3),R_tau(3,3),U_inv(3,3),detF
-      real*8 Fe_tau(3,3)
-      real*8 pwrinct,stress_power
+      real*8 stress_power
       real*8 matProps(nprops)
       real*8 thetag_t,thetag_tau
       real*8 coordx,coordy,coordz
@@ -408,11 +375,6 @@
       ! START LOOP OVER MATERIAL POINTS:
       do km=1,nblock
 
-         ! Copy old and new deformation gradients
-         F_t(1,1) = defgradOld(km,1)
-         F_t(2,2) = defgradOld(km,2)
-         F_t(3,3) = defgradOld(km,3)
-         F_t(1,2) = defgradOld(km,4)
          F_tau(1,1) = defgradNew(km,1)
          F_tau(2,2) = defgradNew(km,2)
          F_tau(3,3) = defgradNew(km,3)
@@ -423,11 +385,6 @@
          U_tau(1,2) = stretchNew(km,4)
          if(nshr .lt. 2) then
             ! 2D case
-            F_t(2,1) = defgradOld(km,5)
-            F_t(1,3) = zero
-            F_t(2,3) = zero
-            F_t(3,1) = zero
-            F_t(3,2) = zero
             F_tau(2,1) = defgradNew(km,5)
             F_tau(1,3) = zero
             F_tau(2,3) = zero
@@ -440,11 +397,6 @@
             U_tau(3,2) = zero
          else
             ! 3D case
-            F_t(2,3) = defgradOld(km,5)
-            F_t(3,1) = defgradOld(km,6)
-            F_t(2,1) = defgradOld(km,7)
-            F_t(3,2) = defgradOld(km,8)
-            F_t(1,3) = defgradOld(km,9)
             F_tau(2,3) = defgradNew(km,5)
             F_tau(3,1) = defgradNew(km,6)
             F_tau(2,1) = defgradNew(km,7)
@@ -546,9 +498,8 @@
          enerInternNew(km) = enerInternOld(km) + 
      +        stress_power/density(km)
            
-         enerInelasNew(km) = enerInelasOld(km) + 
-     +        pwrinct/density(km)
-           
+         enerInelasNew(km) = enerInelasOld(km)
+
       enddo ! end loop over material points
 
       end subroutine vumatXtrArg_gray
@@ -558,9 +509,7 @@
      +                       theta_dot_1,f_2)
       implicit none
 
-      character*256 ,fileName
-
-      integer i,j,k,l,nargs,nprops
+      integer nargs,nprops
       parameter(nargs=5)
 
       real*8 Iden(3,3),F_tau(3,3),sigma_tau(3,3)
@@ -575,16 +524,16 @@
       real*8 coordx,coordy,coordz,theta_dot_1,G_GM,gamma_1,f_phi
       real*8 T_1,totalTime
       real*8 majoraxis_reduced,minoraxis_reduced
-      real*8 maj_min_ratio,maj_axis,min_axis
+      real*8 maj_axis,min_axis
       real*8 T_2,f_H
       real*8 rad,psi,r_tilde,delta_bar,delta,a_tilde
       real*8 f_2,N_gyri,gamma,alpha
-      real*8 b_tilde,periods
+      real*8 b_tilde
 
       ! Parameters
-      real*8 zero,one,two,half,three,third,nine,ten
+      real*8 zero,one,two,half,three,third
       parameter(zero=0.d0,one=1.d0,two=2.d0,half=0.5d0,three=3.d0,
-     +     third=1.d0/3.d0,nine=9.d0,ten=10.d0)
+     +     third=1.d0/3.d0)
 
       ! Obtain WM material properties
       mu        = props(1)
@@ -604,9 +553,7 @@
       delta_bar = props(15) ! scaled threshold for heaviside function
 
       ! Setting up the growth rate calculations
-      maj_min_ratio = maj_axis/min_axis
-
-      a_tilde = b_tilde*maj_min_ratio
+      a_tilde = b_tilde*(maj_axis/min_axis)
 
       ! For progenitor push effect
       majoraxis_reduced = maj_axis - a_tilde !white matter reduced to bring in the progenitor effect
@@ -626,7 +573,7 @@
 
       f_2 = sin(four*psi*(N_gyri - half)) + one
 
-      call gauss(r_tilde,delta_bar,alpha,f_phi)
+      call gauss(r_tilde,delta,alpha,f_phi)
 
       theta_dot_1 = (G_GM*gamma_1)*half*f_phi*f_2 ! Scaled so that growth rate is highest at the grey matter layer
 
@@ -765,9 +712,9 @@
       real*8 maj_axis,min_axis
 
       ! Parameters
-      real*8 zero,one,two,half,three,third,nine,Pi
+      real*8 zero,one,two,half,three,third
       parameter(zero=0.d0,one=1.d0,two=2.d0,half=0.5d0,three=3.d0,
-     +     third=1.d0/3.d0,nine=9.d0,Pi=3.1415926d0)
+     +     third=1.d0/3.d0)
 
       ! Obtain material properties
       mu        = props(1)
