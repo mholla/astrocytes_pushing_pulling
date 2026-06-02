@@ -177,16 +177,15 @@
          ! constitutive response based on the material model.
 
          if((totalTime.eq.zero).and.(stepTime.eq.zero)) then
-            ! initialization (dummy) step
-            ! call elastic response, send dt=-1.0 to integ subroutine
-            call integ_white(props, nprops, F_tau, -one, totalTime,
+            ! initialization (dummy) step: pass zero timestep
+            call integ_white(props, nprops, F_tau, zero, totalTime,
      +                       coordx, coordy, coordz, thetag_t,
-     +                       theta_dot_1, f_2, thetag_tau, sigma_tau)     
+     +                       theta_dot_1, f_2, thetag_tau, sigma_tau)
          else
             ! perform explicit time integration procedure
-            call integ_white(props, nprops, F_tau, dt, totalTime, 
+            call integ_white(props, nprops, F_tau, dt, totalTime,
      +                       coordx, coordy, coordz, thetag_t,
-     +                       theta_dot_1, f_2, thetag_tau, sigma_tau)     
+     +                       theta_dot_1, f_2, thetag_tau, sigma_tau)
          endif
          !---------------------------------------------------------------
 
@@ -371,9 +370,8 @@
          ! constitutive response based on the material model.
 
          if((totalTime.eq.zero).and.(stepTime.eq.zero)) then
-            ! initialization (dummy) step
-            ! call elastic response, send dt=-1.0 to integ subroutine
-            call integ_gray(props, nprops, F_tau, -one, totalTime,
+            ! initialization (dummy) step: pass zero timestep
+            call integ_gray(props, nprops, F_tau, zero, totalTime,
      +                     coordx, coordy, coordz, thetag_t,
      +                     thetag_tau, sigma_tau
      +                     )
@@ -508,68 +506,32 @@
       ! calculate growth rate in Phase 3 (pushing)
       call mdet(F_tau,detF)
 
-      if ((totalTime.le.T_1)) then ! push effect during Phase 1
-
-         if(dtime.lt.zero) then ! initialization (dummy) step
-
-            thetag_tau = thetag_t
-
-            ! update kinematics
-            Fg_tau  = (thetag_tau**third)*Iden
-            call m3inv(Fg_tau, Fginv)
-            Fe_tau = matmul(F_tau, Fginv)
-            Be_tau = matmul(Fe_tau, transpose(Fe_tau))
-            call mdet(Fg_tau, Jg)
-            Je = detF/Jg
-
-            sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
-
-            return
-         endif
-
+      if (totalTime.le.T_1) then ! Phase 1
          thetag_tau = thetag_t + (theta_dot_1)*dtime
-
-         ! update kinematics
-         Fg_tau  = (thetag_tau**third)*Iden
-         call m3inv(Fg_tau, Fginv)
-         Fe_tau = matmul(F_tau, Fginv)
-         Be_tau = matmul(Fe_tau, transpose(Fe_tau))
-         call mdet(Fg_tau, Jg)
-         Je = detF/Jg
-
-         sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
 
       else if (totalTime.le.T_2) then ! Phase 2 (WM doesn't grow)
          thetag_tau = thetag_t
 
-         ! update kinematics
-         Fg_tau  = (thetag_tau**third)*Iden
-         call m3inv(Fg_tau, Fginv)
-         Fe_tau = matmul(F_tau, Fginv)
-         Be_tau = matmul(Fe_tau, transpose(Fe_tau))
-         call mdet(Fg_tau, Jg)
-         Je = detF/Jg
-
-         sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
-
       else ! Phase 3 (pushing)
-         
+
          ! calculate growth rate in Phase 3
          coordiff = (r_tilde - delta_bar)*one
          call Hhat(coordiff,alpha_bar,f_H)
-         theta_dot_1 = (G_GM*gamma)*half*f_H*f_2 
+         theta_dot_1 = (G_GM*gamma)*half*f_H*f_2
          thetag_tau = thetag_t + (theta_dot_1)*dtime
 
-         Fg_tau  = (thetag_tau**third)*Iden
-         call m3inv(Fg_tau, Fginv)
-         Fe_tau = matmul(F_tau, Fginv)
-         Be_tau = matmul(Fe_tau, transpose(Fe_tau))
-         call mdet(Fg_tau, Jg)
-         Je = detF/Jg
-
-         sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
-      
       endif
+
+      ! update kinematics
+      Fg_tau  = (thetag_tau**third)*Iden
+      call m3inv(Fg_tau, Fginv)
+      Fe_tau = matmul(F_tau, Fginv)
+      Be_tau = matmul(Fe_tau, transpose(Fe_tau))
+      call mdet(Fg_tau, Jg)
+      Je = detF/Jg
+
+      sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
+
       end subroutine integ_white
       
       !****************************************************************************
@@ -614,24 +576,6 @@
       N_R = N_R/tmp
 
       call mdet(F_tau,detF)
-
-      if(dtime.lt.zero) then ! initialization (dummy) step
-
-         thetag_tau = thetag_t
-
-         ! update kinematics
-         Fg_tau = dsqrt(thetag_tau)*Iden
-     +            +(one - dsqrt(thetag_tau))*matmul(N_R, transpose(N_R))
-         call m3inv(Fg_tau, Fginv)
-         Fe_tau = matmul(F_tau, Fginv)
-         Be_tau = matmul(Fe_tau, transpose(Fe_tau))
-         call mdet(Fg_tau, Jg)
-         Je = detF/Jg
-
-         sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
-
-         return
-      endif
 
       if (totalTime.le.T_1) then ! Phase 1 (no GM growth)
          thetag_tau = one
