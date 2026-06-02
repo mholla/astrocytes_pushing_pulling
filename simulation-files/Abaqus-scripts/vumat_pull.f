@@ -1,147 +1,119 @@
-! author: Karan Taneja
-! unit system: mm-N-MPa
-! dimension: plane strain
-! documentation: 'Astrocytes in white matter respond to tensile cues during cortical folding: a numerical study'
-
-!**********************************************************************
+      ! author: Karan Taneja
+      ! unit system: mm-N-MPa
+      ! dimension: plane strain
+      ! documentation: 'Astrocytes in white matter ...'
+      
+      !****************************************************************
+      
       module GlobalStorage
       ! this number must >= the number of elements in the mesh
       ! otherwise, the simulation will crash   
       real*8 inicoord(46000,3)
       end module  
 
-      !************************************************************************
+      !****************************************************************
+      
       subroutine vumat (
-      ! Read only -
-     +     jblock, ndir, nshr, nstatev, nfieldv, nprops,lanneal, 
-     +     stepTime, totalTime, dt, cmname, coordMp,charLength, 
-     +     props, density, strainInc, relSpinInc,
-     +     tempOld, stretchOld, defgradOld, fieldOld,
-     +     stressOld, stateOld, enerInternOld, enerInelasOld,
-     +     tempNew, stretchNew, defgradNew, fieldNew,
-      ! Write only -
-     +     stressNew, stateNew, enerInternNew, enerInelasNew )
-      !
+            ! read only
+     +      jblock, ndir, nshr, nstatev, nfieldv, nprops, lanneal, 
+     +      stepTime, totalTime, dt, cmname, coordMp, charLength, 
+     +      props, density, strainInc, relSpinInc,
+     +      tempOld, stretchOld, defgradOld, fieldOld,
+     +      stressOld, stateOld, enerInternOld, enerInelasOld,
+     +      tempNew, stretchNew, defgradNew, fieldNew,
+            ! write only
+     +      stressNew, stateNew, enerInternNew, enerInelasNew )
+
       include 'vaba_param.inc'
-      ! lanneal is a default parameter set to zero internally. Refer manual.
-      dimension jblock(*), props(nprops),density(*), coordMp(*),
-     +     charLength(*), strainInc(*),
-     +     relSpinInc(*), tempOld(*),
-     +     stretchOld(*),
-     +     defgradOld(*),
-     +     fieldOld(*), stressOld(*),
-     +     stateOld(*), enerInternOld(*),
-     +     enerInelasOld(*), tempNew(*),
-     +     stretchNew(*),
-     +     defgradNew(*),
-     +     fieldNew(*),
-     +     stressNew(*), stateNew(*),
-     +     enerInternNew(*), enerInelasNew(*)
-      !
+
+      dimension jblock(*), coordMp(*), charLength(*), 
+     +      props(nprops), density(*), strainInc(*),
+     +      relSpinInc(*), tempOld(*), stretchOld(*), 
+     +      defgradOld(*), fieldOld(*), stressOld(*),
+     +      stateOld(*), enerInternOld(*), enerInelasOld(*), 
+     +      tempNew(*), stretchNew(*), defgradNew(*),
+     +      fieldNew(*), stressNew(*), stateNew(*),
+     +      enerInternNew(*), enerInelasNew(*)
+      
       character*80 cmname
-      character*256 WHIT,GRAY
 
       parameter (     
-     +     i_umt_nblock = 1,
-     +     i_umt_npt    = 2,
-     +     i_umt_layer  = 3,
-     +     i_umt_kspt   = 4,
-     +     i_umt_noel   = 5 )
+     +      i_umt_nblock = 1,
+     +      i_umt_npt    = 2,
+     +      i_umt_layer  = 3,
+     +      i_umt_kspt   = 4,
+     +      i_umt_noel   = 5 )
 
-      !--------------------------------------------------------
       ! call particular user material to perform the analysis 
-      IF (CMNAME(1:4) .EQ. 'WHIT') THEN
-
-      ! this is white matter 
-      call  vumatXtrArg_white (jblock(i_umt_nblock),
-     +     ndir, nshr, nstatev, nfieldv, nprops,lanneal, 
-     +     stepTime, totalTime, dt, cmname, coordMp,charLength, 
-     +     props, density, strainInc, relSpinInc,
-     +     tempOld, stretchOld, defgradOld, fieldOld,
-     +     stressOld, stateOld, enerInternOld, enerInelasOld,
-     +     tempNew, stretchNew, defgradNew, fieldNew,
-     +     stressNew, stateNew, enerInternNew, enerInelasNew,
-     +     jblock(i_umt_noel), jblock(i_umt_npt),
-     +     jblock(i_umt_layer), jblock(i_umt_kspt))
-      ELSE IF(CMNAME(1:4) .EQ. 'GRAY') THEN
-      ! this is gray matter 
-      call  vumatXtrArg_gray (jblock(i_umt_nblock),
-     +     ndir, nshr, nstatev, nfieldv, nprops,lanneal, 
-     +     stepTime, totalTime, dt, cmname, coordMp,charLength, 
-     +     props, density, strainInc, relSpinInc,
-     +     tempOld, stretchOld, defgradOld, fieldOld,
-     +     stressOld, stateOld, enerInternOld, enerInelasOld,
-     +     tempNew, stretchNew, defgradNew, fieldNew,
-     +     stressNew, stateNew, enerInternNew, enerInelasNew,
-     +     jblock(i_umt_noel), jblock(i_umt_npt),
-     +     jblock(i_umt_layer), jblock(i_umt_kspt))
-      Endif
+      if (cmname(1:4) .eq. 'WHIT') then
+         call  vumat_white (jblock(i_umt_nblock),
+     +      ndir, nshr, nstatev, nprops, 
+     +      stepTime, totalTime, dt, coordMp, 
+     +      props, density, strainInc, 
+     +      stressOld, stateOld, enerInternOld, enerInelasOld,
+     +      stretchNew, defgradNew, 
+     +      stressNew, stateNew, enerInternNew, enerInelasNew,
+     +      jblock(i_umt_noel))
+      else if(cmname(1:4) .eq. 'GRAY') then
+         call  vumat_gray (jblock(i_umt_nblock),
+     +      ndir, nshr, nstatev, nprops, 
+     +      stepTime, totalTime, dt, coordMp, 
+     +      props, density, strainInc, 
+     +      stressOld, stateOld, enerInternOld, enerInelasOld,
+     +      stretchNew, defgradNew, 
+     +      stressNew, stateNew, enerInternNew, enerInelasNew,
+     +      jblock(i_umt_noel))
+      endif
 
       end subroutine vumat
-      !***********************************************************************
-      subroutine vumatXtrArg_white (
-      ! Read only -
-     +     nblock, ndir, nshr, nstatev, nfieldv, nprops,lanneal, 
-     +     stepTime, totalTime, dt, cmname, coordMp,charLength, 
-     +     props, density, strainInc, relSpinInc,
-     +     tempOld, stretchOld, defgradOld, fieldOld,
-     +     stressOld, stateOld, enerInternOld, enerInelasOld,
-     +     tempNew, stretchNew, defgradNew, fieldNew,
-      ! Write only -
-     +     stressNew, stateNew, enerInternNew, enerInelasNew,
-      ! Read only extra arguments -
-     +     nElement, nMatPoint, nLayer, nSecPoint )
+      
+      !****************************************************************
+      
+      subroutine vumat_white (
+            ! read only
+     +      nblock, ndir, nshr, nstatev, nprops, 
+     +      stepTime, totalTime, dt, coordMp, 
+     +      props, density, strainInc, 
+     +      stressOld, stateOld, enerInternOld, enerInelasOld,
+     +      stretchNew, defgradNew, 
+            ! write only
+     +      stressNew, stateNew, enerInternNew, enerInelasNew,
+            ! extra argument - array of internal element numbers
+     +      nElement )
 
       use GlobalStorage
-
-      !$$$        implicit none ! This is used during compilation testing to make
       include 'vaba_param.inc'
+      ! implicit none 
 
-      dimension props(nprops), density(nblock), coordMp(nblock,*),
-     +     charLength(nblock), strainInc(nblock,ndir+nshr),
-     +     relSpinInc(nblock,nshr), tempOld(nblock),
-     +     stretchOld(nblock,ndir+nshr),
-     +     defgradOld(nblock,ndir+nshr+nshr),
-     +     fieldOld(nblock,nfieldv), stressOld(nblock,ndir+nshr),
-     +     stateOld(nblock,nstatev), enerInternOld(nblock),
-     +     enerInelasOld(nblock), tempNew(nblock),
-     +     stretchNew(nblock,ndir+nshr),
-     +     defgradNew(nblock,ndir+nshr+nshr),
-     +     fieldNew(nblock,nfieldv),
-     +     stressNew(nblock,ndir+nshr), stateNew(nblock,nstatev),
-     +     enerInternNew(nblock), enerInelasNew(nblock)
+      dimension coordMp(nblock,*), 
+     +      props(nprops), density(nblock), strainInc(nblock,ndir+nshr),
+     +      stressOld(nblock,ndir+nshr), stateOld(nblock,nstatev), 
+     +      enerInternOld(nblock), enerInelasOld(nblock), 
+     +      stretchNew(nblock,ndir+nshr), defgradNew(nblock,ndir+nshr+nshr),
+     +      stressNew(nblock,ndir+nshr), stateNew(nblock,nstatev),
+     +      enerInternNew(nblock), enerInelasNew(nblock), 
+     +      nElement(nblock)
+      
+      ! local quantities
+      integer i, km
+      real*8 F_tau(3,3), detF, stress_power
+      real*8 R_tau(3,3), U_tau(3,3), U_inv(3,3)
+      real*8 N_R(2,1), zeta, rot_matrix(3,3)
+      real*8 sigma_tau(3,3), sigma_rot(3,3), sigma_rad, sigma_tan
+      real*8 theta_dot_1, f_2, thetag_t, thetag_tau
+      real*8 coordx, coordy, coordz, maj_axis, min_axis
+      real*8 zero, one, two, three, half, third, Pi
+      
+      ! constants
+      parameter(zero=0.d0, one=1.d0, two=2.d0, three=3.d0,
+     +   half=0.5d0, third=1.d0/3.d0, Pi=3.1415926d0)
+      
+      ! WM ellipse parameters
+      maj_axis = props(8) ! WM major axis (mm)
+      min_axis = props(9) ! WM minor axis (mm)
 
-      !
-      ! Documentation of extra arguments:
-      !  nElement: Array of internal element numbers
-      dimension nElement(nblock)
-      !  nMatPoint: Integration point number
-      !  nLayer   : Layer number for composite shells and layered solids
-      !  nSecPoint: Section point number within the current layer
-      !
-      character*80 cmname
-
-      integer i,km
-
-      real*8 Iden(3,3),F_t(3,3),F_tau(3,3),U_tau(3,3)
-      real*8 sigma_tau(3,3),R_tau(3,3),U_inv(3,3),detF
-      real*8 Fe_tau(3,3)
-      real*8 pwrinct,stress_power
-      real*8 sigma_rot(3,3),rot_matrix(3,3),N_R(2,1)
-      real*8 matProps(nprops),sigma_rad,sigma_tan
-      real*8 theta_dot_1,f_2,zeta,ctheta,stheta
-      real*8 coordx,coordy,coordz,thetag_t,thetag_tau,maj_axis,min_axis
-
-      ! Parameters
-      real*8 zero,one,two,three,half,third,four,Pi,two_third
-      parameter(zero=0.d0,one=1.d0,two=2.d0,three=3.d0,half=0.5d0,
-     +     third=1.d0/3.d0,two_third=2.d0/3.d0,four=4.d0,Pi=3.1415926d0)
-      ! WM Ellipse params
-      maj_axis = props(11) ! WM major axis (mm)
-      min_axis = props(12) ! WM minor axis (mm)
-
-      ! Pour initial coordinates into the global variable matrix 
-      if (totalTime.lt. dt) then
+      ! pour initial coordinates into the global variable matrix 
+      if (totalTime.lt.dt) then
          do km=1,nblock
             inicoord(nElement(km),1) = coordMp(km,1)
             inicoord(nElement(km),2) = coordMp(km,2)
@@ -149,54 +121,39 @@
          enddo
       end if 
 
-      ! Identity matrix for later use.
-      call onem(Iden)
-
-      ! START LOOP OVER MATERIAL POINTS:
+      ! start loop over material points:
       do km=1,nblock
-      
-         ! Copy old and new deformation gradients
-         F_t(1,1) = defgradOld(km,1)
-         F_t(2,2) = defgradOld(km,2)
-         F_t(3,3) = defgradOld(km,3)
-         F_t(1,2) = defgradOld(km,4)
+
+         ! copy new deformation gradient (at end of current increment)
          F_tau(1,1) = defgradNew(km,1)
          F_tau(2,2) = defgradNew(km,2)
          F_tau(3,3) = defgradNew(km,3)
          F_tau(1,2) = defgradNew(km,4)
+         
          U_tau(1,1) = stretchNew(km,1)
          U_tau(2,2) = stretchNew(km,2)
          U_tau(3,3) = stretchNew(km,3)
          U_tau(1,2) = stretchNew(km,4)
-         if(nshr .lt. 2) then
-            ! 2D case
-            F_t(2,1) = defgradOld(km,5)
-            F_t(1,3) = zero
-            F_t(2,3) = zero
-            F_t(3,1) = zero
-            F_t(3,2) = zero
+         
+         if(nshr .lt. 2) then ! 2D case
             F_tau(2,1) = defgradNew(km,5)
             F_tau(1,3) = zero
             F_tau(2,3) = zero
             F_tau(3,1) = zero
             F_tau(3,2) = zero
+            
             U_tau(2,1) = U_tau(1,2)
             U_tau(1,3) = zero
             U_tau(2,3) = zero
             U_tau(3,1) = zero
             U_tau(3,2) = zero
-         else
-            ! 3D case
-            F_t(2,3) = defgradOld(km,5)
-            F_t(3,1) = defgradOld(km,6)
-            F_t(2,1) = defgradOld(km,7)
-            F_t(3,2) = defgradOld(km,8)
-            F_t(1,3) = defgradOld(km,9)
+         else ! 3D case
             F_tau(2,3) = defgradNew(km,5)
             F_tau(3,1) = defgradNew(km,6)
             F_tau(2,1) = defgradNew(km,7)
             F_tau(3,2) = defgradNew(km,8)
             F_tau(1,3) = defgradNew(km,9)
+            
             U_tau(2,3) = stretchNew(km,5)
             U_tau(3,1) = stretchNew(km,6)
             U_tau(2,1) = U_tau(1,2)
@@ -204,50 +161,46 @@
             U_tau(1,3) = U_tau(3,1)
          end if
 
+         ! initialization (dummy) step: set growth parameter at t=0
          if((totalTime.eq.zero).and.(stepTime.eq.zero)) then
-            ! Dummy step, initalize state variables
-            
-            stateOld(km,1)   = one ! growth parameter at t=0
+            stateOld(km,1) = one 
          endif
 
-         ! Read old state variables
-         
-         thetag_t = stateOld(km,1) ! growth parameter at time t
-
+         ! read old growth parameter and coordinates
+         thetag_t = stateOld(km,1) ! growth parameter at beginning of increment
          coordx = inicoord(nElement(km),1)
          coordy = inicoord(nElement(km),2)
          coordz = inicoord(nElement(km),3)
 
-         !---------------------------------------------------------------
-         ! Perform the time integration and compute the
-         !  constitutive response based on the material model.
-
-         matProps = props
+         !-------------------------------------------------------------
+         ! perform the time integration and compute the
+         ! constitutive response based on the material model
 
          if((totalTime.eq.zero).and.(stepTime.eq.zero)) then
-            ! dummy step, call elastic response, note dt=-1.0 is sent
-            !  into the integ subroutine
-            call integ_white(matProps,nprops,F_tau,-one,sigma_tau,thetag_t,thetag_tau,
-     +                       coordx,coordy,coordz,totalTime,
-     +                       theta_dot_1,f_2)     
-
+            ! initialization (dummy) step: pass zero timestep
+            call integ_white(props, nprops, F_tau, zero, totalTime,
+     +                       coordx, coordy, coordz, thetag_t,
+     +                       theta_dot_1, f_2, thetag_tau, sigma_tau)
          else
-            ! Perform explicit time integration procedure
-            call integ_white(matProps,nprops,F_tau,dt,sigma_tau,thetag_t,thetag_tau,
-     +                       coordx,coordy,coordz,totalTime,
-     +                       theta_dot_1,f_2)     
-
+            ! perform explicit time integration procedure
+            call integ_white(props, nprops, F_tau, dt, totalTime,
+     +                       coordx, coordy, coordz, thetag_t,
+     +                       theta_dot_1, f_2, thetag_tau, sigma_tau)
          endif
          !---------------------------------------------------------------
 
-         ! ABAQUS/Explicit uses stress measure (transpose(R) T R)
-         call m3inv(U_tau,U_inv)
-         R_tau = matmul(F_tau,U_inv)
-         sigma_tau = matmul(transpose(R_tau),matmul(sigma_tau,R_tau))
+         ! define stress at end of current increment
+         ! (ABAQUS/Explicit uses Cauchy stress in corotational frame, R^T . sigma . R
+         ! see ABAQUS User Subroutines Manual, VUMAT, Special Considerations for Hyperelasticity
+
+         call m3inv(U_tau, U_inv)
+         R_tau = matmul(F_tau, U_inv)
+         sigma_tau = matmul(transpose(R_tau), matmul(sigma_tau, R_tau))
 
          do i=1,ndir
             stressNew(km,i) = sigma_tau(i,i)
          end do
+         
          if(nshr.ne.0) then
             stressNew(km,ndir+1) = sigma_tau(1,2)
             if(nshr.ne.1) then
@@ -257,141 +210,105 @@
                endif
             endif
          endif
-         ! Rotate stress tensor to get radial and tangential outputs
+         
+         ! rotate stress tensor and get radial and tangential outputs 
          ! S' = R.S.R^T
-
-         ! Find normal vector
-
          N_R(1,1) = two*coordx/maj_axis**two
          N_R(2,1) = two*coordy/min_axis**two
          zeta = atan(N_R(2,1)/N_R(1,1))
 
-         ! Create rotation matrix
-         ctheta = cos(zeta)
-         stheta = sin(zeta)
-         rot_matrix(1,1) = ctheta
-         rot_matrix(1,2) = stheta
-         rot_matrix(1,3) = zero
-         rot_matrix(2,1) = -stheta
-         rot_matrix(2,2) = ctheta
-         rot_matrix(2,3) = zero
-         rot_matrix(3,1) = zero
-         rot_matrix(3,2) = zero
-         rot_matrix(3,3) = one
+         rot_matrix = zero
+         rot_matrix(1,1) =  cos(zeta)
+         rot_matrix(1,2) =  sin(zeta)
+         rot_matrix(2,1) = -sin(zeta)
+         rot_matrix(2,2) =  cos(zeta)
+         rot_matrix(3,3) =  one
 
-         ! Rotate the stress tensor
-         sigma_rot = matmul(matmul(rot_matrix,sigma_tau),transpose(rot_matrix))
-
-         ! Get radial and tangential components
+         sigma_rot = matmul(matmul(rot_matrix, sigma_tau), transpose(rot_matrix))
          sigma_rad = sigma_rot(1,1)
          sigma_tan = sigma_rot(2,2)
 
-         ! Update state variables
-         stateNew(km,1) = thetag_tau ! growth parameter at time tau
-
-         stateNew(km,2) = coordx ! 
-         stateNew(km,3) = coordy ! 
-         stateNew(km,4) = coordz !
+         ! update state variables
          call mdet(F_tau,detF)
+
+         stateNew(km,1) = thetag_tau ! growth parameter at end of increment
+         stateNew(km,2) = coordx  
+         stateNew(km,3) = coordy  
+         stateNew(km,4) = coordz 
          stateNew(km,5) = detF   
          stateNew(km,6) = (sigma_tau(1,1)+sigma_tau(2,2)+sigma_tau(3,3))/three
          stateNew(km,7) = theta_dot_1
-         stateNew(km,8) = f_2   
+         stateNew(km,8) = f_2
          stateNew(km,9) = sigma_rad
          stateNew(km,10) = sigma_tan   
 
-         ! Update the specific internal energy
+         ! update the specific internal energy
          stress_power = zero
          do i = 1,ndir
-            stress_power = stress_power +
-     +           half*((stressOld(km,i)+stressNew(km,i))*
-     +           strainInc(km,i))
+            stress_power = stress_power + half*(
+     +         (stressOld(km,i) + stressNew(km,i))*strainInc(km,i) )
          enddo
          
          select case (nshr)
-         case(1)
-            stress_power = stress_power + 
-     +           half*((stressOld(km,ndir+1)+stressNew(km,ndir+1))*
-     +           strainInc(km,ndir+1))
-         case(3)
-            stress_power = stress_power + 
-     +           half*(((stressOld(km,ndir+1) + stressNew(km,ndir+1))*
-     +           strainInc(km,ndir+1)) +
-     +           ((stressOld(km,ndir+2)+ stressNew(km,ndir+2)) *
-     +           strainInc(km,ndir+2))+
-     +           ((stressOld(km,ndir+3) + stressNew(km,ndir+3))*
-     +           strainInc(km,ndir+3)))
+         case(1) ! 2D analysis
+            stress_power = stress_power + half*(
+     +         (stressOld(km,ndir+1) + stressNew(km,ndir+1))*strainInc(km,ndir+1) )
+         case(3) ! 3D analysis
+            stress_power = stress_power + half*(
+     +         (stressOld(km,ndir+1) + stressNew(km,ndir+1))*strainInc(km,ndir+1) +
+     +         (stressOld(km,ndir+2) + stressNew(km,ndir+2))*strainInc(km,ndir+2) +
+     +         (stressOld(km,ndir+3) + stressNew(km,ndir+3))*strainInc(km,ndir+3) )
          end select
            
-         enerInternNew(km) = enerInternOld(km) + 
-     +        stress_power/density(km)
-           
-         enerInelasNew(km) = enerInelasOld(km) + 
-     +        pwrinct/density(km)
-           
+         enerInternNew(km) = enerInternOld(km) + stress_power/density(km)
+         enerInelasNew(km) = enerInelasOld(km)
+
       enddo ! end loop over material points
+      end subroutine vumat_white
+      
+      !****************************************************************
+      
+      subroutine vumat_gray (
+            ! read only
+     +      nblock, ndir, nshr, nstatev, nprops, 
+     +      stepTime, totalTime, dt, coordMp, 
+     +      props, density, strainInc, 
+     +      stressOld, stateOld, enerInternOld, enerInelasOld,
+     +      stretchNew, defgradNew,
+            ! write only
+     +      stressNew, stateNew, enerInternNew, enerInelasNew,
+            ! read only extra arguments
+     +      nElement )
 
-      end subroutine vumatXtrArg_white
-      !***********************************************************************
-      subroutine vumatXtrArg_gray (
-      ! Read only -
-     +     nblock, ndir, nshr, nstatev, nfieldv, nprops,lanneal, 
-     +     stepTime, totalTime, dt, cmname, coordMp,charLength, 
-     +     props, density, strainInc, relSpinInc,
-     +     tempOld, stretchOld, defgradOld, fieldOld,
-     +     stressOld, stateOld, enerInternOld, enerInelasOld,
-     +     tempNew, stretchNew, defgradNew, fieldNew,
-      ! Write only -
-     +     stressNew, stateNew, enerInternNew, enerInelasNew,
-      ! Read only extra arguments -
-     +     nElement, nMatPoint, nLayer, nSecPoint )
-
-      !$$$        implicit none ! This is used during compilation testing to make
       use GlobalStorage
       include 'vaba_param.inc'
+      ! implicit none 
 
-      dimension props(nprops), density(nblock), coordMp(nblock,*),
-     +     charLength(nblock), strainInc(nblock,ndir+nshr),
-     +     relSpinInc(nblock,nshr), tempOld(nblock),
-     +     stretchOld(nblock,ndir+nshr),
-     +     defgradOld(nblock,ndir+nshr+nshr),
-     +     fieldOld(nblock,nfieldv), stressOld(nblock,ndir+nshr),
-     +     stateOld(nblock,nstatev), enerInternOld(nblock),
-     +     enerInelasOld(nblock), tempNew(nblock),
-     +     stretchNew(nblock,ndir+nshr),
-     +     defgradNew(nblock,ndir+nshr+nshr),
-     +     fieldNew(nblock,nfieldv),
-     +     stressNew(nblock,ndir+nshr), stateNew(nblock,nstatev),
-     +     enerInternNew(nblock), enerInelasNew(nblock)
-      !
-      ! Documentation of extra arguments:
-      !  nElement: Array of internal element numbers
-      dimension nElement(nblock)
-      !  nMatPoint: Integration point number
-      !  nLayer   : Layer number for composite shells and layered solids
-      !  nSecPoint: Section point number within the current layer
-      !
-
-      character*80 cmname
-
-      integer i,km
-
-      real*8 Iden(3,3),F_t(3,3),F_tau(3,3),U_tau(3,3)
-      real*8 sigma_tau(3,3),R_tau(3,3),U_inv(3,3),detF
-      real*8 Fe_tau(3,3)
-      real*8 pwrinct,stress_power
-      real*8 matProps(nprops)
-      real*8 thetag_t,thetag_tau
-      real*8 coordx,coordy,coordz
-      real*8 N_R(3,1)
+      dimension coordMp(nblock,*), 
+     +      props(nprops), density(nblock), strainInc(nblock,ndir+nshr),
+     +      stressOld(nblock,ndir+nshr),
+     +      stateOld(nblock,nstatev), enerInternOld(nblock),
+     +      enerInelasOld(nblock), 
+     +      stretchNew(nblock,ndir+nshr),
+     +      defgradNew(nblock,ndir+nshr+nshr),
+     +      stressNew(nblock,ndir+nshr), stateNew(nblock,nstatev),
+     +      enerInternNew(nblock), enerInelasNew(nblock), 
+     +      nElement(nblock)
+      
+      ! local quantities
+      integer i, km
+      real*8 F_tau(3,3), detF, stress_power
+      real*8 R_tau(3,3), U_tau(3,3), U_inv(3,3)
+      real*8 thetag_t, thetag_tau, sigma_tau(3,3)
+      real*8 coordx, coordy, coordz
+      real*8 zero, one, two, three, half, third
  
-      ! Parameters
-      real*8 zero,one,two,three,half,third,four,Pi,two_third
-      parameter(zero=0.d0,one=1.d0,two=2.d0,three=3.d0,half=0.5d0,
-     +     third=1.d0/3.d0,two_third=2.d0/3.d0,four=4.d0,Pi=3.1415926d0)
+      ! constants
+      parameter(zero=0.d0, one=1.d0, two=2.d0, three=3.d0, 
+     +      half=0.5d0, third=1.d0/3.d0)
 
       ! pour initial coordinates into the global variable
-      if (totalTime.lt. dt) then
+      if (totalTime.lt.dt) then
          do km=1,nblock
             inicoord(nElement(km),1) = coordMp(km,1)
             inicoord(nElement(km),2) = coordMp(km,2)
@@ -399,54 +316,39 @@
          enddo
       end if
 
-      ! Identity matrix for later use.
-      call onem(Iden)
-
-      ! START LOOP OVER MATERIAL POINTS:
+      ! start loop over material points:
       do km=1,nblock
 
-         ! Copy old and new deformation gradients
-         F_t(1,1) = defgradOld(km,1)
-         F_t(2,2) = defgradOld(km,2)
-         F_t(3,3) = defgradOld(km,3)
-         F_t(1,2) = defgradOld(km,4)
+         ! copy new deformation gradient (at end of current increment)
          F_tau(1,1) = defgradNew(km,1)
          F_tau(2,2) = defgradNew(km,2)
          F_tau(3,3) = defgradNew(km,3)
          F_tau(1,2) = defgradNew(km,4)
+         
          U_tau(1,1) = stretchNew(km,1)
          U_tau(2,2) = stretchNew(km,2)
          U_tau(3,3) = stretchNew(km,3)
          U_tau(1,2) = stretchNew(km,4)
-         if(nshr .lt. 2) then
-            ! 2D case
-            F_t(2,1) = defgradOld(km,5)
-            F_t(1,3) = zero
-            F_t(2,3) = zero
-            F_t(3,1) = zero
-            F_t(3,2) = zero
+         
+         if(nshr .lt. 2) then ! 2D case
             F_tau(2,1) = defgradNew(km,5)
             F_tau(1,3) = zero
             F_tau(2,3) = zero
             F_tau(3,1) = zero
             F_tau(3,2) = zero
+            
             U_tau(2,1) = U_tau(1,2)
             U_tau(1,3) = zero
             U_tau(2,3) = zero
             U_tau(3,1) = zero
             U_tau(3,2) = zero
-         else
-            ! 3D case
-            F_t(2,3) = defgradOld(km,5)
-            F_t(3,1) = defgradOld(km,6)
-            F_t(2,1) = defgradOld(km,7)
-            F_t(3,2) = defgradOld(km,8)
-            F_t(1,3) = defgradOld(km,9)
+         else ! 3D case
             F_tau(2,3) = defgradNew(km,5)
             F_tau(3,1) = defgradNew(km,6)
             F_tau(2,1) = defgradNew(km,7)
             F_tau(3,2) = defgradNew(km,8)
             F_tau(1,3) = defgradNew(km,9)
+            
             U_tau(2,3) = stretchNew(km,5)
             U_tau(3,1) = stretchNew(km,6)
             U_tau(2,1) = U_tau(1,2)
@@ -454,60 +356,46 @@
             U_tau(1,3) = U_tau(3,1)
          end if
 
+         ! initialization (dummy) step: set growth parameter at t=0
          if((totalTime.eq.zero).and.(stepTime.eq.zero)) then
-            ! Dummy step, initalize state variables
-            
-            stateOld(km,1)   = one ! growth parameter at t=0
+            stateOld(km,1) = one 
          endif
 
-         ! Read old state variables
-         
-         thetag_t = stateOld(km,1) ! growth parameter at time t
-
-         ! reads in the original coordinates
+         ! read old state variables and coordinates
+         thetag_t = stateOld(km,1) ! growth parameter at beginning of increment
          coordx = inicoord(nElement(km),1)
          coordy = inicoord(nElement(km),2)
          coordz = inicoord(nElement(km),3)
 
          !---------------------------------------------------------------
-         ! Perform the time integration and compute the
-         !  constitutive response based on the material model.
-
-
-         matProps = props
+         ! perform the time integration and compute the
+         ! constitutive response based on the material model
 
          if((totalTime.eq.zero).and.(stepTime.eq.zero)) then
-            ! dummy step, call elastic response, note dt=-1.0 is sent
-            !  into the integ subroutine
-            call integ_gray(matProps,nprops,F_tau,-1.0,sigma_tau,thetag_t,thetag_tau,
-     +                     coordx,coordy,coordz,N_R,totalTime)
-
+            ! initialization (dummy) step: pass zero timestep
+            call integ_gray(props, nprops, F_tau, zero, totalTime,
+     +                      coordx, coordy, coordz, thetag_t,
+     +                      thetag_tau, sigma_tau)
          else
-            ! Perform explicit time integration procedure
-            call integ_gray(matProps,nprops,F_tau,dt,sigma_tau,thetag_t,thetag_tau,
-     +                     coordx,coordy,coordz,N_R,totalTime)
-
+            ! perform explicit time integration procedure
+            call integ_gray(props, nprops, F_tau, dt, totalTime,
+     +                      coordx, coordy, coordz, thetag_t,
+     +                      thetag_tau, sigma_tau)
          endif
          !---------------------------------------------------------------
          
-         ! Update state variables
-         stateNew(km,1) = thetag_tau ! growth parameter at time tau
+         ! define stress at end of current increment
+         ! (ABAQUS/Explicit uses Cauchy stress in corotational frame, R^T . sigma . R
+         ! see ABAQUS User Subroutines Manual, VUMAT, Special Considerations for Hyperelasticity
 
-         stateNew(km,2) = coordx
-         stateNew(km,3) = coordy
-         stateNew(km,4) = coordz
-         call mdet(F_tau,detF)
-
-         stateNew(km,5) = detF 
-
-         ! ABAQUS/Explicit uses stress measure (transpose(R) T R)
-         call m3inv(U_tau,U_inv)
-         R_tau = matmul(F_tau,U_inv)
-         sigma_tau = matmul(transpose(R_tau),matmul(sigma_tau,R_tau))
+         call m3inv(U_tau, U_inv)
+         R_tau = matmul(F_tau, U_inv)
+         sigma_tau = matmul(transpose(R_tau), matmul(sigma_tau, R_tau))
 
          do i=1,ndir
             stressNew(km,i) = sigma_tau(i,i)
          end do
+         
          if(nshr.ne.0) then
             stressNew(km,ndir+1) = sigma_tau(1,2)
             if(nshr.ne.1) then
@@ -517,511 +405,337 @@
                endif
             endif
          endif
+
+         ! update state variables
+         call mdet(F_tau,detF)
+
+         stateNew(km,1) = thetag_tau ! growth parameter at end of increment
+         stateNew(km,2) = coordx
+         stateNew(km,3) = coordy
+         stateNew(km,4) = coordz
+         stateNew(km,5) = detF       
          stateNew(km,6) = (sigma_tau(1,1)+sigma_tau(2,2)+sigma_tau(3,3))/three
 
-         ! Update the specific internal energy
+         ! update the specific internal energy
          stress_power = zero
          do i = 1,ndir
             stress_power = stress_power +
-     +           half*((stressOld(km,i)+stressNew(km,i))*
-     +           strainInc(km,i))
+     +         half*((stressOld(km,i)+stressNew(km,i))*
+     +         strainInc(km,i))
          enddo
          
          select case (nshr)
-         case(1)
-            stress_power = stress_power + 
-     +           half*((stressOld(km,ndir+1)+stressNew(km,ndir+1))*
-     +           strainInc(km,ndir+1))
-         case(3)
-            stress_power = stress_power + 
-     +           half*(((stressOld(km,ndir+1) + stressNew(km,ndir+1))*
-     +           strainInc(km,ndir+1)) +
-     +           ((stressOld(km,ndir+2)+ stressNew(km,ndir+2)) *
-     +           strainInc(km,ndir+2))+
-     +           ((stressOld(km,ndir+3) + stressNew(km,ndir+3))*
-     +           strainInc(km,ndir+3)))
+         case(1) ! 2D analysis
+            stress_power = stress_power + half*(
+     +         (stressOld(km,ndir+1) + stressNew(km,ndir+1))*strainInc(km,ndir+1) )
+         case(3) ! 3D analysis
+            stress_power = stress_power + half*(
+     +         (stressOld(km,ndir+1) + stressNew(km,ndir+1))*strainInc(km,ndir+1) +
+     +         (stressOld(km,ndir+2) + stressNew(km,ndir+2))*strainInc(km,ndir+2) +
+     +         (stressOld(km,ndir+3) + stressNew(km,ndir+3))*strainInc(km,ndir+3) )
          end select
            
-         enerInternNew(km) = enerInternOld(km) + 
-     +        stress_power/density(km)
-           
-         enerInelasNew(km) = enerInelasOld(km) + 
-     +        pwrinct/density(km)
-           
-      enddo ! end loop over material points
+         enerInternNew(km) = enerInternOld(km) + stress_power/density(km)
+         enerInelasNew(km) = enerInelasOld(km)
 
-      end subroutine vumatXtrArg_gray
-      !***********************************************************************
-      subroutine integ_white(Props,nprops,F_tau,dtime,sigma_tau,
-     +                       thetag_t,thetag_tau,coordx,coordy,coordz,totalTime,
-     +                       theta_dot_1,f_2)
+      enddo ! end loop over material points
+      end subroutine vumat_gray
+
+      !****************************************************************
+      
+      subroutine integ_white(props, nprops, F_tau, dtime, totalTime, 
+     +                       coordx, coordy, coordz, thetag_t, 
+     +                       theta_dot_1, f_2, thetag_tau, sigma_tau
+     +                       )
+      
       implicit none
 
-      integer i,nargs,nprops
-      parameter(nargs=5)
+      integer nitl, nprops
 
-      real*8 Iden(3,3),F_tau(3,3),sigma_tau(3,3)
-      real*8 detF
-      real*8 B_tau(3,3)
-      real*8 lambda,mu
-      real*8 Be_tau(3,3),Fg_tau(3,3),Fe_tau(3,3),Je
-      real*8 thetag_tau,args(nargs),thetag_t
-      real*8 props(nprops),dtime,Jg
-      real*8 Fginv(3,3)
-      real*8 coordx,coordy,coordz,theta_dot_1,G_GM,gamma_1,f_phi
-      real*8 threshold,T_1,totalTime,T_2
-      real*8 majoraxis_reduced,minoraxis_reduced,growth_crit
-      real*8 nitl, thetag_dum, lnJe, trMe,a_tilde,b_tilde
-      real*8 res, dres, phig, dphig, xtol
-      real*8 theta_dot_3_fac
-      real*8 rad,psi,r_tilde,delta_bar,maj_axis,min_axis
-      real*8 f_2,N_gyri,gamma_hat
-      real*8 periods,maj_min_ratio,alpha       
+      ! arguments passed in to read
+      real*8 props(nprops), F_tau(3,3), dtime, totalTime
+      real*8 coordx, coordy, coordz, thetag_t
+      ! arguments passed in to write
+      real*8 theta_dot_1, f_2, thetag_tau, sigma_tau(3,3)
+      ! properties
+      real*8 lambda, mu, G_GM, gamma_1, gamma_hat, T_1, T_2
+      real*8 maj_axis, min_axis, b_tilde, N_gyri, alpha, delta
+      ! local quantities
+      real*8 Fg_tau(3,3), Jg, Fginv(3,3)
+      real*8 Fe_tau(3,3), Je, Be_tau(3,3)
+      real*8 detF, lnJe, trMe, f_phi
+      real*8 maj_min_ratio, a_tilde, rad, r_tilde, psi
+      real*8 growth_crit, res, dres, phig, dphig, xtol
+      real*8 thetag_dum, theta_dot_3_fac
+      real*8 Iden(3,3), zero, one, two, four, nine, half, third
 
-      ! Parameters
-      real*8 zero,one,two,half,three,third,nine,ten
-      parameter(zero=0.d0,one=1.d0,two=2.d0,half=0.5d0,three=3.d0,
-     +     third=1.d0/3.d0,nine=9.d0,ten=10.d0)
-
-      xtol = 1.d-10 ! Tolerance for local newton iterations in growth parameter calculations
-      alpha = 0.4d0 ! Standard deviation of gauss function in Phase 1 growth rate
-
-      growth_crit = zero ! critical growth criterion, Purely tensile growth in this study
-
-      ! Obtain material properties
-      mu        = props(1)
-      lambda    = props(2)
-      G_GM      = props(3) ! grey matter growth rate
-      delta_bar = props(4) ! scaled threshold for heaviside function
-      gamma_1   = props(5) ! G_wm/G_gm used in Phase 1
-      T_1       = props(6) ! end of Phase 1.
-      N_gyri    = props(7) ! Number of proliferation zones
-      gamma_hat = props(8) ! G_wm/G_gm in Phase 3 (pulling)
-      b_tilde   = props(9) ! scaling factor used in calculating r_tilde
-      T_2       = props(10) ! end of Phase 2
-      maj_axis  = props(11) ! WM major axis (a)
-      min_axis  = props(12) ! WM minor axis (b)
-
-      maj_min_ratio = maj_axis/min_axis
-
-      a_tilde = b_tilde*maj_min_ratio
-
-      majoraxis_reduced = maj_axis - a_tilde !white matter reduced to bring in the progenitor effect
-      minoraxis_reduced = min_axis - b_tilde
-
-      ! Identity matrix
+      ! constants
+      parameter(zero=0.d0, one=1.d0, two=2.d0, four=4.d0, nine=9.d0,
+     +   half=0.5d0, third=1.d0/3.d0)
+      xtol = 1.d-10 ! tolerance for local Newton iterations in growth parameter calculations
+      growth_crit = zero ! critical growth criterion (purely tensile growth in this study)
       call onem(Iden)
 
-      ! Compute the relative volume change
-      call mdet(F_tau,detF)
+      ! obtain material properties
+      mu        = props(1)
+      lambda    = props(2)
+      G_GM      = props(3)  ! gray matter growth rate
+      gamma_1   = props(4)  ! G_wm/G_gm used in Phase 1
+      gamma_hat = props(5)  ! G_wm/G_gm in Phase 3 (pulling)
+      T_1       = props(6)  ! end of Phase 1
+      T_2       = props(7)  ! end of Phase 2
+      maj_axis  = props(8)  ! WM major axis (a)
+      min_axis  = props(9)  ! WM minor axis (b)
+      b_tilde   = props(10) ! scaling factor used in calculating r_tilde
+      N_gyri    = props(11) ! number of proliferation zones
+      alpha     = props(12) ! standard deviation of Gauss growth rate function
+      delta     = props(13) ! scaled threshold for Heaviside function
+
+      ! calculate other dimensions
+      maj_min_ratio = maj_axis/min_axis
+      a_tilde = b_tilde*maj_min_ratio
 
       psi = atan(coordy/coordx)
       rad = sqrt(coordx**two + coordy**two)
-      r_tilde = rad/sqrt((majoraxis_reduced*cos(psi))**two + (minoraxis_reduced*sin(psi))**two)
+      r_tilde = rad/sqrt(
+     +     ((maj_axis - a_tilde)*cos(psi))**two 
+     +   + ((min_axis - b_tilde)*sin(psi))**two )
 
+      ! calculate growth rates
+      call gauss(r_tilde,delta,alpha,f_phi)
       f_2 = sin(four*psi*(N_gyri - half)) + one
+      theta_dot_1 = (G_GM*gamma_1)*half*f_phi*f_2 ! Phase 1
+      theta_dot_3_fac = gamma_hat*G_GM/mu ! factor in Phase 3 (pulling)
 
-      call gauss(r_tilde,delta_bar,alpha,f_phi)
+      call mdet(F_tau,detF)
 
-      theta_dot_1 = (G_GM*gamma_1)*half*f_phi*f_2 ! WM growth rate in Phase 1
-      theta_dot_3_fac = gamma_hat*G_GM/mu !scaling with 1/mu_W, WM growth rate in Phase 3
+      if (totalTime.le.T_1) then ! Phase 1
+         thetag_tau = thetag_t + (theta_dot_1)*dtime
 
-      if ((totalTime.le.T_1)) then !Push effect BEFORE grow time, Phase 1
-
-         ! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-         !
-         if(dtime.lt.zero) then
-
-            thetag_tau = thetag_t
-
-            ! update  kinematics
-            ! iso
-            Fg_tau  = (thetag_tau**third)*Iden
-
-            ! inverse of the growth Fg
-            call m3inv(Fg_tau,Fginv)
-
-            ! elastic Fe
-            Fe_tau = matmul(F_tau,Fginv)
-
-            ! Left Cauchy Green tensor
-            Be_tau = matmul(Fe_tau,transpose(Fe_tau))
-
-            ! Jacobian of the Fg
-            call mdet(Fg_tau,Jg)
-
-            Je = detF/Jg
-
-            ! compute Cauchy stress
-            sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
-
-            return
-         endif
-         ! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-         !
-
-         thetag_tau = thetag_t + (white_growth)*dtime
-
-         ! update  kinematics
-
-         Fg_tau  = (thetag_tau**third)*Iden
-         ! inverse of the growth Fg
-         call m3inv(Fg_tau,Fginv)
-
-         ! elastic Fe
-         Fe_tau = matmul(F_tau,Fginv)
-
-         ! Left Cauchy Green tensor
-         Be_tau = matmul(Fe_tau,transpose(Fe_tau))
-
-         ! Jacobian of the Fg
-         call mdet(Fg_tau,Jg)
-
-         Je = detF/Jg
-
-         ! compute Cauchy stress
-         sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
-
-      else if ((totalTime.le.T_2).and.(totalTime.ge.T_1)) then
-         ! Between the progenitor push and astro pull phases,
-         ! WM doesn't grow so theta_g doesn't change
+      else if (totalTime.le.T_2) then ! Phase 2 (WM doesn't grow)
          thetag_tau = thetag_t
 
-         ! update  kinematics
-
-         Fg_tau  = (thetag_tau**third)*Iden
-         ! inverse of the growth Fg
-         call m3inv(Fg_tau,Fginv)
-
-         ! elastic Fe
-         Fe_tau = matmul(F_tau,Fginv)
-
-         ! Left Cauchy Green tensor
-         Be_tau = matmul(Fe_tau,transpose(Fe_tau))
-
-         ! Jacobian of the Fg
-         call mdet(Fg_tau,Jg)
-
-         Je = detF/Jg
-
-         ! compute Cauchy stress
-         sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
-
-      endif
-
-      if ((totalTime.ge.T_2)) then !Pull effect after grow time
-
-         ! KT: If the totalTime is > T_2, tensile stress based growth
-         ! KT: Mandel stress derived growth criterion function
-         ! KT: Taken from Ch 6 of Hitchhikers and associted code on Github
-
-         ! Obtain dummy current growth var
+      else ! Phase 3 (pulling)
+         ! obtain dummy current growth var
          thetag_dum = thetag_t
 
-         ! Start Newton Raphson Iteration
+         ! start Newton-Raphson iteration
          nitl = 0
 
   200    continue
 
-         ! Get Growth tensor
-
+         ! update kinematics with current iterate
          Fg_tau  = (thetag_dum**third)*Iden
-
-         ! Get Fg^-1
-
-         call m3inv(Fg_tau,Fginv)
-
-         ! Get Elastic F and associated deformation measures
-
-         Fe_tau = matmul(F_tau,Fginv)
-
-         Be_tau = matmul(Fe_tau,transpose(Fe_tau))
-
-         B_tau = matmul(F_tau, transpose(F_tau))
-
-         call mdet(Fg_tau,Jg)
-
+         call m3inv(Fg_tau, Fginv)
+         Fe_tau = matmul(F_tau, Fginv)
+         Be_tau = matmul(Fe_tau, transpose(Fe_tau))
+         call mdet(Fg_tau, Jg)
          Je = detF/Jg
-
          lnJe = log(Je)
 
-         ! Growth criterion based on trace of Kirchoff Stress
-
+         ! growth criterion based on trace of Kirchoff/Mandel stress
          trMe = 3*(lambda*lnJe - mu) + mu*(Be_tau(1,1) + Be_tau(2,2) + Be_tau(3,3))
          phig = trMe - growth_crit
 
          if (phig.le.zero) then ! no tensile growth
-            ! print *,'No growth, trMe=',trMe
             thetag_tau = thetag_dum
-            res = zero
-            dres = one
 
          else ! tensile growth
-            ! print *,'Growth, trMe=',trMe
             nitl = nitl + 1
-            ! Growth criterion
 
+            ! non-linear residual
             dphig = -third/thetag_dum*(two*mu*(Be_tau(1,1) + Be_tau(2,2) + Be_tau(3,3)) + nine*lambda)
-
-            ! Non-linear residual
             res = thetag_dum - thetag_t - (theta_dot_3_fac)*phig*dtime
             dres = one - ((theta_dot_3_fac)*dphig)*dtime
 
-            ! updated thetag
+            ! update thetag
             thetag_tau = thetag_dum - res / dres
 
-            ! Check for convergence
-
+            ! check for convergence
             if ((nitl.lt.50).and.(dabs(res).gt.xtol)) go to 200
-            ! if (nitl.eq.50) print *, '>no convergence!!!! |r|=', dabs(res)
+            if (nitl.eq.50) print *, '>no convergence!!!! |r|=', dabs(res)
 
          endif
-         ! ends local newton iteration
-
-         ! update  kinematics
-
-         Fg_tau  = (thetag_tau**third)*Iden
-
-         call m3inv(Fg_tau,Fginv)
-
-         Fe_tau = matmul(F_tau,Fginv)
-
-         Be_tau = matmul(Fe_tau,transpose(Fe_tau))
-
-         B_tau = matmul(F_tau, transpose(F_tau))
-
-         call mdet(Fg_tau,Jg)
-
-         Je = detF/Jg
-
-         ! compute Cauchy stress
-         sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
 
       endif
 
+      ! update kinematics
+      Fg_tau  = (thetag_tau**third)*Iden
+      call m3inv(Fg_tau, Fginv)
+      Fe_tau = matmul(F_tau, Fginv)
+      Be_tau = matmul(Fe_tau, transpose(Fe_tau))
+      call mdet(Fg_tau, Jg)
+      Je = detF/Jg
+
+      sigma_tau = ((lambda*dlog(Je) - mu)*Iden + mu*Be_tau)/Je
+
       end subroutine integ_white
-      !****************************************************************************
-      subroutine integ_gray(Props,nprops,F_tau,dtime,sigma_tau,
-     +                       thetag_t,thetag_tau,coordx,coordy,coordz,
-     +                      N_R,totalTime)
+      
+      !****************************************************************
+      
+      subroutine integ_gray(props, nprops, F_tau, dtime, totalTime,
+     +                      coordx, coordy, coordz, thetag_t, 
+     +                      thetag_tau, sigma_tau)
 
       implicit none
 
-      integer nargs,nprops
-      parameter(nargs=5)
-
-      real*8 Iden(3,3),F_tau(3,3),sigma_tau(3,3)
-      real*8 detF
-      real*8 N_R(3,1)
-      real*8 Be_tau(3,3),Fg_tau(3,3),Fe_tau(3,3),Je
-      real*8 thetag_tau,args(nargs),thetag_t
-      real*8 props(nprops),dtime,Jg
-      real*8 mu,lambda,G_GM
-      real*8 coordx,coordy,coordz,tmp
-      real*8 Fginv(3,3)
-      real*8 T_1,totalTime
-      real*8 maj_axis,min_axis
-
-      ! Parameters
-      real*8 zero,one,two,half,three,third,nine,Pi
-      parameter(zero=0.d0,one=1.d0,two=2.d0,half=0.5d0,three=3.d0,
-     +     third=1.d0/3.d0,nine=9.d0,Pi=3.1415926d0)
-
-      ! Obtain material properties
-      mu        = props(1)
-      lambda    = props(2)
-      G_GM      = props(3) ! grey matter growth rate
-      T_1       = props(4) ! Time after which gray matter starts to grow in Phase 2.
-      maj_axis  = props(5) ! WM major axis (a)
-      min_axis  = props(6) ! WM minor axis (b)
-
-      ! Identity matrix
+      ! arguments passed in to read 
+      integer nprops
+      real*8 props(nprops), F_tau(3,3), dtime, totalTime
+      real*8 coordx, coordy, coordz, thetag_t
+      ! arguments passed in to write
+      real*8 thetag_tau, sigma_tau(3,3)
+      ! properties
+      real*8 mu, lambda, G_GM, T_1, maj_axis, min_axis
+      ! local quantities
+      real*8 detF, N_R(3,1), tmp
+      real*8 Fg_tau(3,3), Jg, Fginv(3,3)
+      real*8 Fe_tau(3,3), Je, Be_tau(3,3)
+      real*8 Iden(3,3), zero, one, two, half, third
+      
+      ! constants
+      parameter(zero=0.d0, one=1.d0, two=2.d0, half=0.5d0, third=1.d0/3.d0)
       call onem(Iden)
 
-      ! Compute the relative volume change
-      call mdet(F_tau,detF)
-
-      ! Compute the inverse of the deformation gradient
-      call m3inv(F_tau,Finv)
+      ! obtain material properties
+      mu       = props(1)
+      lambda   = props(2)
+      G_GM     = props(3) ! gray matter growth rate
+      T_1      = props(4) ! end of Phase 1, beginning of Phase 2
+      maj_axis = props(5) ! WM major axis (a)
+      min_axis = props(6) ! WM minor axis (b)
 
       ! obtain referential surface outnormal of an elliptical surface
       N_R(1,1) = two*coordx/maj_axis**two
       N_R(2,1) = two*coordy/min_axis**two
       N_R(3,1) = zero
-
       tmp = sqrt(N_R(1,1)**two + N_R(2,1)**two + N_R(3,1)**two)
-
       N_R = N_R/tmp
 
-      ! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !
-      if(dtime.lt.zero) then
+      call mdet(F_tau,detF)
 
-         thetag_tau = thetag_t
-
-         ! update  kinematics
-         ! area growth
-         Fg_tau  = dsqrt(thetag_tau)*Iden
-     +          +(one - dsqrt(thetag_tau))*matmul(N_R,transpose(N_R))
-
-         ! inverse of the growth Fg
-         call m3inv(Fg_tau,Fginv)
-
-         ! elastic Fe
-         Fe_tau = matmul(F_tau,Fginv)
-
-         ! Left Cauchy Green tensor
-         Be_tau = matmul(Fe_tau,transpose(Fe_tau))
-
-         ! Jacobian of the Fg
-         call mdet(Fg_tau,Jg)
-
-         Je = detF/Jg
-
-         ! compute Cauchy stress
-         sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
-
-         return
-      endif
-      !
-      ! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      ! KT: GM grows only after T_1 to allow progenitors to grow in WM
-
-      if (totalTime.le.T_1) then
+      if (totalTime.le.T_1) then ! Phase 1 (no GM growth)
          thetag_tau = one
-      else
+      else ! Phase 2 and 3
          thetag_tau = thetag_t + (G_GM)*dtime
       endif
 
-      ! update  kinematics
-      ! area
-      Fg_tau  = dsqrt(thetag_tau)*Iden
-     +          +(one - dsqrt(thetag_tau))*matmul(N_R,transpose(N_R))
-
-      ! inverse of the growth Fg
-      call m3inv(Fg_tau,Fginv)
-
-      ! elastic Fe
-      Fe_tau = matmul(F_tau,Fginv)
-
-      ! Left Cauchy Green tensor
-      Be_tau = matmul(Fe_tau,transpose(Fe_tau))
-
-      ! Jacobian of the Fg
-      call mdet(Fg_tau,Jg)
-
+      ! update kinematics
+      Fg_tau = dsqrt(thetag_tau)*Iden
+     +         +(one - dsqrt(thetag_tau))*matmul(N_R,transpose(N_R))
+      call m3inv(Fg_tau, Fginv)
+      Fe_tau = matmul(F_tau, Fginv)
+      Be_tau = matmul(Fe_tau, transpose(Fe_tau))
+      call mdet(Fg_tau, Jg)
       Je = detF/Jg
 
-      ! compute Cauchy stress
-      sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
+      sigma_tau = ((lambda*dlog(Je) - mu)*Iden + mu*Be_tau)/Je
 
       end subroutine integ_gray
-      !****************************************************************************
-      !****************************************************************************
-      ! C**********************************************************************
-      ! C   THE FOLLOWING SUBROUTINES ARE UTILITY ROUTINES
-      ! C**********************************************************************
-      subroutine gauss(x,mean,sigma,y)
-      ! Gaussian bell curve evaluated at x with given mean and sigma.
-      implicit none
+      
+      !****************************************************************
 
-      real*8 x,mean,sigma,y
-      real*8 half,Pi,two
-      parameter(half=0.5d0,two=2.d0,Pi=3.1415926d0)
+      subroutine gauss(x, mean, sigma, y)
+      ! Gaussian curve evaluated at x with given mean and sigma
+      
+      implicit none
+      real*8 x, mean, sigma, y
+      real*8 half, two, Pi
+      parameter(half=0.5d0, two=2.d0, Pi=3.1415926d0)
       
       y = exp(-half * ((x - mean) / sigma)**two) / (sigma * dsqrt(two*Pi))
 
       end subroutine gauss      
 
-      !**********************************************************************
-      SUBROUTINE ONEM(A)
-      ! Set A to the 3x3 identity matrix.
-      REAL*8 A(3,3)
-      INTEGER I, J
+      !****************************************************************
+      
+      subroutine onem(A)
+      ! set A to the 3x3 identity matrix
+      
+      implicit none
+      real*8 A(3,3)
+        
+      A=0d0
+      A(1,1)=1d0
+      A(2,2)=1d0
+      A(3,3)=1d0
 
-      DO I = 1, 3
-         DO J = 1, 3
-            IF (I .EQ. J) THEN
-               A(I,J) = 1.0D0
-            ELSE
-               A(I,J) = 0.0D0
-            END IF
-         END DO
-      END DO
+      end
 
-      RETURN
-      END
+      !****************************************************************
+      
+      subroutine mtrans(A, Atrans)
+      ! compute the transpose of 3x3 matrix A into Atrans.
+      
+      implicit none
+      real*8 A(3,3), Atrans(3,3)
+      integer i, j
 
-      !**********************************************************************
-      SUBROUTINE MTRANS(A, ATRANS)
-      ! Compute the transpose of 3x3 matrix A into ATRANS.
-      REAL*8 A(3,3), ATRANS(3,3)
-      INTEGER I, J
+      do i = 1, 3
+         do j = 1, 3
+            Atrans(j,i) = A(i,j)
+         end do
+      end do
 
-      DO I = 1, 3
-         DO J = 1, 3
-            ATRANS(J,I) = A(I,J)
-         END DO
-      END DO
+      end
 
-      RETURN
-      END
+      !****************************************************************
+      
+      subroutine mdet(A, det)
+      ! compute the determinant of 3x3 matrix A
+      
+      implicit none
+      real*8 A(3,3), det
 
-      !**********************************************************************
-      SUBROUTINE MDET(A, DET)
-      ! Compute the determinant of 3x3 matrix A.
-      REAL*8 A(3,3), DET
+      det =   A(1,1)*A(2,2)*A(3,3) + A(1,2)*A(2,3)*A(3,1)
+     +      + A(1,3)*A(2,1)*A(3,2)
+     +      - A(3,1)*A(2,2)*A(1,3) - A(3,2)*A(2,3)*A(1,1)
+     +      - A(3,3)*A(2,1)*A(1,2)
 
-      DET =   A(1,1)*A(2,2)*A(3,3) + A(1,2)*A(2,3)*A(3,1)
-     +       + A(1,3)*A(2,1)*A(3,2)
-     +       - A(3,1)*A(2,2)*A(1,3) - A(3,2)*A(2,3)*A(1,1)
-     +       - A(3,3)*A(2,1)*A(1,2)
+      end
 
-      RETURN
-      END
+      !****************************************************************
+      
+      subroutine m3inv(A, Ainv)
+      ! compute the inverse of 3x3 matrix A into Ainv; stops if singular
+      
+      implicit none
+      real*8 A(3,3), Ainv(3,3), det, Acofac(3,3), Aadj(3,3)
+      integer i, j
 
-      !**********************************************************************
-      SUBROUTINE M3INV(A, AINV)
-      ! Compute the inverse of 3x3 matrix A into AINV; stops if singular.
-      REAL*8 A(3,3), AINV(3,3), DET, ACOFAC(3,3), AADJ(3,3)
-      INTEGER I, J
+      call mdet(A, det)
+      if (det .eq. 0.d0) then
+         write(*,*) 'm3inv: matrix is singular'
+         stop
+      end if
 
-      CALL MDET(A, DET)
-      IF (DET .EQ. 0.D0) THEN
-         WRITE(*,10)
-         STOP
-      END IF
+      call mcofac(A, Acofac)
+      call mtrans(Acofac, Aadj)
 
-      CALL MCOFAC(A, ACOFAC)
-      CALL MTRANS(ACOFAC, AADJ)
+      do i = 1, 3
+         do j = 1, 3
+            Ainv(i,j) = Aadj(i,j) / det
+         end do
+      end do
 
-      DO I = 1, 3
-         DO J = 1, 3
-            AINV(I,J) = AADJ(I,J) / DET
-         END DO
-      END DO
+      end
 
-10    FORMAT(5X,'--ERROR IN M3INV--- THE MATRIX IS SINGULAR')
+      !****************************************************************
+      
+      subroutine mcofac(A, Acofac)
+      ! compute the cofactor matrix of 3x3 matrix A for inversion
+      
+      implicit none
+      real*8 A(3,3), Acofac(3,3)
 
-      RETURN
-      END
+      Acofac(1,1) =   A(2,2)*A(3,3) - A(3,2)*A(2,3)
+      Acofac(1,2) = -(A(2,1)*A(3,3) - A(3,1)*A(2,3))
+      Acofac(1,3) =   A(2,1)*A(3,2) - A(3,1)*A(2,2)
+      Acofac(2,1) = -(A(1,2)*A(3,3) - A(3,2)*A(1,3))
+      Acofac(2,2) =   A(1,1)*A(3,3) - A(3,1)*A(1,3)
+      Acofac(2,3) = -(A(1,1)*A(3,2) - A(3,1)*A(1,2))
+      Acofac(3,1) =   A(1,2)*A(2,3) - A(2,2)*A(1,3)
+      Acofac(3,2) = -(A(1,1)*A(2,3) - A(2,1)*A(1,3))
+      Acofac(3,3) =   A(1,1)*A(2,2) - A(2,1)*A(1,2)
 
-      !**********************************************************************
-      SUBROUTINE MCOFAC(A, ACOFAC)
-      ! Compute the cofactor matrix of 3x3 matrix A.
-      REAL*8 A(3,3), ACOFAC(3,3)
-
-      ACOFAC(1,1) = A(2,2)*A(3,3) - A(3,2)*A(2,3)
-      ACOFAC(1,2) = -(A(2,1)*A(3,3) - A(3,1)*A(2,3))
-      ACOFAC(1,3) = A(2,1)*A(3,2) - A(3,1)*A(2,2)
-      ACOFAC(2,1) = -(A(1,2)*A(3,3) - A(3,2)*A(1,3))
-      ACOFAC(2,2) = A(1,1)*A(3,3) - A(3,1)*A(1,3)
-      ACOFAC(2,3) = -(A(1,1)*A(3,2) - A(3,1)*A(1,2))
-      ACOFAC(3,1) = A(1,2)*A(2,3) - A(2,2)*A(1,3)
-      ACOFAC(3,2) = -(A(1,1)*A(2,3) - A(2,1)*A(1,3))
-      ACOFAC(3,3) = A(1,1)*A(2,2) - A(2,1)*A(1,2)
-
-      RETURN
-      END
-
+      end
