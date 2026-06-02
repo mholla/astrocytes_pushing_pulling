@@ -136,7 +136,7 @@ def Create_Material(ModelName, Materials):
     mdb.models[ModelName].Material(name='WHIT')
     mdb.models[ModelName].materials['WHIT'].Density(table=((density, ), ))
     mdb.models[ModelName].materials['WHIT'].Depvar(n=10)
-    mdb.models[ModelName].materials['WHIT'].UserMaterial(mechanicalConstants=(shear_w,lambda_w,Gctx,scaled_thresh,smoothening,GwByGgr,progen_grow_time,N_gyri,gamma_push,reduction,push_grow_time,MajorAxis_W,MinorAxis_W))
+    mdb.models[ModelName].materials['WHIT'].UserMaterial(mechanicalConstants=(shear_w,lambda_w,Gctx,GwByGgr,gamma_push,progen_grow_time,push_grow_time,MajorAxis_W,MinorAxis_W,reduction,N_gyri,alpha,scaled_thresh,smoothening,scaled_thresh))
 
     mdb.models[ModelName].Material(name='GRAY')
     mdb.models[ModelName].materials['GRAY'].Density(table=((density, ), ))
@@ -497,7 +497,8 @@ for j in range(len(gamma_push_list)):
     N_gyri = 4.0 # Number of proliferation zones.
     gamma_push = gamma_push_list[j] # gamma parameter for pushing effect due to astrocytes
     reduction = 4.0 # parameter \tilde{b} in 1/10 mm units
-    push_grow_time = 0.45 # time after which pull effect comes into play in WM @ P6     
+    alpha = 0.4 # standard deviation of gauss growth rate function
+    push_grow_time = 0.45 # time after which pull effect comes into play in WM @ P6
     density = 1e-11 # N/mm3, For explicit simulation, a very small density is given to make it a quasi-static problem.
     Materials = [CorticalMaterial, SubCortMaterial]
 

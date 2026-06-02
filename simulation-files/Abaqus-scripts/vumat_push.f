@@ -139,8 +139,8 @@
      +     third=1.d0/3.d0,two_third=2.d0/3.d0,four=4.d0,Pi=3.1415926d0)
 
       ! WM Ellipse params
-      maj_axis = props(12) ! WM major axis (mm)
-      min_axis = props(13) ! WM minor axis (mm)
+      maj_axis = props(8) ! WM major axis (mm)
+      min_axis = props(9) ! WM minor axis (mm)
 
       ! Pour initial coordinates into the global variable matrix 
       if (totalTime.lt. dt) then
@@ -577,32 +577,31 @@
       real*8 majoraxis_reduced,minoraxis_reduced
       real*8 maj_min_ratio,maj_axis,min_axis
       real*8 T_2,f_H
-      real*8 rad,psi,r_tilde,delta_bar,a_tilde
+      real*8 rad,psi,r_tilde,delta_bar,delta,a_tilde
       real*8 f_2,N_gyri,gamma,alpha
-      real*8 b_tilde,periods       
+      real*8 b_tilde,periods
 
       ! Parameters
       real*8 zero,one,two,half,three,third,nine,ten
       parameter(zero=0.d0,one=1.d0,two=2.d0,half=0.5d0,three=3.d0,
      +     third=1.d0/3.d0,nine=9.d0,ten=10.d0)
 
-      ! standard deviation of gauss growth rate function
-      alpha = 0.4d0
-
       ! Obtain WM material properties
       mu        = props(1)
       lambda    = props(2)
-      G_GM      = props(3) ! grey matter growth rate
-      delta_bar = props(4) ! scaled threshold for heaviside function
-      alpha_bar = props(5) ! Smoothening for heaviside function used in Phase 3
-      gamma_1   = props(6) ! G_wm/G_gm used in Phase 1
-      T_1       = props(7) ! end of Phase 1
-      N_gyri    = props(8) ! Number of proliferation zones
-      gamma     = props(9) ! G_wm/G_gm in Phase 3 (pushing)
+      G_GM      = props(3)  ! grey matter growth rate
+      gamma_1   = props(4)  ! G_wm/G_gm used in Phase 1
+      gamma     = props(5)  ! G_wm/G_gm in Phase 3 (pushing)
+      T_1       = props(6)  ! end of Phase 1
+      T_2       = props(7)  ! end of Phase 2
+      maj_axis  = props(8)  ! WM major axis (a)
+      min_axis  = props(9)  ! WM minor axis (b)
       b_tilde   = props(10) ! scaling factor used in calculating r_tilde
-      T_2       = props(11) ! end of Phase 2
-      maj_axis  = props(12) ! WM major axis (a)
-      min_axis  = props(13) ! WM minor axis (b)
+      N_gyri    = props(11) ! Number of proliferation zones
+      alpha     = props(12) ! standard deviation of gauss growth rate function
+      delta     = props(13) ! scaled threshold for heaviside function
+      alpha_bar = props(14) ! smoothening for heaviside function used in Phase 3
+      delta_bar = props(15) ! scaled threshold for heaviside function
 
       ! Setting up the growth rate calculations
       maj_min_ratio = maj_axis/min_axis
