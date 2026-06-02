@@ -516,46 +516,43 @@
          thetag_tau = thetag_t
 
       else ! Phase 3 (pulling)
-         ! obtain dummy current growth var
          thetag_dum = thetag_t
 
-         ! start Newton-Raphson iteration
-         nitl = 0
+         do nitl = 1, 50
 
-  200    continue
+            ! kinematics with current iterate
+            Fg_tau  = (thetag_dum**third)*Iden
+            call m3inv(Fg_tau, Fginv)
+            Fe_tau = matmul(F_tau, Fginv)
+            Be_tau = matmul(Fe_tau, transpose(Fe_tau))
+            call mdet(Fg_tau, Jg)
+            Je = detF/Jg
+            lnJe = log(Je)
 
-         ! update kinematics with current iterate
-         Fg_tau  = (thetag_dum**third)*Iden
-         call m3inv(Fg_tau, Fginv)
-         Fe_tau = matmul(F_tau, Fginv)
-         Be_tau = matmul(Fe_tau, transpose(Fe_tau))
-         call mdet(Fg_tau, Jg)
-         Je = detF/Jg
-         lnJe = log(Je)
+            ! growth criterion based on trace of Kirchoff/Mandel stress
+            trMe = 3*(lambda*lnJe - mu) + mu*(Be_tau(1,1) + Be_tau(2,2) + Be_tau(3,3))
+            phig = trMe - growth_crit
 
-         ! growth criterion based on trace of Kirchoff/Mandel stress
-         trMe = 3*(lambda*lnJe - mu) + mu*(Be_tau(1,1) + Be_tau(2,2) + Be_tau(3,3))
-         phig = trMe - growth_crit
+            if (phig.le.zero) then ! criterion not met: no tensile growth
+               thetag_tau = thetag_dum
+               exit
+            endif
 
-         if (phig.le.zero) then ! no tensile growth
+            ! nonlinear residual and derivative
+            dphig = -third/thetag_dum*(two*mu*(Be_tau(1,1) + Be_tau(2,2) + Be_tau(3,3))
+     +              + nine*lambda)
+            res  = thetag_dum - thetag_t - (theta_dot_3_fac)*phig*dtime
+            dres = one - (theta_dot_3_fac)*dphig*dtime
+
+            ! update iterate
+            thetag_dum = thetag_dum - res/dres
             thetag_tau = thetag_dum
 
-         else ! tensile growth
-            nitl = nitl + 1
+            if (dabs(res).le.xtol) exit
 
-            ! non-linear residual
-            dphig = -third/thetag_dum*(two*mu*(Be_tau(1,1) + Be_tau(2,2) + Be_tau(3,3)) + nine*lambda)
-            res = thetag_dum - thetag_t - (theta_dot_3_fac)*phig*dtime
-            dres = one - ((theta_dot_3_fac)*dphig)*dtime
-
-            ! update thetag
-            thetag_tau = thetag_dum - res / dres
-
-            ! check for convergence
-            if ((nitl.lt.50).and.(dabs(res).gt.xtol)) go to 200
             if (nitl.eq.50) print *, '>no convergence!!!! |r|=', dabs(res)
 
-         endif
+         enddo
 
       endif
 
