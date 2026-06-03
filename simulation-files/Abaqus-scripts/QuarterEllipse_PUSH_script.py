@@ -105,10 +105,10 @@ def Create_Rigid_wall(ModelName):
 #######################################################################################
 #######################################################################################
 def Create_Step(ModelName, Step):
-    StepName, TotalTime, Mass_Scaling = Step
+    TotalTime, Mass_Scaling = Step
 
-    mdb.models[ModelName].ExplicitDynamicsStep(name=StepName, previous='Initial', timePeriod=TotalTime, massScaling=((SEMI_AUTOMATIC, MODEL, AT_BEGINNING, Mass_Scaling, 0.0, None, 0, 0, 0.0, 0.0, 0, None),),)
-    mdb.models[ModelName].steps[StepName].setValues(timePeriod=TotalTime, scaleFactor=1.0, linearBulkViscosity=0.0, quadBulkViscosity=0.0, improvedDtMethod=ON)
+    mdb.models[ModelName].ExplicitDynamicsStep(name='growth', previous='Initial', timePeriod=TotalTime, massScaling=((SEMI_AUTOMATIC, MODEL, AT_BEGINNING, Mass_Scaling, 0.0, None, 0, 0, 0.0, 0.0, 0, None),),)
+    mdb.models[ModelName].steps['growth'].setValues(timePeriod=TotalTime, scaleFactor=1.0, linearBulkViscosity=0.0, quadBulkViscosity=0.0, improvedDtMethod=ON)
     mdb.models[ModelName].TabularAmplitude(name='Amp-1', timeSpan=STEP, smooth=SOLVER_DEFAULT, data=((0.0, 0.0), (1.0, 1.0)))
 
 #######################################################################################
@@ -464,7 +464,7 @@ if __name__ == '__main__':
         # ======================================================
         TotalTime = 1
         Mass_Scaling = Mass_Scaling_list[j] # Mass scaling necessary for stable simulations
-        Step = ['growth', TotalTime, Mass_Scaling]
+        Step = [TotalTime, Mass_Scaling]
 
         # ======================================================
         # Material Parameters
