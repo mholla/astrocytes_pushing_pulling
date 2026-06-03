@@ -486,10 +486,9 @@ if __name__ == '__main__':
         # ======================================================
         # Step Parameters
         # ======================================================
-        StepName = 'growth'
         TotalTime = 1
         Mass_Scaling = Mass_Scaling_list[j] # Mass scaling necessary for stable simulations
-        Step = [StepName, TotalTime, Mass_Scaling]
+        Step = ['growth', TotalTime, Mass_Scaling]
 
         # ======================================================
         # Material Parameters
