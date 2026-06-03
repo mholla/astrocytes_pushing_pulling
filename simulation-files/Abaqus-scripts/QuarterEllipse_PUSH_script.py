@@ -5,7 +5,6 @@
 
 from abaqus import *
 from abaqusConstants import *
-import __main__
 import part
 import material
 import section
@@ -18,15 +17,8 @@ import optimization
 import job
 import sketch
 import visualization
-import connectorBehavior
-import time
-import string
-import random
-import math
-import numpy as np
-import xyPlot
 import regionToolset
-import connectorBehavior
+import numpy as np
 
 #######################################################################################
 #######################################################################################
