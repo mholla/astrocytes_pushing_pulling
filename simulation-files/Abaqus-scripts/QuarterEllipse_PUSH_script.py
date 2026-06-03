@@ -1,3 +1,8 @@
+# author: Karan Taneja
+# unit system: mm-N-MPa
+# dimension: plane strain
+# documentation: 'Astrocytes in white matter ...'
+
 from abaqus import *
 from abaqusConstants import *
 import __main__
@@ -20,12 +25,8 @@ import random
 import math
 import numpy as np
 import xyPlot
-import displayGroupOdbToolset as dgo
 import regionToolset
-import displayGroupMdbToolset as dgm
 import connectorBehavior
-
-# Units: mm, kPa, N,
 
 #######################################################################################
 #######################################################################################
@@ -126,25 +127,26 @@ def Create_Rigid_wall(ModelName):
 #######################################################################################
 #######################################################################################
 def Create_Step(ModelName, Step):
-    mdb.models[ModelName].ExplicitDynamicsStep(name=StepName, previous='Initial', timePeriod= TotalTime, massScaling=((SEMI_AUTOMATIC, MODEL, AT_BEGINNING, MS, 0.0, None, 0, 0, 0.0, 0.0, 0, None),),)
+    mdb.models[ModelName].ExplicitDynamicsStep(name=StepName, previous='Initial', timePeriod= TotalTime, massScaling=((SEMI_AUTOMATIC, MODEL, AT_BEGINNING, Mass_Scaling, 0.0, None, 0, 0, 0.0, 0.0, 0, None),),)
     mdb.models[ModelName].steps[StepName].setValues(timePeriod=TotalTime, scaleFactor=1.0, linearBulkViscosity=0.0, quadBulkViscosity=0.0, improvedDtMethod=ON)
     mdb.models[ModelName].TabularAmplitude(name='Amp-1', timeSpan=STEP, smooth=SOLVER_DEFAULT, data=((0.0, 0.0), (1.0, 1.0)))
 
 #######################################################################################
 #######################################################################################
-def Create_Material(ModelName, Materials): 
+def Create_Material(ModelName, White_Matter_Properties, Gray_Matter_Properties): 
     mdb.models[ModelName].Material(name='WHIT')
     mdb.models[ModelName].materials['WHIT'].Density(table=((density, ), ))
     mdb.models[ModelName].materials['WHIT'].Depvar(n=10)
-    mdb.models[ModelName].materials['WHIT'].UserMaterial(mechanicalConstants=(shear_w,lambda_w,Gctx,GwByGgr,gamma_push,progen_grow_time,push_grow_time,MajorAxis_W,MinorAxis_W,reduction,N_gyri,alpha,scaled_thresh,smoothening,scaled_thresh))
+    mdb.models[ModelName].materials['WHIT'].UserMaterial(mechanicalConstants=White_Matter_Properties)
 
     mdb.models[ModelName].Material(name='GRAY')
     mdb.models[ModelName].materials['GRAY'].Density(table=((density, ), ))
     mdb.models[ModelName].materials['GRAY'].Depvar(n=7)
-    mdb.models[ModelName].materials['GRAY'].UserMaterial(mechanicalConstants=(shear_g,lambda_g,Gctx,progen_grow_time,MajorAxis_G,MinorAxis_G))
+    mdb.models[ModelName].materials['GRAY'].UserMaterial(mechanicalConstants=Gray_Matter_Properties)
+
 #######################################################################################
 #######################################################################################
-def Create_Section(ModelName, PartName, Dimensions, Materials):
+def Create_Section(ModelName, PartName, Dimensions):
 
     p = mdb.models[ModelName].parts['Part-1']
     c = p.cells 
@@ -153,11 +155,11 @@ def Create_Section(ModelName, PartName, Dimensions, Materials):
     c_subcort = c.findAt((( MajorAxis_W/2.,0.0, Depth), )) 
     c_cortex  = c.findAt((( MajorAxis_G - 0.1,0.0,  Depth), ))
 
-    mdb.models[ModelName].HomogeneousSolidSection(name='Subcortex', material=SubCortMaterial, thickness=None)
+    mdb.models[ModelName].HomogeneousSolidSection(name='Subcortex', material='WHIT', thickness=None)
     region = p.Set(cells=c_subcort, name='Subcortex')
     p.SectionAssignment(region=region, sectionName='Subcortex', offset=0.0, offsetType=MIDDLE_SURFACE, offsetField='', thicknessAssignment=FROM_SECTION)
     
-    mdb.models[ModelName].HomogeneousSolidSection(name='Cortex', material=CorticalMaterial, thickness=None)
+    mdb.models[ModelName].HomogeneousSolidSection(name='Cortex', material='GRAY', thickness=None)
     region = p.Set(cells=c_cortex, name='Cortex')
     p.SectionAssignment(region=region, sectionName='Cortex', offset=0.0, offsetType=MIDDLE_SURFACE, offsetField='', thicknessAssignment=FROM_SECTION)
 
@@ -317,11 +319,11 @@ def Create_Boundary_Conditions(ModelName, InstanceName, Step):
 
 #######################################################################################
 ####################################################################################### 
-def Create_VP(ModelName, InstanceName, Step, VP):
+def Create_Viscous_Pressure(ModelName, InstanceName, Step, Viscous_Pressure):
 
     a = mdb.models[ModelName].rootAssembly 
     region = a.instances[InstanceName].surfaces['top_s']
-    mdb.models[ModelName].Pressure(name='VP', createStepName=StepName, region=region, distributionType=VISCOUS, field='', magnitude=VP, amplitude='Amp-1')
+    mdb.models[ModelName].Pressure(name='Viscous Pressure', createStepName=StepName, region=region, distributionType=VISCOUS, field='', magnitude=Viscous_Pressure, amplitude='Amp-1')
 
 #######################################################################################
 #######################################################################################    
@@ -347,6 +349,7 @@ def Create_Contact(ModelName, InstanceName, Step, Dimensions):
     region1=a.instances['wall-2'].surfaces['s_wall']#a.Surface(side2Faces=side1Faces1, name='bottom_wall')
     region2=a.instances[InstanceName].surfaces['top_s']
     mdb.models[ModelName].SurfaceToSurfaceContactExp(name ='Int-3', createStepName='Initial', main = region1, secondary = region2, mechanicalConstraint=KINEMATIC, sliding=FINITE, interactionProperty='IntProp-2', initialClearance=OMIT, datumAxis=None, clearanceRegion=None)
+
 #######################################################################################    
 #######################################################################################    
 def Create_Mesh(ModelName, PartName, InstanceName, Step, Dimensions,minsize,maxsize):  
@@ -398,8 +401,6 @@ def Create_Mesh(ModelName, PartName, InstanceName, Step, Dimensions,minsize,maxs
     p.setElementType(regions=pickedRegions, elemTypes=(elemType1,elemType2,elemType3))
     p.generateMesh(regions=partInstances)
 
-   
-
 #######################################################################################
 #######################################################################################
 def Create_Output(ModelName, PartName, InstanceName, Step): 
@@ -421,8 +422,6 @@ def Create_Output(ModelName, PartName, InstanceName, Step):
 #######################################################################################
 #######################################################################################
 def Create_Job(ModelName, JobName):
-
-#    mdb.Job(name=JobName, model=ModelName, description='', type=ANALYSIS, atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90, memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True, explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF, modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine=None, scratch='', multiprocessingMode=DEFAULT, numDomains=8, numCpus=8, numGPUs=0)
     mdb.Job(name=JobName, model=ModelName, description='', type=ANALYSIS, 
         atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90, 
         memoryUnits=PERCENTAGE, explicitPrecision=DOUBLE, 
@@ -443,89 +442,95 @@ def Create_Job(ModelName, JobName):
 
 #######################################################################################
 #######################################################################################
-gamma_push_list = [0.05,0.1,0.2,0.3,0.5,1.0,2.0,3.0]
-MS_list = [120,120,120,120,120,120,150,180]
-VP_list = [1e-5,1e-5,1e-5,1e-5,1e-5,1e-5,1e-5,1e-5]
-job_list_name = ['5em2','10em2','20em2','30em2','50em2','1','2','3'] 
-for j in range(len(gamma_push_list)):
-    # for i in range(1):
+if __name__ == '__main__':
+    
+    gamma_list = [0.05,0.1,0.2,0.3,0.5,1.0,2.0,3.0]
+    Mass_Scaling_list = [120,120,120,120,120,120,150,180]
+    Viscous_Pressure_list = [1e-5,1e-5,1e-5,1e-5,1e-5,1e-5,1e-5,1e-5]
+    Job_Name_list = ['5em2','10em2','20em2','30em2','50em2','1','2','3'] 
+    
+    for j in range(len(gamma_list)):
+        # ======================================================
+        # Dimensions
+        # ======================================================
+        CT = 0.15 # mm
+        MajorAxis_G = 3.6 # mm
+        MinorAxis_G = 3.0 # mm
+        MajorAxis_W = MajorAxis_G - CT
+        MinorAxis_W = MinorAxis_G - CT
+        Depth = 1.0 # mm
+        Dimensions = [MajorAxis_W, MinorAxis_G, MinorAxis_W, Depth] 
+        
+        # ======================================================
+        # Mesh Parameters
+        # ======================================================
+        bias = 3 # bias through width of subcortex
+        ecortex = 7 # number of elements in the thickness of the cortex                                                
+        cortex_size = CT/ecortex # size of elements in cortex
+        Mesh = [bias, cortex_size]
+        # For biased subcortex mesh
+        minsize = 0.02 # mm 
+        maxsize = 0.2 # mm  
+        
+        # ======================================================
+        # Step Parameters
+        # ======================================================
+        StepName = 'growth'
+        TotalTime = 1
+        Mass_Scaling = Mass_Scaling_list[j] # Mass scaling necessary for stable simulations
+        Step = [StepName, TotalTime, Mass_Scaling]
 
-    # ======================================================
-    # Dimensions
-    # ======================================================
-    CT = 1.5 # Units: 1/10 mm
-    MajorAxis_G = 36 # Units: 1/10 mm
-    MinorAxis_G = 30 # Units: 1/10 mm
-    MajorAxis_W = MajorAxis_G - CT
-    MinorAxis_W = MinorAxis_G - CT
+        # ======================================================
+        # Material Parameters
+        # ======================================================      
+        mu_g = 0.002 # N/mm2 = MPa 
+        mu_w = 0.001 # N/mm2 = MPa  
+        lambda_w = 0.1 # N/mm2 = MPa 
+        lambda_g = 0.2 # N/mm2 = MPa 
+        G_GM = 1.5 # cortical growth rate in sim time (0.084/day)
+        gamma_1 = 1.0 # G_wm/G_gm used in Phase 1
+        gamma = gamma_list[j] # G_wm/G_gm in Phase 3 (pushing)
+        T_1 = 0.1 # end of Phase 1 (during which progenitors expand in WM only)
+        T_2 = 0.45 # end of Phase 2 (start of push effect)
+        b_tilde = 0.4 # mm, scaling factor used in calculating r_tilde
+        N_gyri = 4.0 # number of proliferation zones
+        alpha = 0.4 # standard deviation of Gauss function
+        delta = 0.415 # scaled threshold for Gauss function
+        alpha_bar = 10.0 # smoothing for Heaviside function used in Phase 3
+        delta_bar = 0.415 # scaled threshold for Heaviside function
+        density = 1e-11 # N/mm3, For explicit simulation, a very small density is given to make it a quasi-static problem.
+        
+        White_Matter_Properties = (mu_w, lambda_w, G_GM, gamma_1, gamma, T_1, T_2, 
+                                   MajorAxis_W, MinorAxis_W, b_tilde, N_gyri,
+                                   alpha, delta, alpha_bar, delta_bar)
+        Gray_Matter_Properties = (mu_g, lambda_g, G_GM, T_1, MajorAxis_G, MinorAxis_G)
 
-    Depth = 1.0 # Units: 1/10 mm
-    Dimensions = [MajorAxis_W,MinorAxis_G,MinorAxis_W,Depth] 
-    # ======================================================
-    # Mesh Parameters
-    # ======================================================
-    bias = 3                                                        # bias through width of subcortex
-    ecortex = 7                                                    # number of elements in cortex                                                
-    cortex_size = CT/ecortex # size of element in cortex
-    Mesh = [bias,cortex_size]
-    # For biased subcortex mesh
-    minsize = 0.2 
-    maxsize = 2.0  
-    # ======================================================
-    # Step Parameters
-    # ======================================================
-    StepName = 'growth'
-    TotalTime = 1
-    MS = MS_list[j] # Mass scaling necessary for stable simulations
-    Step = [StepName, TotalTime, MS]
-
-    # ======================================================
-    # Material Parameters
-    # ======================================================
-    CorticalMaterial = 'GRAY'
-    SubCortMaterial = 'WHIT'
-  
-    GwByGgr = 1.0 # gamma parameter for pulling effect due to progenitors
-    progen_grow_time = 0.1 # intial growth time less than which progenitors expand in WM only
-    smoothening = 10.0 # For smoothening in heaviside function, \bar{\alpha}
-    scaled_thresh = 0.415 # parameter for phi growth rate function -> This is used in vumat_push.f to calculate scaled_thresh which is the same as \bar{\delta} and \delta in Table 1.
-    shear_g = 0.002 # N/mm2 shear modulus for cortex (Gray matter)
-    shear_w = 0.001 # N/mm2  shear modulus for subcortex (White matter)
-    lambda_w = 0.1 # N/mm2 
-    lambda_g = 0.2 # N/mm2 
-    Gctx = 1.5 # growth rate constant for cortex in sim time 0 to 1, which translates to 0.084/day in Table 1.
-    N_gyri = 4.0 # Number of proliferation zones.
-    gamma_push = gamma_push_list[j] # gamma parameter for pushing effect due to astrocytes
-    reduction = 4.0 # parameter \tilde{b} in 1/10 mm units
-    alpha = 0.4 # standard deviation of gauss growth rate function
-    push_grow_time = 0.45 # time after which pull effect comes into play in WM @ P6
-    density = 1e-11 # N/mm3, For explicit simulation, a very small density is given to make it a quasi-static problem.
-    Materials = [CorticalMaterial, SubCortMaterial]
-
-    # ======================================================
-    # Boundary Condition to keep KE < 10% of Total Energy
-    # ======================================================
-    VP = VP_list[j] 
-    # ======================================================
+        # ======================================================
+        # Viscous Pressure (to keep kinetic energy < 10% of total)
+        # ======================================================
+        Viscous_Pressure = Viscous_Pressure_list[j] 
+        
+        # ======================================================
         # Model
-    # ======================================================
-    ModelName = "QuarterEllipse_pull_gammahat{}".format(job_list_name[j])
-    PartName = 'Part-1'
-    InstanceName = 'Part-1'
-    JobName = "QuarterEllipse_pull_gammahat{}".format(job_list_name[j])
-    # ======================================================
-    # Call Functions
-    # ======================================================
-    Create_Quarter_Ellipse(ModelName, PartName, Dimensions)
-    Create_Rigid_wall(ModelName)
-    Create_Step(ModelName, Step)
-    Create_Material(ModelName, Materials)
-    Create_Section(ModelName, PartName, Dimensions, Materials)
-    Create_Assembly(ModelName, PartName, InstanceName, Dimensions)
-    Create_Sets(ModelName, PartName, Dimensions)
-    Create_Boundary_Conditions(ModelName, InstanceName, Step)
-    Create_VP(ModelName, InstanceName, Step, VP)
-    Create_Contact(ModelName, InstanceName, Step, Dimensions)   
-    Create_Mesh(ModelName, PartName, InstanceName, Step, Dimensions,minsize,maxsize)
-    Create_Output(ModelName, PartName, InstanceName, Step)
-    Create_Job(ModelName, JobName)
+        # ======================================================
+        ModelName = "QuarterEllipse_push_gammahat{}".format(Job_Name_list[j])
+        PartName = 'Part-1'
+        InstanceName = 'Part-1'
+        JobName = ModelName
+        
+        # ======================================================
+        # Call Functions
+        # ======================================================
+        Create_Quarter_Ellipse(ModelName, PartName, Dimensions)
+        Create_Rigid_wall(ModelName)
+        Create_Step(ModelName, Step)
+        Create_Material(ModelName, White_Matter_Properties, Gray_Matter_Properties)
+        Create_Section(ModelName, PartName, Dimensions)
+        Create_Assembly(ModelName, PartName, InstanceName, Dimensions)
+        Create_Sets(ModelName, PartName, Dimensions)
+        Create_Boundary_Conditions(ModelName, InstanceName, Step)
+        Create_Viscous_Pressure(ModelName, InstanceName, Step, Viscous_Pressure)
+        Create_Contact(ModelName, InstanceName, Step, Dimensions)   
+        Create_Mesh(ModelName, PartName, InstanceName, Step, Dimensions,minsize,maxsize)
+        Create_Output(ModelName, PartName, InstanceName, Step)
+        Create_Job(ModelName, JobName)
