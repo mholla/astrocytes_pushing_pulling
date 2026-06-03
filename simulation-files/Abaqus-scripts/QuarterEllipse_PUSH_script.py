@@ -31,21 +31,15 @@ def Create_Quarter_Ellipse(ModelName, PartName, Dimensions):
     mdb.Model(name=ModelName, modelType=STANDARD_EXPLICIT)
 
     s1 = mdb.models[ModelName].ConstrainedSketch(name='__profile__', sheetSize=100.0)
-
-
     g, v, d, c = s1.geometry, s1.vertices, s1.dimensions, s1.constraints
     s1.setPrimaryObject(option=STANDALONE)
     s1.EllipseByCenterPerimeter(center=(0.0, 0.0), axisPoint1=(MajorAxis_G, 0.0),
         axisPoint2=(0.0, MinorAxis_G))
     p = mdb.models[ModelName].Part(name='Part-1', dimensionality=THREE_D,
         type=DEFORMABLE_BODY)
-    p = mdb.models[ModelName].parts['Part-1']
     p.BaseSolidExtrude(sketch=s1, depth=Depth)
     s1.unsetPrimaryObject()
-    p = mdb.models[ModelName].parts['Part-1']
 
-
-    p = mdb.models[ModelName].parts['Part-1']
     f, e, d1 = p.faces, p.edges, p.datums
     t = p.MakeSketchTransform(sketchPlane=f[1], sketchUpEdge=e[0],
         sketchPlaneSide=SIDE1, origin=(0.0, 0.0, 2.0))
@@ -53,7 +47,6 @@ def Create_Quarter_Ellipse(ModelName, PartName, Dimensions):
         sheetSize=187.48, gridSpacing=4.68, transform=t)
     g, v, d, c = s.geometry, s.vertices, s.dimensions, s.constraints
     s.setPrimaryObject(option=SUPERIMPOSE)
-    p = mdb.models[ModelName].parts['Part-1']
     p.projectReferencesOntoSketch(sketch=s, filter=COPLANAR_EDGES)
     s.Line(point1=(36.0, 0.0), point2=(0.0, 0.0))
     s.HorizontalConstraint(entity=g[3], addUndoState=False)
@@ -64,29 +57,23 @@ def Create_Quarter_Ellipse(ModelName, PartName, Dimensions):
     s.CoincidentConstraint(entity1=v[2], entity2=g[2], addUndoState=False)
     s.EllipseByCenterPerimeter(center=(0.0, 0.0), axisPoint1=(MajorAxis_W, 0.0),
         axisPoint2=(0.0, MinorAxis_W))
-    p = mdb.models[ModelName].parts['Part-1']
-    f = p.faces
     pickedFaces = f.getSequenceFromMask(mask=('[#2 ]', ), )
     e1, d2 = p.edges, p.datums
     p.PartitionFaceBySketch(sketchUpEdge=e1[0], faces=pickedFaces, sketch=s)
     s.unsetPrimaryObject()
 
-
-    p = mdb.models[ModelName].parts['Part-1']
     c = p.cells
     pickedCells = c.getSequenceFromMask(mask=('[#1 ]', ), )
     v1, e, d1 = p.vertices, p.edges, p.datums
     p.PartitionCellByPlaneThreePoints(point1=v1[3], point2=v1[4], point3=v1[5],
         cells=pickedCells)
 
-    p = mdb.models[ModelName].parts['Part-1']
     c = p.cells
     pickedCells = c.getSequenceFromMask(mask=('[#2 ]', ), )
     v2, e1, d2 = p.vertices, p.edges, p.datums
     p.PartitionCellByPlaneThreePoints(point1=v2[4], point2=v2[7],
         cells=pickedCells, point3=p.InterestingPoint(edge=e1[7], rule=MIDDLE))
 
-    p = mdb.models[ModelName].parts['Part-1']
     c = p.cells
     pickedCells = c.getSequenceFromMask(mask=('[#4 ]', ), )
     e, d1 = p.edges, p.datums
@@ -94,11 +81,9 @@ def Create_Quarter_Ellipse(ModelName, PartName, Dimensions):
     p.PartitionCellByExtrudeEdge(line=e[3], cells=pickedCells, edges=pickedEdges,
         sense=FORWARD)
 
-    p = mdb.models[ModelName].parts['Part-1']
     f1 = p.faces
     p.RemoveFaces(faceList = f1[5:6]+f1[11:13]+f1[14:15]+f1[16:18],
         deleteCells=False)
-    p = mdb.models[ModelName].parts['Part-1']
     f = p.faces
     p.RemoveFaces(faceList = f[5:6]+f[7:8]+f[12:13], deleteCells=False)
 
@@ -112,7 +97,6 @@ def Create_Rigid_wall(ModelName):
 
     s1.rectangle(point1=(0.0, -20.0), point2=(-2.0, 40.0))
     p = mdb.models[ModelName].Part(name='wall', dimensionality=THREE_D, type=DISCRETE_RIGID_SURFACE)
-    p = mdb.models[ModelName].parts['wall']
     p.BaseShell(sketch=s1)
     # Reference point
     v1, e, d1, n = p.vertices, p.edges, p.datums, p.nodes
