@@ -285,63 +285,57 @@ def Create_Sets(ModelName, PartName, Dimensions):
 
 #######################################################################################
 #######################################################################################
-def Create_Boundary_Conditions(ModelName, InstanceName, Step):
-    StepName, TotalTime, Mass_Scaling = Step
-
+def Create_Boundary_Conditions(ModelName, InstanceName):
     a = mdb.models[ModelName].rootAssembly
 
     # Add displacement and fixed bcs
 
     region = a.instances[InstanceName].sets['back']
-    mdb.models[ModelName].DisplacementBC(name='back', createStepName=StepName, region=region, u1=UNSET, u2=UNSET, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET, amplitude='Amp-1', fixed=OFF, distributionType=UNIFORM, fieldName='', localCsys=None)
+    mdb.models[ModelName].DisplacementBC(name='back', createStepName='growth', region=region, u1=UNSET, u2=UNSET, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET, amplitude='Amp-1', fixed=OFF, distributionType=UNIFORM, fieldName='', localCsys=None)
 
     region = a.instances[InstanceName].sets['bottom']
-    mdb.models[ModelName].DisplacementBC(name='bottom', createStepName=StepName, region=region, u1=UNSET, u2=0.0, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET, amplitude='Amp-1', fixed=OFF, distributionType=UNIFORM, fieldName='', localCsys=None)
+    mdb.models[ModelName].DisplacementBC(name='bottom', createStepName='growth', region=region, u1=UNSET, u2=0.0, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET, amplitude='Amp-1', fixed=OFF, distributionType=UNIFORM, fieldName='', localCsys=None)
 
     region = a.instances[InstanceName].sets['side-1']
-    mdb.models[ModelName].DisplacementBC(name='side-1', createStepName=StepName, region=region, u1=0.0, u2=UNSET, u3=UNSET, ur1=UNSET, ur2=UNSET, ur3=UNSET, amplitude='Amp-1', fixed=OFF, distributionType=UNIFORM, fieldName='', localCsys=None)
+    mdb.models[ModelName].DisplacementBC(name='side-1', createStepName='growth', region=region, u1=0.0, u2=UNSET, u3=UNSET, ur1=UNSET, ur2=UNSET, ur3=UNSET, amplitude='Amp-1', fixed=OFF, distributionType=UNIFORM, fieldName='', localCsys=None)
 
 
     region = a.instances[InstanceName].sets['cortex_front']
-    mdb.models[ModelName].DisplacementBC(name='cortex_front', createStepName=StepName, region=region, u1=UNSET, u2=UNSET, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET, amplitude='Amp-1', fixed=OFF, distributionType=UNIFORM, fieldName='', localCsys=None)
+    mdb.models[ModelName].DisplacementBC(name='cortex_front', createStepName='growth', region=region, u1=UNSET, u2=UNSET, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET, amplitude='Amp-1', fixed=OFF, distributionType=UNIFORM, fieldName='', localCsys=None)
 
     region = a.instances[InstanceName].sets['subcortex_front']
-    mdb.models[ModelName].DisplacementBC(name='subcortex_front', createStepName=StepName, region=region, u1=UNSET, u2=UNSET, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET, amplitude='Amp-1', fixed=OFF, distributionType=UNIFORM, fieldName='', localCsys=None)
+    mdb.models[ModelName].DisplacementBC(name='subcortex_front', createStepName='growth', region=region, u1=UNSET, u2=UNSET, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET, amplitude='Amp-1', fixed=OFF, distributionType=UNIFORM, fieldName='', localCsys=None)
 
     region = a.instances['wall-1'].sets['ref']
-    mdb.models[ModelName].EncastreBC(name='ref-left', createStepName=StepName, region=region, localCsys=None)
+    mdb.models[ModelName].EncastreBC(name='ref-left', createStepName='growth', region=region, localCsys=None)
 
     region = a.instances['wall-2'].sets['ref']
-    mdb.models[ModelName].EncastreBC(name='ref-right', createStepName=StepName, region=region, localCsys=None)
-    mdb.models[ModelName].boundaryConditions['back'].move(StepName,
+    mdb.models[ModelName].EncastreBC(name='ref-right', createStepName='growth', region=region, localCsys=None)
+    mdb.models[ModelName].boundaryConditions['back'].move('growth',
         'Initial')
-    mdb.models[ModelName].boundaryConditions['bottom'].move(StepName,
+    mdb.models[ModelName].boundaryConditions['bottom'].move('growth',
         'Initial')
-    mdb.models[ModelName].boundaryConditions['cortex_front'].move(StepName,
+    mdb.models[ModelName].boundaryConditions['cortex_front'].move('growth',
         'Initial')
-    mdb.models[ModelName].boundaryConditions['ref-left'].move(StepName,
+    mdb.models[ModelName].boundaryConditions['ref-left'].move('growth',
         'Initial')
-    mdb.models[ModelName].boundaryConditions['ref-right'].move(StepName,
+    mdb.models[ModelName].boundaryConditions['ref-right'].move('growth',
         'Initial')
-    mdb.models[ModelName].boundaryConditions['side-1'].move(StepName,
+    mdb.models[ModelName].boundaryConditions['side-1'].move('growth',
         'Initial')
-    mdb.models[ModelName].boundaryConditions['subcortex_front'].move(StepName
+    mdb.models[ModelName].boundaryConditions['subcortex_front'].move('growth'
         , 'Initial')
 
 #######################################################################################
 #######################################################################################
-def Create_Viscous_Pressure(ModelName, InstanceName, Step, Viscous_Pressure):
-    StepName, TotalTime, Mass_Scaling = Step
-
+def Create_Viscous_Pressure(ModelName, InstanceName, Viscous_Pressure):
     a = mdb.models[ModelName].rootAssembly
     region = a.instances[InstanceName].surfaces['top_s']
-    mdb.models[ModelName].Pressure(name='Viscous Pressure', createStepName=StepName, region=region, distributionType=VISCOUS, field='', magnitude=Viscous_Pressure, amplitude='Amp-1')
+    mdb.models[ModelName].Pressure(name='Viscous Pressure', createStepName='growth', region=region, distributionType=VISCOUS, field='', magnitude=Viscous_Pressure, amplitude='Amp-1')
 
 #######################################################################################
 #######################################################################################
-def Create_Contact(ModelName, InstanceName, Step, Dimensions):
-    StepName, TotalTime, Mass_Scaling = Step
-
+def Create_Contact(ModelName, InstanceName):
     a = mdb.models[ModelName].rootAssembly
 
     mdb.models[ModelName].ContactProperty('IntProp-1')
@@ -354,7 +348,7 @@ def Create_Contact(ModelName, InstanceName, Step, Dimensions):
     mdb.models[ModelName].interactionProperties['IntProp-2'].NormalBehavior(pressureOverclosure=HARD, allowSeparation=ON, constraintEnforcementMethod=DEFAULT)
 
     region = a.instances[InstanceName].surfaces['top_s']
-    mdb.models[ModelName].SelfContactExp(name='Int-1', createStepName=StepName, surface=region, mechanicalConstraint=KINEMATIC, interactionProperty='IntProp-1')
+    mdb.models[ModelName].SelfContactExp(name='Int-1', createStepName='growth', surface=region, mechanicalConstraint=KINEMATIC, interactionProperty='IntProp-1')
 
     region1= a.instances['wall-1'].surfaces['s_wall']#a.Surface(side1Faces=side1Faces1, name='left-wall')
     region2=a.instances[InstanceName].surfaces['top_s']
@@ -366,8 +360,9 @@ def Create_Contact(ModelName, InstanceName, Step, Dimensions):
 
 #######################################################################################
 #######################################################################################
-def Create_Mesh(ModelName, PartName, InstanceName, Step, Dimensions, minsize, maxsize, cortex_size):
+def Create_Mesh(ModelName, PartName, InstanceName, Dimensions, Mesh, minsize, maxsize):
     MajorAxis_G, MajorAxis_W, MinorAxis_G, MinorAxis_W, Depth = Dimensions
+    bias, cortex_size = Mesh
 
     # Rigif plane mesh
     p = mdb.models[ModelName].parts['wall']
@@ -419,23 +414,21 @@ def Create_Mesh(ModelName, PartName, InstanceName, Step, Dimensions, minsize, ma
 
 #######################################################################################
 #######################################################################################
-def Create_Output(ModelName, PartName, InstanceName, Step):
-    StepName, TotalTime, Mass_Scaling = Step
-
+def Create_Output(ModelName, PartName, InstanceName):
     p = mdb.models[ModelName].parts[PartName]
 
     # Assign desired output to sets
     regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstanceName].sets['whole-domain']
-    mdb.models[ModelName].FieldOutputRequest(name='F-Output-2', createStepName=StepName, variables=('S', 'PE', 'LE', 'U', 'ELSE', 'COORD','SDV','EVOL'),  numIntervals=500, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
+    mdb.models[ModelName].FieldOutputRequest(name='F-Output-2', createStepName='growth', variables=('S', 'PE', 'LE', 'U', 'ELSE', 'COORD','SDV','EVOL'),  numIntervals=500, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
 
     regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstanceName].sets['Cortex']
-    mdb.models[ModelName].FieldOutputRequest(name='F-Output-3', createStepName=StepName, variables=('ELSE', 'COORD', 'U','EVOL'), numIntervals=500, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
+    mdb.models[ModelName].FieldOutputRequest(name='F-Output-3', createStepName='growth', variables=('ELSE', 'COORD', 'U','EVOL'), numIntervals=500, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
 
     regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstanceName].sets['Subcortex']
-    mdb.models[ModelName].FieldOutputRequest(name='F-Output-4', createStepName=StepName, variables=('ELSE', 'COORD', 'U','EVOL'), numIntervals=500, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
+    mdb.models[ModelName].FieldOutputRequest(name='F-Output-4', createStepName='growth', variables=('ELSE', 'COORD', 'U','EVOL'), numIntervals=500, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
 
     regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstanceName].sets['whole-domain']
-    mdb.models[ModelName].HistoryOutputRequest(name='H-Output-1', createStepName=StepName, variables=('ALLIE', 'ALLKE'), numIntervals=1000, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
+    mdb.models[ModelName].HistoryOutputRequest(name='H-Output-1', createStepName='growth', variables=('ALLIE', 'ALLKE'), numIntervals=1000, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
 
 #######################################################################################
 #######################################################################################
@@ -546,9 +539,9 @@ if __name__ == '__main__':
         Create_Section(ModelName, PartName, Dimensions)
         Create_Assembly(ModelName, PartName, InstanceName, Dimensions)
         Create_Sets(ModelName, PartName, Dimensions)
-        Create_Boundary_Conditions(ModelName, InstanceName, Step)
-        Create_Viscous_Pressure(ModelName, InstanceName, Step, Viscous_Pressure)
-        Create_Contact(ModelName, InstanceName, Step, Dimensions)
-        Create_Mesh(ModelName, PartName, InstanceName, Step, Dimensions, minsize, maxsize, cortex_size)
-        Create_Output(ModelName, PartName, InstanceName, Step)
+        Create_Boundary_Conditions(ModelName, InstanceName)
+        Create_Viscous_Pressure(ModelName, InstanceName, Viscous_Pressure)
+        Create_Contact(ModelName, InstanceName)
+        Create_Mesh(ModelName, PartName, InstanceName, Dimensions, Mesh, minsize, maxsize)
+        Create_Output(ModelName, PartName, InstanceName)
         Create_Job(ModelName, JobName)
