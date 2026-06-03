@@ -2,9 +2,9 @@
       ! unit system: mm-N-MPa
       ! dimension: plane strain
       ! documentation: 'Astrocytes in white matter ...'
-      
+
       !****************************************************************
-      
+
       module GlobalStorage
       ! this number must >= the number of elements in the mesh
       ! otherwise, the simulation will crash   
@@ -12,7 +12,7 @@
       end module  
 
       !****************************************************************
-      
+
       subroutine vumat (
             ! read only
      +      jblock, ndir, nshr, nstatev, nfieldv, nprops, lanneal, 
@@ -28,13 +28,13 @@
 
       dimension jblock(*), coordMp(*), charLength(*), 
      +      props(nprops), density(*), strainInc(*),
-     +      relSpinInc(*), tempOld(*), stretchOld(*), 
+     +      relSpinInc(*), tempOld(*), stretchOld(*),
      +      defgradOld(*), fieldOld(*), stressOld(*),
      +      stateOld(*), enerInternOld(*), enerInelasOld(*), 
      +      tempNew(*), stretchNew(*), defgradNew(*),
      +      fieldNew(*), stressNew(*), stateNew(*),
      +      enerInternNew(*), enerInelasNew(*)
-      
+
       character*80 cmname
 
       parameter (     
@@ -48,7 +48,7 @@
       if (cmname(1:4) .eq. 'WHIT') then
          call  vumat_white (jblock(i_umt_nblock),
      +      ndir, nshr, nstatev, nprops, 
-     +      stepTime, totalTime, dt, coordMp, 
+     +      stepTime, totalTime, dt, coordMp,
      +      props, density, strainInc, 
      +      stressOld, stateOld, enerInternOld, enerInelasOld,
      +      stretchNew, defgradNew, 
@@ -57,7 +57,7 @@
       else if(cmname(1:4) .eq. 'GRAY') then
          call  vumat_gray (jblock(i_umt_nblock),
      +      ndir, nshr, nstatev, nprops, 
-     +      stepTime, totalTime, dt, coordMp, 
+     +      stepTime, totalTime, dt, coordMp,
      +      props, density, strainInc, 
      +      stressOld, stateOld, enerInternOld, enerInelasOld,
      +      stretchNew, defgradNew, 
@@ -66,13 +66,13 @@
       endif
 
       end subroutine vumat
-      
+
       !****************************************************************
-      
+
       subroutine vumat_white (
             ! read only
      +      nblock, ndir, nshr, nstatev, nprops, 
-     +      stepTime, totalTime, dt, coordMp, 
+     +      stepTime, totalTime, dt, coordMp,
      +      props, density, strainInc, 
      +      stressOld, stateOld, enerInternOld, enerInelasOld,
      +      stretchNew, defgradNew, 
@@ -93,7 +93,7 @@
      +      stressNew(nblock,ndir+nshr), stateNew(nblock,nstatev),
      +      enerInternNew(nblock), enerInelasNew(nblock), 
      +      nElement(nblock)
-      
+
       ! local quantities
       integer i, km
       real*8 F_tau(3,3), detF, stress_power
@@ -103,11 +103,11 @@
       real*8 theta_dot_1, f_2, thetag_t, thetag_tau
       real*8 coordx, coordy, coordz, maj_axis, min_axis
       real*8 zero, one, two, three, half, third, Pi
-      
+
       ! constants
       parameter(zero=0.d0, one=1.d0, two=2.d0, three=3.d0,
      +   half=0.5d0, third=1.d0/3.d0, Pi=3.1415926d0)
-      
+
       ! WM ellipse parameters
       maj_axis = props(8) ! WM major axis (mm)
       min_axis = props(9) ! WM minor axis (mm)
@@ -187,7 +187,7 @@
      +                       coordx, coordy, coordz, thetag_t,
      +                       theta_dot_1, f_2, thetag_tau, sigma_tau)
          endif
-         !---------------------------------------------------------------
+         !-------------------------------------------------------------
 
          ! define stress at end of current increment
          ! (ABAQUS/Explicit uses Cauchy stress in corotational frame, R^T . sigma . R
@@ -210,8 +210,8 @@
                endif
             endif
          endif
-         
-         ! rotate stress tensor and get radial and tangential outputs 
+
+         ! rotate stress tensor and get radial and tangential outputs
          ! S' = R.S.R^T
          N_R(1,1) = two*coordx/maj_axis**two
          N_R(2,1) = two*coordy/min_axis**two
@@ -232,8 +232,8 @@
          call mdet(F_tau,detF)
 
          stateNew(km,1) = thetag_tau ! growth parameter at end of increment
-         stateNew(km,2) = coordx  
-         stateNew(km,3) = coordy  
+         stateNew(km,2) = coordx
+         stateNew(km,3) = coordy
          stateNew(km,4) = coordz 
          stateNew(km,5) = detF   
          stateNew(km,6) = (sigma_tau(1,1)+sigma_tau(2,2)+sigma_tau(3,3))/three
@@ -265,9 +265,9 @@
 
       enddo ! end loop over material points
       end subroutine vumat_white
-      
+
       !****************************************************************
-      
+
       subroutine vumat_gray (
             ! read only
      +      nblock, ndir, nshr, nstatev, nprops, 
@@ -284,17 +284,15 @@
       include 'vaba_param.inc'
       ! implicit none 
 
-      dimension coordMp(nblock,*), 
+      dimension coordMp(nblock,*),
      +      props(nprops), density(nblock), strainInc(nblock,ndir+nshr),
-     +      stressOld(nblock,ndir+nshr),
-     +      stateOld(nblock,nstatev), enerInternOld(nblock),
-     +      enerInelasOld(nblock), 
-     +      stretchNew(nblock,ndir+nshr),
-     +      defgradNew(nblock,ndir+nshr+nshr),
+     +      stressOld(nblock,ndir+nshr), stateOld(nblock,nstatev), 
+     +      enerInternOld(nblock), enerInelasOld(nblock), 
+     +      stretchNew(nblock,ndir+nshr), defgradNew(nblock,ndir+nshr+nshr),
      +      stressNew(nblock,ndir+nshr), stateNew(nblock,nstatev),
-     +      enerInternNew(nblock), enerInelasNew(nblock), 
+     +      enerInternNew(nblock), enerInelasNew(nblock),
      +      nElement(nblock)
-      
+
       ! local quantities
       integer i, km
       real*8 F_tau(3,3), detF, stress_power
@@ -302,10 +300,10 @@
       real*8 thetag_t, thetag_tau, sigma_tau(3,3)
       real*8 coordx, coordy, coordz
       real*8 zero, one, two, three, half, third
- 
+
       ! constants
       parameter(zero=0.d0, one=1.d0, two=2.d0, three=3.d0, 
-     +      half=0.5d0, third=1.d0/3.d0)
+     +     half=0.5d0, third=1.d0/3.d0)
 
       ! pour initial coordinates into the global variable
       if (totalTime.lt.dt) then
@@ -413,7 +411,7 @@
          stateNew(km,2) = coordx
          stateNew(km,3) = coordy
          stateNew(km,4) = coordz
-         stateNew(km,5) = detF       
+         stateNew(km,5) = detF
          stateNew(km,6) = (sigma_tau(1,1)+sigma_tau(2,2)+sigma_tau(3,3))/three
 
          ! update the specific internal energy
@@ -442,13 +440,13 @@
       end subroutine vumat_gray
 
       !****************************************************************
-      
-      subroutine integ_white(props, nprops, F_tau, dtime, totalTime, 
-     +                       coordx, coordy, coordz, thetag_t, 
+
+      subroutine integ_white(props, nprops, F_tau, dtime, totalTime,
+     +                       coordx, coordy, coordz, thetag_t,
      +                       theta_dot_1, f_2, thetag_tau, sigma_tau
      +                       )
-      
-      implicit none
+
+     implicit none
 
       integer nitl, nprops
 
@@ -464,7 +462,7 @@
       real*8 Fg_tau(3,3), Jg, Fginv(3,3)
       real*8 Fe_tau(3,3), Je, Be_tau(3,3)
       real*8 detF, lnJe, trMe, f_phi
-      real*8 maj_min_ratio, a_tilde, rad, r_tilde, psi
+      real*8 a_tilde, rad, r_tilde, psi
       real*8 growth_crit, res, dres, phig, dphig, xtol
       real*8 thetag_dum, theta_dot_3_fac
       real*8 Iden(3,3), zero, one, two, four, nine, half, third
@@ -488,12 +486,11 @@
       min_axis  = props(9)  ! WM minor axis (b)
       b_tilde   = props(10) ! scaling factor used in calculating r_tilde
       N_gyri    = props(11) ! number of proliferation zones
-      alpha     = props(12) ! standard deviation of Gauss growth rate function
-      delta     = props(13) ! scaled threshold for Heaviside function
+      alpha     = props(12) ! standard deviation of Gauss function
+      delta     = props(13) ! scaled threshold for Gauss function
 
       ! calculate other dimensions
-      maj_min_ratio = maj_axis/min_axis
-      a_tilde = b_tilde*maj_min_ratio
+      a_tilde = b_tilde*(maj_axis/min_axis)
 
       psi = atan(coordy/coordx)
       rad = sqrt(coordx**two + coordy**two)
@@ -501,13 +498,14 @@
      +     ((maj_axis - a_tilde)*cos(psi))**two 
      +   + ((min_axis - b_tilde)*sin(psi))**two )
 
-      ! calculate growth rates
+      ! calculate growth rate in Phase 1
       call gauss(r_tilde,delta,alpha,f_phi)
       f_2 = sin(four*psi*(N_gyri - half)) + one
-      theta_dot_1 = (G_GM*gamma_1)*half*f_phi*f_2 ! Phase 1
-      theta_dot_3_fac = gamma_hat*G_GM/mu ! factor in Phase 3 (pulling)
+      theta_dot_1 = (G_GM*gamma_1)*half*f_phi*f_2 
 
+      ! calculate growth rate in Phase 3 (pulling)
       call mdet(F_tau,detF)
+      theta_dot_3_fac = gamma_hat*G_GM/mu 
 
       if (totalTime.le.T_1) then ! Phase 1
          thetag_tau = thetag_t + (theta_dot_1)*dtime
@@ -567,16 +565,16 @@
       sigma_tau = ((lambda*dlog(Je) - mu)*Iden + mu*Be_tau)/Je
 
       end subroutine integ_white
-      
+
       !****************************************************************
-      
+
       subroutine integ_gray(props, nprops, F_tau, dtime, totalTime,
-     +                      coordx, coordy, coordz, thetag_t, 
+     +                      coordx, coordy, coordz, thetag_t,
      +                      thetag_tau, sigma_tau)
 
       implicit none
 
-      ! arguments passed in to read 
+      ! arguments passed in to read
       integer nprops
       real*8 props(nprops), F_tau(3,3), dtime, totalTime
       real*8 coordx, coordy, coordz, thetag_t
@@ -589,7 +587,7 @@
       real*8 Fg_tau(3,3), Jg, Fginv(3,3)
       real*8 Fe_tau(3,3), Je, Be_tau(3,3)
       real*8 Iden(3,3), zero, one, two, half, third
-      
+
       ! constants
       parameter(zero=0.d0, one=1.d0, two=2.d0, half=0.5d0, third=1.d0/3.d0)
       call onem(Iden)
@@ -629,26 +627,26 @@
       sigma_tau = ((lambda*dlog(Je) - mu)*Iden + mu*Be_tau)/Je
 
       end subroutine integ_gray
-      
+
       !****************************************************************
 
       subroutine gauss(x, mean, sigma, y)
       ! Gaussian curve evaluated at x with given mean and sigma
-      
+
       implicit none
       real*8 x, mean, sigma, y
       real*8 half, two, Pi
       parameter(half=0.5d0, two=2.d0, Pi=3.1415926d0)
-      
+
       y = exp(-half * ((x - mean) / sigma)**two) / (sigma * dsqrt(two*Pi))
 
       end subroutine gauss      
 
       !****************************************************************
-      
+
       subroutine onem(A)
       ! set A to the 3x3 identity matrix
-      
+
       implicit none
       real*8 A(3,3)
         
@@ -660,10 +658,10 @@
       end
 
       !****************************************************************
-      
+
       subroutine mtrans(A, Atrans)
       ! compute the transpose of 3x3 matrix A into Atrans.
-      
+
       implicit none
       real*8 A(3,3), Atrans(3,3)
       integer i, j
@@ -677,10 +675,10 @@
       end
 
       !****************************************************************
-      
+
       subroutine mdet(A, det)
       ! compute the determinant of 3x3 matrix A
-      
+
       implicit none
       real*8 A(3,3), det
 
@@ -692,10 +690,10 @@
       end
 
       !****************************************************************
-      
+
       subroutine m3inv(A, Ainv)
       ! compute the inverse of 3x3 matrix A into Ainv; stops if singular
-      
+
       implicit none
       real*8 A(3,3), Ainv(3,3), det, Acofac(3,3), Aadj(3,3)
       integer i, j
@@ -718,10 +716,10 @@
       end
 
       !****************************************************************
-      
+
       subroutine mcofac(A, Acofac)
       ! compute the cofactor matrix of 3x3 matrix A for inversion
-      
+
       implicit none
       real*8 A(3,3), Acofac(3,3)
 

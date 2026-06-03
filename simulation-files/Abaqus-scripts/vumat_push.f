@@ -1,17 +1,17 @@
       ! author: Karan Taneja
       ! unit system: mm-N-MPa
       ! dimension: plane strain
-      ! documentation: 'Astrocytes in white matter  ...'
+      ! documentation: 'Astrocytes in white matter ...'
 
-      !**********************************************************************
-      
+      !****************************************************************
+
       module GlobalStorage
       ! this number must >= the number of elements in the mesh
       ! otherwise, the simulation will crash   
       real*8 inicoord(46000,3)
       end module  
-      
-      !***********************************************************************
+
+      !****************************************************************
 
       subroutine vumat (
             ! read only
@@ -34,8 +34,8 @@
      +      tempNew(*), stretchNew(*), defgradNew(*),
      +      fieldNew(*), stressNew(*), stateNew(*),
      +      enerInternNew(*), enerInelasNew(*)
- 
-       character*80 cmname
+
+      character*80 cmname
 
       parameter (     
      +      i_umt_nblock = 1,
@@ -66,9 +66,9 @@
       endif
 
       end subroutine vumat
-      
-      !***********************************************************************
-      
+
+      !****************************************************************
+
       subroutine vumat_white (
             ! read only
      +      nblock, ndir, nshr, nstatev, nprops, 
@@ -106,14 +106,14 @@
 
       ! constants
       parameter(zero=0.d0, one=1.d0, two=2.d0, three=3.d0, 
-     +      half=0.5d0, third=1.d0/3.d0, Pi=3.1415926d0)
+     +   half=0.5d0, third=1.d0/3.d0, Pi=3.1415926d0)
 
-      ! WM ellipse params
+      ! WM ellipse parameters
       maj_axis = props(8) ! WM major axis (mm)
       min_axis = props(9) ! WM minor axis (mm)
 
       ! pour initial coordinates into the global variable matrix 
-      if (totalTime.lt. dt) then
+      if (totalTime.lt.dt) then
          do km=1,nblock
             inicoord(nElement(km),1) = coordMp(km,1)
             inicoord(nElement(km),2) = coordMp(km,2)
@@ -123,8 +123,8 @@
 
       ! start loop over material points:
       do km=1,nblock
-         
-         ! copy new deformation gradient
+
+         ! copy new deformation gradient (at end of current increment)
          F_tau(1,1) = defgradNew(km,1)
          F_tau(2,2) = defgradNew(km,2)
          F_tau(3,3) = defgradNew(km,3)
@@ -163,7 +163,7 @@
 
          ! initialization (dummy) step: set growth parameter at t=0
          if((totalTime.eq.zero).and.(stepTime.eq.zero)) then
-            stateOld(km,1)   = one 
+            stateOld(km,1) = one 
          endif
 
          ! read old growth parameter and coordinates
@@ -172,9 +172,9 @@
          coordy = inicoord(nElement(km),2)
          coordz = inicoord(nElement(km),3)
 
-         !---------------------------------------------------------------
+         !-------------------------------------------------------------
          ! perform the time integration and compute the
-         ! constitutive response based on the material model.
+         ! constitutive response based on the material model
 
          if((totalTime.eq.zero).and.(stepTime.eq.zero)) then
             ! initialization (dummy) step: pass zero timestep
@@ -187,12 +187,12 @@
      +                       coordx, coordy, coordz, thetag_t,
      +                       theta_dot_1, f_2, thetag_tau, sigma_tau)
          endif
-         !---------------------------------------------------------------
+         !-------------------------------------------------------------
 
          ! define stress at end of current increment
          ! (ABAQUS/Explicit uses Cauchy stress in corotational frame, R^T . sigma . R
          ! see ABAQUS User Subroutines Manual, VUMAT, Special Considerations for Hyperelasticity
-         
+
          call m3inv(U_tau, U_inv)
          R_tau = matmul(F_tau, U_inv)
          sigma_tau = matmul(transpose(R_tau), matmul(sigma_tau, R_tau))
@@ -232,13 +232,13 @@
          call mdet(F_tau,detF)
 
          stateNew(km,1) = thetag_tau ! growth parameter at end of increment
-         stateNew(km,2) = coordx 
-         stateNew(km,3) = coordy 
+         stateNew(km,2) = coordx
+         stateNew(km,3) = coordy
          stateNew(km,4) = coordz 
          stateNew(km,5) = detF   
          stateNew(km,6) = (sigma_tau(1,1)+sigma_tau(2,2)+sigma_tau(3,3))/three
          stateNew(km,7) = theta_dot_1
-         stateNew(km,8) = f_2   
+         stateNew(km,8) = f_2
          stateNew(km,9) = sigma_rad
          stateNew(km,10) = sigma_tan   
 
@@ -265,16 +265,16 @@
 
       enddo ! end loop over material points
       end subroutine vumat_white
-      
-      !***********************************************************************
-      
+
+      !****************************************************************
+
       subroutine vumat_gray (
             ! read only
      +      nblock, ndir, nshr, nstatev, nprops, 
      +      stepTime, totalTime, dt, coordMp, 
      +      props, density, strainInc, 
      +      stressOld, stateOld, enerInternOld, enerInelasOld,
-     +      stretchNew, defgradNew, 
+     +      stretchNew, defgradNew,
             ! write only
      +      stressNew, stateNew, enerInternNew, enerInelasNew,
             ! read only extra arguments
@@ -285,13 +285,13 @@
       ! implicit none 
 
       dimension coordMp(nblock,*),
-     +     props(nprops), density(nblock), strainInc(nblock,ndir+nshr),
-     +     stressOld(nblock,ndir+nshr), stateOld(nblock,nstatev), 
-     +     enerInternOld(nblock), enerInelasOld(nblock), 
-     +     stretchNew(nblock,ndir+nshr), defgradNew(nblock,ndir+nshr+nshr),
-     +     stressNew(nblock,ndir+nshr), stateNew(nblock,nstatev),
-     +     enerInternNew(nblock), enerInelasNew(nblock),
-     +     nElement(nblock)
+     +      props(nprops), density(nblock), strainInc(nblock,ndir+nshr),
+     +      stressOld(nblock,ndir+nshr), stateOld(nblock,nstatev), 
+     +      enerInternOld(nblock), enerInelasOld(nblock), 
+     +      stretchNew(nblock,ndir+nshr), defgradNew(nblock,ndir+nshr+nshr),
+     +      stressNew(nblock,ndir+nshr), stateNew(nblock,nstatev),
+     +      enerInternNew(nblock), enerInelasNew(nblock),
+     +      nElement(nblock)
 
       ! local quantities
       integer i, km
@@ -300,13 +300,13 @@
       real*8 thetag_t, thetag_tau, sigma_tau(3,3)
       real*8 coordx, coordy, coordz
       real*8 zero, one, two, three, half, third
-      
+
       ! constants
       parameter(zero=0.d0, one=1.d0, two=2.d0, three=3.d0, 
      +     half=0.5d0, third=1.d0/3.d0)
 
       ! pour initial coordinates into the global variable
-      if (totalTime.lt. dt) then
+      if (totalTime.lt.dt) then
          do km=1,nblock
             inicoord(nElement(km),1) = coordMp(km,1)
             inicoord(nElement(km),2) = coordMp(km,2)
@@ -356,7 +356,7 @@
 
          ! initialization (dummy) step: set growth parameter at t=0
          if((totalTime.eq.zero).and.(stepTime.eq.zero)) then
-            stateOld(km,1)   = one 
+            stateOld(km,1) = one 
          endif
 
          ! read old state variables and coordinates
@@ -367,20 +367,18 @@
 
          !---------------------------------------------------------------
          ! perform the time integration and compute the
-         ! constitutive response based on the material model.
+         ! constitutive response based on the material model
 
          if((totalTime.eq.zero).and.(stepTime.eq.zero)) then
             ! initialization (dummy) step: pass zero timestep
             call integ_gray(props, nprops, F_tau, zero, totalTime,
-     +                     coordx, coordy, coordz, thetag_t,
-     +                     thetag_tau, sigma_tau
-     +                     )
+     +                      coordx, coordy, coordz, thetag_t,
+     +                      thetag_tau, sigma_tau)
          else
             ! perform explicit time integration procedure
             call integ_gray(props, nprops, F_tau, dt, totalTime,
-     +                     coordx, coordy, coordz, thetag_t,
-     +                     thetag_tau, sigma_tau
-     +                     )
+     +                      coordx, coordy, coordz, thetag_t,
+     +                      thetag_tau, sigma_tau)
          endif
          !---------------------------------------------------------------
          
@@ -412,7 +410,7 @@
          stateNew(km,2) = coordx
          stateNew(km,3) = coordy
          stateNew(km,4) = coordz
-         stateNew(km,5) = detF 
+         stateNew(km,5) = detF
          stateNew(km,6) = (sigma_tau(1,1)+sigma_tau(2,2)+sigma_tau(3,3))/three
 
          ! update the specific internal energy
@@ -439,15 +437,15 @@
 
       enddo ! end loop over material points
       end subroutine vumat_gray
-      
-      !***********************************************************************
-      
+
+      !****************************************************************
+
       subroutine integ_white(props, nprops, F_tau, dtime, totalTime,
      +                       coordx, coordy, coordz, thetag_t,
      +                       theta_dot_1, f_2, thetag_tau, sigma_tau
      +                       )
-      
-      implicit none
+
+     implicit none
 
       integer nprops
 
@@ -456,7 +454,7 @@
       real*8 coordx, coordy, coordz, thetag_t
       ! arguments passed in to write
       real*8 theta_dot_1, f_2, thetag_tau, sigma_tau(3,3)
-      ! properties 
+      ! properties
       real*8 lambda, mu, G_GM, gamma_1, gamma, T_1, T_2
       real*8 maj_axis, min_axis, b_tilde, N_gyri
       real*8 alpha, delta, alpha_bar, delta_bar
@@ -475,7 +473,7 @@
       ! obtain material properties
       mu        = props(1)
       lambda    = props(2)
-      G_GM      = props(3)  ! grey matter growth rate
+      G_GM      = props(3)  ! gray matter growth rate
       gamma_1   = props(4)  ! G_wm/G_gm used in Phase 1
       gamma     = props(5)  ! G_wm/G_gm in Phase 3 (pushing)
       T_1       = props(6)  ! end of Phase 1
@@ -502,7 +500,7 @@
       call gauss(r_tilde,delta,alpha,f_phi)
       f_2 = sin(four*psi*(N_gyri - half)) + one
       theta_dot_1 = (G_GM*gamma_1)*half*f_phi*f_2 
-      
+
       ! calculate growth rate in Phase 3 (pushing)
       call mdet(F_tau,detF)
 
@@ -530,12 +528,12 @@
       call mdet(Fg_tau, Jg)
       Je = detF/Jg
 
-      sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
+      sigma_tau = ((lambda*dlog(Je) - mu)*Iden + mu*Be_tau)/Je
 
       end subroutine integ_white
-      
-      !****************************************************************************
-      
+
+      !****************************************************************
+
       subroutine integ_gray(props, nprops, F_tau, dtime, totalTime,
      +                      coordx, coordy, coordz, thetag_t,
      +                      thetag_tau, sigma_tau)
@@ -555,18 +553,18 @@
       real*8 Fg_tau(3,3), Jg, Fginv(3,3)
       real*8 Fe_tau(3,3), Je, Be_tau(3,3)
       real*8 Iden(3,3), zero, one, two, half, third
-      
+
       ! constants
       parameter(zero=0.d0, one=1.d0, two=2.d0, half=0.5d0, third=1.d0/3.d0)
       call onem(Iden)
 
       ! obtain material properties
-      mu        = props(1)
-      lambda    = props(2)
-      G_GM      = props(3) ! grey matter growth rate
-      T_1       = props(4) ! end of Phase 1, beginning of Phase 2
-      maj_axis  = props(5) ! WM major axis (a)
-      min_axis  = props(6) ! WM minor axis (b)
+      mu       = props(1)
+      lambda   = props(2)
+      G_GM     = props(3) ! gray matter growth rate
+      T_1      = props(4) ! end of Phase 1, beginning of Phase 2
+      maj_axis = props(5) ! WM major axis (a)
+      min_axis = props(6) ! WM minor axis (b)
 
       ! obtain referential surface outnormal of an elliptical surface
       N_R(1,1) = two*coordx/maj_axis**two
@@ -584,23 +582,23 @@
       endif
 
       ! update kinematics
-      Fg_tau  = dsqrt(thetag_tau)*Iden
-     +          +(one - dsqrt(thetag_tau))*matmul(N_R,transpose(N_R))
+      Fg_tau = dsqrt(thetag_tau)*Iden
+     +         +(one - dsqrt(thetag_tau))*matmul(N_R,transpose(N_R))
       call m3inv(Fg_tau, Fginv)
       Fe_tau = matmul(F_tau, Fginv)
       Be_tau = matmul(Fe_tau, transpose(Fe_tau))
       call mdet(Fg_tau, Jg)
       Je = detF/Jg
 
-      sigma_tau = ((lambda*dlog(Je) - mu)*Iden  + mu*Be_tau)/Je
+      sigma_tau = ((lambda*dlog(Je) - mu)*Iden + mu*Be_tau)/Je
 
       end subroutine integ_gray
-      
-      !***********************************************************************
+
+      !****************************************************************
 
       subroutine Hhat(x, alpha, y)
       ! smooth Heaviside approximation: y = exp(ax)/(1+exp(ax))
-      
+
       implicit none
       real*8 x,alpha,y
 
@@ -608,25 +606,25 @@
 
       end subroutine Hhat
 
-      !***********************************************************************
-      
+      !****************************************************************
+
       subroutine gauss(x, mean, sigma, y)
       ! Gaussian curve evaluated at x with given mean and sigma
-      
+
       implicit none
       real*8 x, mean, sigma, y
       real*8 half, two, Pi
       parameter(half=0.5d0, two=2.d0, Pi=3.1415926d0)
-      
+
       y = exp(-half * ((x - mean) / sigma)**two) / (sigma * dsqrt(two*Pi))
 
       end subroutine gauss      
 
       !****************************************************************
-      
+
       subroutine onem(A)
       ! set A to the 3x3 identity matrix
-      
+
       implicit none
       real*8 A(3,3)
         
@@ -638,10 +636,10 @@
       end
 
       !****************************************************************
-      
+
       subroutine mtrans(A, Atrans)
       ! compute the transpose of 3x3 matrix A into Atrans.
-      
+
       implicit none
       real*8 A(3,3), Atrans(3,3)
       integer i, j
@@ -655,10 +653,10 @@
       end
 
       !****************************************************************
-      
+
       subroutine mdet(A, det)
       ! compute the determinant of 3x3 matrix A
-      
+
       implicit none
       real*8 A(3,3), det
 
@@ -670,10 +668,10 @@
       end
 
       !****************************************************************
-      
+
       subroutine m3inv(A, Ainv)
       ! compute the inverse of 3x3 matrix A into Ainv; stops if singular
-      
+
       implicit none
       real*8 A(3,3), Ainv(3,3), det, Acofac(3,3), Aadj(3,3)
       integer i, j
@@ -696,10 +694,10 @@
       end
 
       !****************************************************************
-      
+
       subroutine mcofac(A, Acofac)
       ! compute the cofactor matrix of 3x3 matrix A for inversion
-      
+
       implicit none
       real*8 A(3,3), Acofac(3,3)
 
