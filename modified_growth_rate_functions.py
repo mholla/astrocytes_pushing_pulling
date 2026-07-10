@@ -53,11 +53,27 @@ maj_min_ratio = MajorAxis_W/MinorAxis_W
 major_reduced = minor_reduced*maj_min_ratio
 MajorAxis_T = MajorAxis_W - threshold
 MinorAxis_T = MinorAxis_W - threshold
-thresh = 0.3 # Trying parameter to approximate VZ and germinal zone thickness.
+thresh = 0.6 # Trying parameter to approximate VZ and germinal zone thickness.
 phi_crit = np.pi / 14
 phi_gap = np.pi / 14
 N_gyri = 4
 lw = 10 #linewidth
+
+# =============================================================================
+# USER-DEFINED SMOOTHING PARAMETERS
+# =============================================================================
+# SMOOTHING_TYPE: 'sigmoid' or 'smoothstep' or 'tanh'
+SMOOTHING_TYPE = 'sigmoid'  # Choose: 'sigmoid', 'smoothstep', 'tanh'
+
+# SMOOTHING_STEEPNESS: Controls how sharp the transition is
+# Higher values = sharper transition (closer to step function)
+# Lower values = smoother transition
+SMOOTHING_STEEPNESS = 20  # Typical range: 10-50
+
+# TRANSITION_WIDTH: For smoothstep method only
+# Width of the transition region (fraction of r)
+TRANSITION_WIDTH = 0.15  # Typical range: 0.05-0.3
+# =============================================================================
 
 def y_coord(x_coord, majoraxis, minoraxis):
     output = np.sqrt((1 - (x_coord * x_coord) / (majoraxis * majoraxis))) * minoraxis
@@ -78,6 +94,35 @@ def gaussian(x, mean, std):
     output = fac * np.exp(-0.5 * (scaled_input ** 2))
     return output
 
+def smoothstep_transition(r, threshold, width):
+    """Smoothstep function for C1 continuous transition"""
+    t = (r - (threshold - width/2)) / width
+    t = np.clip(t, 0, 1)
+    return t**3 * (t * (t * 6 - 15) + 10)
+
+def sigmoid_transition(r, threshold, steepness):
+    """Sigmoid (logistic) transition"""
+    return 1 / (1 + np.exp(-steepness * (r - threshold)))
+
+def tanh_transition(r, threshold, steepness):
+    """Hyperbolic tangent transition"""
+    return 0.5 * (1 + np.tanh(steepness * (r - threshold)))
+
+def apply_smooth_transition(r, threshold, value_below, value_above):
+    """
+    Apply smooth transition between value_below (r < threshold) and 
+    value_above (r > threshold) using the user-selected method
+    """
+    if SMOOTHING_TYPE == 'sigmoid':
+        transition = sigmoid_transition(r, threshold, SMOOTHING_STEEPNESS)
+    elif SMOOTHING_TYPE == 'tanh':
+        transition = tanh_transition(r, threshold, SMOOTHING_STEEPNESS)
+    elif SMOOTHING_TYPE == 'smoothstep':
+        transition = smoothstep_transition(r, threshold, TRANSITION_WIDTH)
+    else:
+        raise ValueError(f"Unknown smoothing type: {SMOOTHING_TYPE}")
+    
+    return value_below * (1 - transition) + value_above * transition
 
 def scaled_xy(x,y):
     MajorAxisLength = MajorAxis_W - major_reduced
@@ -108,19 +153,61 @@ def ang_factor(x, y, periods=4*N_gyri-2):
     theta = np.arctan2(y, x)  # Compute theta from Cartesian coordinates
     return np.sin(periods * theta)  # Sine function of theta
 
-def growth_rate_total(x, y,thresh,flag=0):
-    (scaled_r,scaled_thresh) = scaled_xy(x, y)
-    if scaled_r < thresh:
-        gw = 1.0
-    if scaled_r >= thresh and flag=='phi':
-        gw = 0.5*gaussian(scaled_r, scaled_thresh, 0.4) * (ang_factor(x, y)+1.0)
-    if scaled_r >= thresh and flag=='H':
-        gw = 0.5*heaviside(scaled_r,scaled_thresh)*(ang_factor(x, y)+1.0)
-
+def growth_rate_total(x, y, thresh, flag=0):
+    (scaled_r, scaled_thresh) = scaled_xy(x, y)
+    
+    # Compute the growth value for r >= threshold
+    if flag == 'phi':
+        growth_above = 0.5 * gaussian(scaled_r, scaled_thresh, 0.4) * (ang_factor(x, y) + 1.0)
+    elif flag == 'H':
+        growth_above = 0.5 * heaviside(scaled_r, scaled_thresh, gamma=10) * (ang_factor(x, y) + 1.0)
+    else:
+        growth_above = 0.0
+    
+    # Value when r < threshold (constant 1.0)
+    growth_below = 1.0
+    
+    # Apply smooth transition instead of sharp threshold
+    gw = apply_smooth_transition(scaled_r, thresh, growth_below, growth_above)
+    
     return gw, scaled_r
 
+# Optional: Function to compare sharp vs smooth transitions
+def compare_transitions():
+    """Generate comparison plot of sharp vs smooth transitions"""
+    r_test = np.linspace(0, 2, 1000)
+    threshold_test = 0.8
+    
+    # Sharp transition
+    sharp = np.where(r_test < threshold_test, 1.0, 0.0)
+    
+    # Smooth transitions
+    sigmoid = sigmoid_transition(r_test, threshold_test, SMOOTHING_STEEPNESS)
+    sigmoid_values = 1.0 * (1 - sigmoid) + 0.0 * sigmoid
+    
+    tanh = tanh_transition(r_test, threshold_test, SMOOTHING_STEEPNESS)
+    tanh_values = 1.0 * (1 - tanh) + 0.0 * tanh
+    
+    smoothstep = smoothstep_transition(r_test, threshold_test, TRANSITION_WIDTH)
+    smoothstep_values = 1.0 * (1 - smoothstep) + 0.0 * smoothstep
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(r_test, sharp, 'k--', label='Sharp threshold', linewidth=3)
+    ax.plot(r_test, sigmoid_values, 'b-', label=f'Sigmoid (steepness={SMOOTHING_STEEPNESS})', linewidth=3)
+    ax.plot(r_test, tanh_values, 'g-', label=f'Tanh (steepness={SMOOTHING_STEEPNESS})', linewidth=3)
+    ax.plot(r_test, smoothstep_values, 'r-', label=f'Smoothstep (width={TRANSITION_WIDTH})', linewidth=3)
+    ax.axvline(threshold_test, color='gray', linestyle=':', alpha=0.5, linewidth=2)
+    ax.set_xlabel(r'$\tilde{r}$')
+    ax.set_ylabel('Transition value')
+    ax.set_title(f'Comparison of Smoothing Methods\nSMOOTHING_TYPE = {SMOOTHING_TYPE}')
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig('transition_comparison.pdf', format='pdf', dpi=300)
+    plt.show()
 
-
+# Uncomment to see comparison plot
+# compare_transitions()
 
 x_W = np.linspace(0, MajorAxis_W, 500)
 y_W = np.linspace(0, MinorAxis_W, 500)
@@ -275,7 +362,7 @@ Z_W = np.full_like(X_G, np.nan)  # Initialize Z with NaN for outside points
 for i in range(X_G.shape[0]):
     for j in range(X_G.shape[1]):
         if inside_ellipse_white[i, j]:
-            Z_W[i, j], _ = growth_rate_total(X_G[i, j], Y_G[i, j],thresh,flag=flag)
+            Z_W[i, j], _ = growth_rate_total(X_G[i, j], Y_G[i, j], thresh, flag=flag)
         elif inside_ellipse_gray_strip_W[i,j] and flag=='phi':
             Z_W[i,j] = 0.0
         elif inside_ellipse_gray_strip_W[i,j] and flag=='H':
@@ -317,3 +404,11 @@ ax.set_aspect('equal')
 ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
 # plt.savefig(os.path.join(save_dir_figures, 'cortex_growing.pdf'),format='pdf',dpi=dpi)
 plt.savefig('Fig1_phase1_2_cortex_growing.pdf',format='pdf',dpi=dpi)
+
+# Print smoothing parameters used
+print(f"\nSmoothing parameters:")
+print(f"SMOOTHING_TYPE: {SMOOTHING_TYPE}")
+print(f"SMOOTHING_STEEPNESS: {SMOOTHING_STEEPNESS}")
+if SMOOTHING_TYPE == 'smoothstep':
+    print(f"TRANSITION_WIDTH: {TRANSITION_WIDTH}")
+print("\nTo change smoothing behavior, modify the USER-DEFINED SMOOTHING PARAMETERS section at the top of the script.")
