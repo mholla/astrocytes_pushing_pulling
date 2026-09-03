@@ -178,7 +178,7 @@
 
          if((totalTime.eq.zero).and.(stepTime.eq.zero)) then
             ! initialization (dummy) step: pass zero timestep
-            call integ_white(props, nprops, F_tau, zero, totalTime,
+            call integ_white(props, nprops, F_tau, -1.0d0, totalTime,
      +                       coordx, coordy, coordz, thetag_t,
      +                       theta_dot_1, f_2, thetag_tau, sigma_tau)
          else
@@ -371,7 +371,7 @@
 
          if((totalTime.eq.zero).and.(stepTime.eq.zero)) then
             ! initialization (dummy) step: pass zero timestep
-            call integ_gray(props, nprops, F_tau, zero, totalTime,
+            call integ_gray(props, nprops, F_tau, -1.0d0, totalTime,
      +                      coordx, coordy, coordz, thetag_t,
      +                      thetag_tau, sigma_tau)
          else
@@ -445,7 +445,7 @@
      +                       theta_dot_1, f_2, thetag_tau, sigma_tau
      +                       )
 
-     implicit none
+      implicit none
 
       integer nprops
 
@@ -487,6 +487,25 @@
       alpha_bar = props(14) ! smoothing for Heaviside function used in Phase 3
       delta_bar = props(15) ! scaled threshold for Heaviside function
 
+
+      call mdet(F_tau,detF)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      if (dtime.lt.zero) then
+         thetag_tau = thetag_t
+         Fg_tau  = (thetag_tau**third)*Iden
+         call m3inv(Fg_tau, Fginv)
+         Fe_tau = matmul(F_tau, Fginv)
+         Be_tau = matmul(Fe_tau, transpose(Fe_tau))
+         call mdet(Fg_tau, Jg)
+         Je = detF/Jg
+         sigma_tau = ((lambda*dlog(Je) - mu)*Iden + mu*Be_tau)/Je
+         theta_dot_1 = zero
+         f_2 = zero
+         return
+      endif
+!!!!!!!!!!!!!!!!!!!!!!!!!!! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
       ! calculate other dimensions
       a_tilde = b_tilde*(maj_axis/min_axis)
 
@@ -500,9 +519,6 @@
       call gauss(r_tilde,delta,alpha,f_phi)
       f_2 = sin(four*psi*(N_gyri - half)) + one
       theta_dot_1 = (G_GM*gamma_1)*half*f_phi*f_2 
-
-      ! calculate growth rate in Phase 3 (pushing)
-      call mdet(F_tau,detF)
 
       if (totalTime.le.T_1) then ! Phase 1
          thetag_tau = thetag_t + (theta_dot_1)*dtime
@@ -519,7 +535,7 @@
          thetag_tau = thetag_t + (theta_dot_1)*dtime
 
       endif
-
+      if (thetag_tau .le. 1.0d-6) thetag_tau = 1.0d-6 
       ! update kinematics
       Fg_tau  = (thetag_tau**third)*Iden
       call m3inv(Fg_tau, Fginv)
@@ -566,6 +582,23 @@
       maj_axis = props(5) ! WM major axis (a)
       min_axis = props(6) ! WM minor axis (b)
 
+
+      call mdet(F_tau,detF)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      if (dtime.lt.zero) then
+         thetag_tau = thetag_t
+         Fg_tau = thetag_tau**third*Iden
+         call m3inv(Fg_tau, Fginv)
+         Fe_tau = matmul(F_tau, Fginv)
+         Be_tau = matmul(Fe_tau, transpose(Fe_tau))
+         call mdet(Fg_tau, Jg)
+         Je = detF/Jg
+         sigma_tau = ((lambda*dlog(Je) - mu)*Iden + mu*Be_tau)/Je
+         return
+      endif
+!!!!!!!!!!!!!!!!!!!!!!!!!!! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
       ! obtain referential surface outnormal of an elliptical surface
       N_R(1,1) = two*coordx/maj_axis**two
       N_R(2,1) = two*coordy/min_axis**two
@@ -573,14 +606,12 @@
       tmp = sqrt(N_R(1,1)**two + N_R(2,1)**two + N_R(3,1)**two)
       N_R = N_R/tmp
 
-      call mdet(F_tau,detF)
-
       if (totalTime.le.T_1) then ! Phase 1 (no GM growth)
          thetag_tau = one
       else ! Phase 2 and 3
          thetag_tau = thetag_t + (G_GM)*dtime
       endif
-
+      if (thetag_tau .le. 1.0d-6) thetag_tau = 1.0d-6 
       ! update kinematics
       Fg_tau = dsqrt(thetag_tau)*Iden
      +         +(one - dsqrt(thetag_tau))*matmul(N_R,transpose(N_R))

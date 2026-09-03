@@ -48,10 +48,10 @@ def Create_Quarter_Ellipse(ModelName, PartName, Dimensions):
     g, v, d, c = s.geometry, s.vertices, s.dimensions, s.constraints
     s.setPrimaryObject(option=SUPERIMPOSE)
     p.projectReferencesOntoSketch(sketch=s, filter=COPLANAR_EDGES)
-    s.Line(point1=(36.0, 0.0), point2=(0.0, 0.0))
+    s.Line(point1=(MajorAxis_G*10, 0.0), point2=(0.0, 0.0))
     s.HorizontalConstraint(entity=g[3], addUndoState=False)
     s.PerpendicularConstraint(entity1=g[2], entity2=g[3], addUndoState=False)
-    s.Line(point1=(0.0, 0.0), point2=(0.0, 30.0))
+    s.Line(point1=(0.0, 0.0), point2=(0.0, MinorAxis_G*10))
     s.VerticalConstraint(entity=g[4], addUndoState=False)
     s.PerpendicularConstraint(entity1=g[3], entity2=g[4], addUndoState=False)
     s.CoincidentConstraint(entity1=v[2], entity2=g[2], addUndoState=False)
@@ -95,12 +95,12 @@ def Create_Rigid_wall(ModelName):
     g, v, d, c = s1.geometry, s1.vertices, s1.dimensions, s1.constraints
     s1.setPrimaryObject(option=STANDALONE)
 
-    s1.rectangle(point1=(0.0, -20.0), point2=(-2.0, 40.0))
+    s1.rectangle(point1=(0.0, -2.00), point2=(-0.20, 4.0))
     p = mdb.models[ModelName].Part(name='wall', dimensionality=THREE_D, type=DISCRETE_RIGID_SURFACE)
     p.BaseShell(sketch=s1)
     # Reference point
     v1, e, d1, n = p.vertices, p.edges, p.datums, p.nodes
-    p.ReferencePoint(point=(-1.0, 10.0, 0.0))
+    p.ReferencePoint(point=(-0.10, 1.0, 0.0))
 
 #######################################################################################
 #######################################################################################
@@ -133,8 +133,8 @@ def Create_Section(ModelName, PartName, Dimensions):
     c = p.cells
 
 
-    c_subcort = c.findAt((( MajorAxis_W/2.,0.0, Depth), ))
-    c_cortex  = c.findAt((( MajorAxis_G - 0.1,0.0,  Depth), ))
+    c_subcort = c.findAt((( MajorAxis_W/2.,0.0, Depth/2.), ))
+    c_cortex  = c.findAt((( MajorAxis_G - 0.1,0.0,  Depth/2.), ))
 
     mdb.models[ModelName].HomogeneousSolidSection(name='Subcortex', material='WHIT', thickness=None)
     region = p.Set(cells=c_subcort, name='Subcortex')
@@ -159,14 +159,14 @@ def Create_Assembly(ModelName, PartName, InstanceName, Dimensions):
     a.Instance(name='wall-1', part=p1, dependent=ON)
     a.Instance(name='wall-2', part=p1, dependent=ON)
 
-    a.rotate(instanceList=('wall-1', ), axisPoint=(0.0, 0.0, 0.1), axisDirection=(0.0, -2.0, 0.0), angle=-90.0)
-    a.rotate(instanceList=('wall-2', ), axisPoint=(0.0, 0.0, 0.1), axisDirection=(0.0, -2.0, 0.0), angle=-90.0)
-    a.rotate(instanceList=('wall-2', ), axisPoint=(0.0, 0.0, 0.1), axisDirection=(0.0, 0.0, -2.0), angle=-90.0)
+    a.rotate(instanceList=('wall-1', ), axisPoint=(0.0, 0.0, 0.01), axisDirection=(0.0, -2.0, 0.0), angle=-90.0)
+    a.rotate(instanceList=('wall-2', ), axisPoint=(0.0, 0.0, 0.01), axisDirection=(0.0, -2.0, 0.0), angle=-90.0)
+    a.rotate(instanceList=('wall-2', ), axisPoint=(0.0, 0.0, 0.01), axisDirection=(0.0, 0.0, -2.0), angle=-90.0)
 
     a.translate(instanceList=('wall-1', ), vector=(0.0,MinorAxis_W/2, 0.0))
-    a.translate(instanceList=('wall-1', ), vector=(0.0,0.0, -0.5))
+    a.translate(instanceList=('wall-1', ), vector=(0.0,0.0, Depth/2.-0.01-0.1))
     a.translate(instanceList=('wall-2', ), vector=(MajorAxis_W, 0.0, 0.0))
-    a.translate(instanceList=('wall-2', ), vector=(0.0,0.0, -0.5))
+    a.translate(instanceList=('wall-2', ), vector=(0.0,0.0, Depth/2.-0.01-0.1))
 
 def y_coord(x_coord,majoraxis,minoraxis):
     output = np.sqrt((1 - (x_coord*x_coord)/(majoraxis*majoraxis)))*minoraxis
@@ -215,7 +215,8 @@ def Create_Sets(ModelName, PartName, Dimensions):
     s_side1 = f.findAt(((0, MinorAxis_G/2., Depth/2.),), ((0, MinorAxis_G - 0.1, Depth/2.),))
     s_side2 = f.findAt(((MajorAxis_W/2.,0.0, Depth/2.),),((MajorAxis_G - 0.1, 0.0, Depth/2.),))
     s_interface = f.findAt(((MajorAxis_W/2,y_coord(MajorAxis_W/2,MajorAxis_W,MinorAxis_W), Depth/2),))
-    s_wall = fwall.findAt(((-1, 10, 0.0), ))#fwall.findAt(((-100E-3, 54.1, 1.1), ))
+    # s_wall = fwall.findAt(((-1, 10, 0.0), ))#fwall.findAt(((-100E-3, 54.1, 1.1), ))
+    s_wall = fwall.findAt((((0.0 + -0.20)/2., (-2.00 + 4.0)/2., 0.0), ))
 
 
     # Define coordinate of sets-cells
@@ -342,7 +343,7 @@ def Create_Mesh(ModelName, PartName, InstanceName, Dimensions, Mesh, minsize, ma
 
     # Rigif plane mesh
     p = mdb.models[ModelName].parts['wall']
-    p.seedPart(size=1.5, deviationFactor=0.1, minSizeFactor=0.1)
+    p.seedPart(size=0.15, deviationFactor=0.1, minSizeFactor=0.1)
     p = mdb.models[ModelName].parts['wall']
     p.generateMesh()
 
@@ -352,29 +353,29 @@ def Create_Mesh(ModelName, PartName, InstanceName, Dimensions, Mesh, minsize, ma
 
     p = mdb.models[ModelName].parts['Part-1']
     e = p.edges
-    pickedEdges = e.findAt(((12.097431, 26.376844, 0.0), ), ((31.092919, 11.744441,
-    1.0), ), ((32.761622, 12.435281, 0.0), ), ((12.786489, 28.043935, 1.0), ))
-    p.seedEdgeBySize(edges=pickedEdges, size=0.25, deviationFactor=0.1,
+    pickedEdges = e.findAt(((1.2097431, 2.6376844, 0.0), ), ((3.1092919, 1.1744441,
+    0.1), ), ((3.2761622, 1.2435281, 0.0), ), ((1.2786489, 2.8043935, 0.1), ))
+    p.seedEdgeBySize(edges=pickedEdges, size=0.025, deviationFactor=0.1,
     constraint=FINER)
 
-    pickedEdges = e.findAt(((34.2, 0.0, 0.25), ), ((0.0, 28.2, 0.75), ), ((34.65,
-        0.0, 0.0), ), ((36.0, 0.0, 0.25), ), ((35.55, 0.0, 1.0), ), ((0.0, 28.65,
-        1.0), ), ((0.0, 30.0, 0.75), ), ((0.0, 29.55, 0.0), ))
+    pickedEdges = e.findAt(((3.42, 0.0, 0.025), ), ((0.0, 2.82, 0.075), ), ((3.465,
+        0.0, 0.0), ), ((3.60, 0.0, 0.025), ), ((3.555, 0.0, 0.10), ), ((0.0, 2.865,
+        0.10), ), ((0.0, 3.00, 0.075), ), ((0.0, 2.955, 0.0), ))
     p.seedEdgeBySize(edges=pickedEdges, size=cortex_size, deviationFactor=0.1,
         constraint=FINER) #0.5 gave bad aspect ratios
 
     # For subcortex, used bias to keep it finer near the interface
-    pickedEdges1 = e.findAt(((0.0, 23.25, 0.0), ), ((0.0, 0.0, 0.25), ), ((26.25,
-        0.0, 1.0), ))
-    pickedEdges2 = e.findAt(((0.0, 7.75, 1.0), ), ((8.75, 0.0, 0.0), ))
+    pickedEdges1 = e.findAt(((0.0, 2.325, 0.0), ), ((0.0, 0.0, 0.025), ), ((2.625,
+        0.0, 0.1), ))
+    pickedEdges2 = e.findAt(((0.0, 0.775, 0.1), ), ((0.875, 0.0, 0.0), ))
     p.seedEdgeByBias(biasMethod=SINGLE, end1Edges=pickedEdges1,
         end2Edges=pickedEdges2, minSize=minsize, maxSize=maxsize, constraint=FINER)
     # Unstructured mesh settings
     c = p.cells
-    pickedRegions = c.findAt(((22.580953, 1.833849, 1.0), ))
+    pickedRegions = c.findAt(((2.2580953, 0.1833849, 0.1), ))
     p.deleteMesh(regions=pickedRegions)
     c = p.cells
-    pickedRegions = c.findAt(((22.580953, 1.833849, 1.0), ))
+    pickedRegions = c.findAt(((2.2580953, 0.1833849, 0.1), ))
     p.setMeshControls(regions=pickedRegions, technique=SWEEP,
         algorithm=ADVANCING_FRONT)
     partInstances =(a.instances[InstanceName], )
@@ -435,8 +436,8 @@ if __name__ == '__main__':
     Mass_Scaling_list = [120,120,120,120,120,120,150,180]
     Viscous_Pressure_list = [1e-5,1e-5,1e-5,1e-5,1e-5,1e-5,1e-5,1e-5]
     Job_Name_list = ['5em2','10em2','20em2','30em2','50em2','1','2','3']
-
-    for j in range(len(gamma_list)):
+    # len(gamma_list)
+    for j in range(1):
         # ======================================================
         # Dimensions
         # ======================================================
@@ -445,7 +446,7 @@ if __name__ == '__main__':
         MinorAxis_G = 3.0 # mm
         MajorAxis_W = MajorAxis_G - CT
         MinorAxis_W = MinorAxis_G - CT
-        Depth = 1.0 # mm
+        Depth = 0.1 # mm
         Dimensions = [MajorAxis_G, MajorAxis_W, MinorAxis_G, MinorAxis_W, Depth]
 
         # ======================================================
