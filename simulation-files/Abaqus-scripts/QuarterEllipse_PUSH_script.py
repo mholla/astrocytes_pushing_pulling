@@ -288,6 +288,11 @@ def Create_Boundary_Conditions(ModelName, InstanceName):
 
     region = a.instances['wall-2'].sets['ref']
     mdb.models[ModelName].EncastreBC(name='ref-right', createStepName='growth', region=region, localCsys=None)
+    region = a.instances['Part-1'].sets['whole-domain']
+    mdb.models[ModelName].DisplacementBC(name='fix_z', 
+        createStepName='Initial', region=region, u1=UNSET, u2=UNSET, u3=SET, 
+        ur1=UNSET, ur2=UNSET, ur3=UNSET, amplitude='Amp-1', distributionType=UNIFORM, 
+        fieldName='', localCsys=None)
     mdb.models[ModelName].boundaryConditions['back'].move('growth',
         'Initial')
     mdb.models[ModelName].boundaryConditions['bottom'].move('growth',
@@ -302,6 +307,9 @@ def Create_Boundary_Conditions(ModelName, InstanceName):
         'Initial')
     mdb.models[ModelName].boundaryConditions['subcortex_front'].move('growth'
         , 'Initial')
+    # mdb.models[ModelName].boundaryConditions['fix_z'].move('growth'
+    #     , 'Initial')
+
 
 #######################################################################################
 #######################################################################################
@@ -318,7 +326,7 @@ def Create_Contact(ModelName, InstanceName):
     mdb.models[ModelName].ContactProperty('IntProp-1')
     mdb.models[ModelName].interactionProperties['IntProp-1'].TangentialBehavior(formulation=PENALTY, directionality=ISOTROPIC, slipRateDependency=OFF, pressureDependency=OFF, temperatureDependency=OFF, dependencies=0, table=((10.0, ), ), shearStressLimit=None, maximumElasticSlip=FRACTION, fraction=0.005, elasticSlipStiffness=None)
     mdb.models[ModelName].interactionProperties['IntProp-1'].NormalBehavior(pressureOverclosure=HARD, allowSeparation=ON, constraintEnforcementMethod=DEFAULT)
-    mdb.models[ModelName].interactionProperties['IntProp-1'].GeometricProperties(contactArea=1.0, padThickness=0.1)
+    mdb.models[ModelName].interactionProperties['IntProp-1'].GeometricProperties(contactArea=1.0, padThickness=0.01)
 
     mdb.models[ModelName].ContactProperty('IntProp-2')
     mdb.models[ModelName].interactionProperties['IntProp-2'].TangentialBehavior(formulation=PENALTY, directionality=ISOTROPIC, slipRateDependency=OFF, pressureDependency=OFF, temperatureDependency=OFF, dependencies=0, table=((10.0, ), ), shearStressLimit=None, maximumElasticSlip=FRACTION, fraction=0.005, elasticSlipStiffness=None)
@@ -327,7 +335,7 @@ def Create_Contact(ModelName, InstanceName):
     region = a.instances[InstanceName].surfaces['top_s']
     mdb.models[ModelName].SelfContactExp(name='Int-1', createStepName='growth', surface=region, mechanicalConstraint=KINEMATIC, interactionProperty='IntProp-1')
 
-    region1= a.instances['wall-1'].surfaces['s_wall']#a.Surface(side1Faces=side1Faces1, name='left-wall')
+    region1= a.instances['wall-1'].surfaces['s_wall']#a.Surface(side1Faces=side1Faces1, name='left-wall') 
     region2=a.instances[InstanceName].surfaces['top_s']
     mdb.models[ModelName].SurfaceToSurfaceContactExp(name ='Int-2', createStepName='Initial', main = region1, secondary = region2, mechanicalConstraint=KINEMATIC, sliding=FINITE, interactionProperty='IntProp-2', initialClearance=OMIT, datumAxis=None, clearanceRegion=None)
 
@@ -356,7 +364,7 @@ def Create_Mesh(ModelName, PartName, InstanceName, Dimensions, Mesh, minsize, ma
     pickedEdges = e.findAt(((1.2097431, 2.6376844, 0.0), ), ((3.1092919, 1.1744441,
     0.1), ), ((3.2761622, 1.2435281, 0.0), ), ((1.2786489, 2.8043935, 0.1), ))
     p.seedEdgeBySize(edges=pickedEdges, size=0.025, deviationFactor=0.1,
-    constraint=FINER)
+    constraint=FINER) # size =0.025
 
     pickedEdges = e.findAt(((3.42, 0.0, 0.025), ), ((0.0, 2.82, 0.075), ), ((3.465,
         0.0, 0.0), ), ((3.60, 0.0, 0.025), ), ((3.555, 0.0, 0.10), ), ((0.0, 2.865,
@@ -396,16 +404,16 @@ def Create_Output(ModelName, PartName, InstanceName):
 
     # Assign desired output to sets
     regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstanceName].sets['whole-domain']
-    mdb.models[ModelName].FieldOutputRequest(name='F-Output-2', createStepName='growth', variables=('S', 'PE', 'LE', 'U', 'ELSE', 'COORD','SDV','EVOL'),  numIntervals=500, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
+    mdb.models[ModelName].FieldOutputRequest(name='F-Output-2', createStepName='growth', variables=('S', 'PE', 'LE', 'U', 'ELSE', 'COORD','SDV','EVOL'),  numIntervals=100, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
 
     regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstanceName].sets['Cortex']
-    mdb.models[ModelName].FieldOutputRequest(name='F-Output-3', createStepName='growth', variables=('ELSE', 'COORD', 'U','EVOL'), numIntervals=500, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
+    mdb.models[ModelName].FieldOutputRequest(name='F-Output-3', createStepName='growth', variables=('ELSE', 'COORD', 'U','EVOL'), numIntervals=100, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
 
     regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstanceName].sets['Subcortex']
-    mdb.models[ModelName].FieldOutputRequest(name='F-Output-4', createStepName='growth', variables=('ELSE', 'COORD', 'U','EVOL'), numIntervals=500, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
+    mdb.models[ModelName].FieldOutputRequest(name='F-Output-4', createStepName='growth', variables=('ELSE', 'COORD', 'U','EVOL'), numIntervals=100, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
 
     regionDef=mdb.models[ModelName].rootAssembly.allInstances[InstanceName].sets['whole-domain']
-    mdb.models[ModelName].HistoryOutputRequest(name='H-Output-1', createStepName='growth', variables=('ALLIE', 'ALLKE'), numIntervals=1000, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
+    mdb.models[ModelName].HistoryOutputRequest(name='H-Output-1', createStepName='growth', variables=('ALLIE', 'ALLKE'), numIntervals=100, region=regionDef, sectionPoints=DEFAULT, rebar=EXCLUDE)
 
 #######################################################################################
 #######################################################################################
@@ -424,7 +432,7 @@ def Create_Job(ModelName, JobName):
     mdb.jobs[JobName].writeInput(consistencyChecking=OFF)
     try:
         mdb.jobs[JobName].submit(consistencyChecking=OFF)
-        mdb.jobs[JobName].waitForCompletion()
+        # mdb.jobs[JobName].waitForCompletion()
     except:
         print("Job %s crashed" % JobName)
 
@@ -432,9 +440,9 @@ def Create_Job(ModelName, JobName):
 #######################################################################################
 if __name__ == '__main__':
 
-    gamma_list = [0.05,0.1,0.2,0.3,0.5,1.0,2.0,3.0]
+    gamma_list = [3.0,0.1,0.2,0.3,0.5,1.0,2.0,3.0]
     Mass_Scaling_list = [120,120,120,120,120,120,150,180]
-    Viscous_Pressure_list = [1e-5,1e-5,1e-5,1e-5,1e-5,1e-5,1e-5,1e-5]
+    Viscous_Pressure_list = [1e-5,1e-5,1e-5,1e-4,1e-4,1e-4,1e-4,1e-4]
     Job_Name_list = ['5em2','10em2','20em2','30em2','50em2','1','2','3']
     # len(gamma_list)
     for j in range(1):
@@ -453,11 +461,11 @@ if __name__ == '__main__':
         # Mesh Parameters
         # ======================================================
         bias = 3 # bias through width of subcortex
-        ecortex = 7 # number of elements in the thickness of the cortex
+        ecortex = 8 # number of elements in the thickness of the cortex
         cortex_size = CT/ecortex # size of elements in cortex
         Mesh = [bias, cortex_size]
         # For biased subcortex mesh
-        minsize = 0.02 # mm
+        minsize = 0.018 # mm, or 0.02
         maxsize = 0.2 # mm
 
         # ======================================================
@@ -485,7 +493,7 @@ if __name__ == '__main__':
         delta = 0.415 # scaled threshold for Gauss function
         alpha_bar = 10.0 # smoothing for Heaviside function used in Phase 3
         delta_bar = 0.415 # scaled threshold for Heaviside function
-        density = 1e-11 # N/mm3, For explicit simulation, a very small density is given to make it a quasi-static problem.
+        density = 1e-9 # N/mm3, For explicit simulation, a very small density is given to make it a quasi-static problem.
 
         White_Matter_Properties = (mu_w, lambda_w, G_GM, gamma_1, gamma, T_1, T_2,
                                    MajorAxis_W, MinorAxis_W, b_tilde, N_gyri,

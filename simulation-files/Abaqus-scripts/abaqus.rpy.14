@@ -1,0 +1,117 @@
+# -*- coding: mbcs -*-
+#
+# Abaqus/CAE Release 2024 replay file
+# Internal Version: 2023_09_21-08.55.25 RELr426 190762
+# Run by cwei2 on Thu Aug 20 22:19:42 2026
+#
+
+# from driverUtils import executeOnCaeGraphicsStartup
+# executeOnCaeGraphicsStartup()
+#: Executing "onCaeGraphicsStartup()" in the site directory ...
+from abaqus import *
+from abaqusConstants import *
+session.Viewport(name='Viewport: 1', origin=(0.0, 0.0), width=225.501342773438, 
+    height=95.4799575805664)
+session.viewports['Viewport: 1'].makeCurrent()
+session.viewports['Viewport: 1'].maximize()
+from caeModules import *
+from driverUtils import executeOnCaeStartup
+executeOnCaeStartup()
+session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
+    referenceRepresentation=ON)
+execfile(
+    '/groups/mhollan5/commandlab/Chongyi/Repositories/astrocytes_pushing_pulling/simulation-files/Abaqus-scripts/QuarterEllipse_PUSH_script.py', 
+    __main__.__dict__)
+#: The model "QuarterEllipse_push_gammahat5em2" has been created.
+#: Warning: findAt could not find a geometric entity at (1.725, 2.46817240078565, 0.05)
+#: The interaction property "IntProp-1" has been created.
+#: The interaction property "IntProp-2" has been created.
+#: The interaction "Int-1" has been created.
+#: The interaction "Int-2" has been created.
+#: The interaction "Int-3" has been created.
+#: Warning: findAt could not find a geometric entity at (1.2097431, 2.6376844, 0.0)
+#: Warning: findAt could not find a geometric entity at (3.1092919, 1.1744441, 0.1)
+#: Warning: findAt could not find a geometric entity at (3.42, 0.0, 0.025)
+#: Warning: findAt could not find a geometric entity at (0.0, 2.82, 0.075)
+#: Warning: parallelizationMethodExplicit member has been removed from Job objects.
+#: Job QuarterEllipse_push_gammahat5em2: Analysis Input File Processor completed successfully.
+#: Job QuarterEllipse_push_gammahat5em2: Abaqus/Explicit Packager completed successfully.
+#: Error in job QuarterEllipse_push_gammahat5em2: The elements contained in element set ErrElemExcessDistortion-Step1 have distorted excessively.
+#: Error in job QuarterEllipse_push_gammahat5em2: Print-out suppressed for subsequent distorted elements
+#: Error in job QuarterEllipse_push_gammahat5em2: There are a total of 36565 excessively distorted elements
+#: Error in job QuarterEllipse_push_gammahat5em2: The elements contained in element set ErrElemExcessDistortion-Step1 have distorted excessively.
+#: Job QuarterEllipse_push_gammahat5em2: Abaqus/Explicit aborted due to errors.
+#: Error in job QuarterEllipse_push_gammahat5em2: Abaqus/Explicit Analysis exited with an error - Please see the  status file for possible error messages if the file exists.
+#: Job QuarterEllipse_push_gammahat5em2 aborted due to errors.
+execfile(
+    '/groups/mhollan5/commandlab/Chongyi/Repositories/astrocytes_pushing_pulling/simulation-files/Abaqus-scripts/QuarterEllipse_PUSH_script.py', 
+    __main__.__dict__)
+#: The model "QuarterEllipse_push_gammahat5em2" has been created.
+#: Warning: findAt could not find a geometric entity at (1.725, 2.46817240078565, 0.05)
+#: The interaction property "IntProp-1" has been created.
+#: The interaction property "IntProp-2" has been created.
+#: The interaction "Int-1" has been created.
+#: The interaction "Int-2" has been created.
+#: The interaction "Int-3" has been created.
+#: Warning: findAt could not find a geometric entity at (1.2097431, 2.6376844, 0.0)
+#: Warning: findAt could not find a geometric entity at (3.1092919, 1.1744441, 0.1)
+#: Warning: findAt could not find a geometric entity at (3.42, 0.0, 0.025)
+#: Warning: findAt could not find a geometric entity at (0.0, 2.82, 0.075)
+#: Warning: parallelizationMethodExplicit member has been removed from Job objects.
+#: Job QuarterEllipse_push_gammahat5em2: Analysis Input File Processor completed successfully.
+#: Job QuarterEllipse_push_gammahat5em2: Abaqus/Explicit Packager completed successfully.
+#: Error in job QuarterEllipse_push_gammahat5em2: The elements contained in element set ErrElemExcessDistortion-Step1 have distorted excessively.
+#: Error in job QuarterEllipse_push_gammahat5em2: Print-out suppressed for subsequent distorted elements
+#: Error in job QuarterEllipse_push_gammahat5em2: There are a total of 36565 excessively distorted elements
+#: Error in job QuarterEllipse_push_gammahat5em2: The elements contained in element set ErrElemExcessDistortion-Step1 have distorted excessively.
+#: Job QuarterEllipse_push_gammahat5em2: Abaqus/Explicit aborted due to errors.
+#: Error in job QuarterEllipse_push_gammahat5em2: Abaqus/Explicit Analysis exited with an error - Please see the  status file for possible error messages if the file exists.
+#: Job QuarterEllipse_push_gammahat5em2 aborted due to errors.
+execfile(
+    '/groups/mhollan5/commandlab/Chongyi/Repositories/astrocytes_pushing_pulling/simulation-files/Abaqus-scripts/QuarterEllipse_PUSH_script.py', 
+    __main__.__dict__)
+#: The model "QuarterEllipse_push_gammahat5em2" has been created.
+#: Warning: findAt could not find a geometric entity at (1.725, 2.46817240078565, 0.05)
+#: The interaction property "IntProp-1" has been created.
+#: The interaction property "IntProp-2" has been created.
+#: The interaction "Int-1" has been created.
+#: The interaction "Int-2" has been created.
+#: The interaction "Int-3" has been created.
+#: Warning: findAt could not find a geometric entity at (1.2097431, 2.6376844, 0.0)
+#: Warning: findAt could not find a geometric entity at (3.1092919, 1.1744441, 0.1)
+#: Warning: findAt could not find a geometric entity at (3.42, 0.0, 0.025)
+#: Warning: findAt could not find a geometric entity at (0.0, 2.82, 0.075)
+#: Warning: parallelizationMethodExplicit member has been removed from Job objects.
+#: Job QuarterEllipse_push_gammahat5em2: Analysis Input File Processor completed successfully.
+#: Job QuarterEllipse_push_gammahat5em2: Abaqus/Explicit Packager completed successfully.
+#: Error in job QuarterEllipse_push_gammahat5em2: The elements contained in element set ErrElemExcessDistortion-Step1 have distorted excessively.
+#: Error in job QuarterEllipse_push_gammahat5em2: Print-out suppressed for subsequent distorted elements
+#: Error in job QuarterEllipse_push_gammahat5em2: There are a total of 36565 excessively distorted elements
+#: Error in job QuarterEllipse_push_gammahat5em2: The elements contained in element set ErrElemExcessDistortion-Step1 have distorted excessively.
+#: Job QuarterEllipse_push_gammahat5em2: Abaqus/Explicit aborted due to errors.
+#: Error in job QuarterEllipse_push_gammahat5em2: Abaqus/Explicit Analysis exited with an error - Please see the  status file for possible error messages if the file exists.
+#: Job QuarterEllipse_push_gammahat5em2 aborted due to errors.
+execfile(
+    '/groups/mhollan5/commandlab/Chongyi/Repositories/astrocytes_pushing_pulling/simulation-files/Abaqus-scripts/QuarterEllipse_PUSH_script.py', 
+    __main__.__dict__)
+#: The model "QuarterEllipse_push_gammahat5em2" has been created.
+#: Warning: findAt could not find a geometric entity at (1.725, 2.46817240078565, 0.05)
+#: The interaction property "IntProp-1" has been created.
+#: The interaction property "IntProp-2" has been created.
+#: The interaction "Int-1" has been created.
+#: The interaction "Int-2" has been created.
+#: The interaction "Int-3" has been created.
+#: Warning: findAt could not find a geometric entity at (1.2097431, 2.6376844, 0.0)
+#: Warning: findAt could not find a geometric entity at (3.1092919, 1.1744441, 0.1)
+#: Warning: findAt could not find a geometric entity at (3.42, 0.0, 0.025)
+#: Warning: findAt could not find a geometric entity at (0.0, 2.82, 0.075)
+#: Warning: parallelizationMethodExplicit member has been removed from Job objects.
+#: Job QuarterEllipse_push_gammahat5em2: Analysis Input File Processor completed successfully.
+#: Job QuarterEllipse_push_gammahat5em2: Abaqus/Explicit Packager completed successfully.
+#: Error in job QuarterEllipse_push_gammahat5em2: The elements contained in element set ErrElemExcessDistortion-Step1 have distorted excessively.
+#: Error in job QuarterEllipse_push_gammahat5em2: Print-out suppressed for subsequent distorted elements
+#: Error in job QuarterEllipse_push_gammahat5em2: There are a total of 36565 excessively distorted elements
+#: Error in job QuarterEllipse_push_gammahat5em2: The elements contained in element set ErrElemExcessDistortion-Step1 have distorted excessively.
+#: Job QuarterEllipse_push_gammahat5em2: Abaqus/Explicit aborted due to errors.
+#: Error in job QuarterEllipse_push_gammahat5em2: Abaqus/Explicit Analysis exited with an error - Please see the  status file for possible error messages if the file exists.
+#: Job QuarterEllipse_push_gammahat5em2 aborted due to errors.

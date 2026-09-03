@@ -1,0 +1,442 @@
+1
+
+   Abaqus 2024                                  Date 20-Aug-2026   Time 23:18:36
+   For use by UNIVERSITY OF NOTRE DAME DU LAC under license from Dassault Systemes or its subsidiary.
+
+
+
+                         The Abaqus Software is a product of:
+
+                           Dassault Systemes SIMULIA Corp.
+                           1301 Atwood Avenue, Suite 101W
+                              Johnston, RI 02919, USA
+ 
+
+
+                   The Abaqus Software is available only under license
+                   from Dassault Systemes or its subsidiary and may be
+                   used or reproduced only in accordance with the terms
+                   of such license.
+ 
+                          On machine commandfe.crc.nd.edu 
+                          you are authorized to run
+                          Abaqus/Explicit until 31-Dec-2026
+
+                          Your site id is: 200000000017787 
+
+
+ 
+                    For assistance or any other information you may
+                    obtain contact information for your local office
+                    from the world wide web at:
+
+                      https://www.3ds.com/products-services/simulia/services-support/
+
+ 
+                * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                *                                                         * 
+                *                   *****************                     * 
+                *                   *  N O T I C E  *                     * 
+                *                   *****************                     * 
+                *                                                         * 
+                *                                                         * 
+                *                       Abaqus 2024                       * 
+                *                                                         * 
+                *       BUILD ID: 2023_09_21-08.55.25 RELr426 190762      * 
+                *                                                         * 
+                *                                                         * 
+                *  Please make sure you are using                         * 
+                *  release Abaqus 2024 manuals                            * 
+                *  plus the notes accompanying this release.              * 
+                *                                                         * 
+                *                                                         * 
+                *                                                         * 
+                *                                                         * 
+                *                                                         * 
+                *   This program may not be used for commercial purposes  * 
+                *           without payment of a commercial fee.          * 
+                *                                                         * 
+                * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+
+
+ 
+
+
+
+     PROCESSING PART, INSTANCE, AND ASSEMBLY INFORMATION
+   *******************************************************
+
+
+     END PROCESSING PART, INSTANCE, AND ASSEMBLY INFORMATION
+   ***********************************************************
+
+
+
+
+     OPTIONS BEING PROCESSED
+   ***************************
+
+
+  *Heading
+  *Element, type=C3D8R
+  *Elset, elset=ASSEMBLY_PART-1_BACK
+  *Elset, elset=ASSEMBLY_PART-1_BOTTOM
+  *Elset, elset=ASSEMBLY_PART-1_CORTEX
+  *Elset, elset=ASSEMBLY_PART-1_CORTEX_FRONT
+  *Elset, elset=ASSEMBLY_PART-1_CORTEX_TOP
+  *Elset, elset=ASSEMBLY_PART-1_INTERFACE
+  *Elset, elset=ASSEMBLY_PART-1_INTERFACE-EDGE
+  *Elset, elset=ASSEMBLY_PART-1_SIDE-1
+  *Elset, elset=ASSEMBLY_PART-1_SIDE-2
+  *Elset, elset=ASSEMBLY_PART-1_SUBCORTEX
+  *Elset, elset=ASSEMBLY_PART-1_SUBCORTEX_FRONT
+  *Elset, elset=ASSEMBLY_PART-1_TOP-EDGE
+  *Elset, elset=ASSEMBLY_PART-1_WHOLE-DOMAIN
+  *Elset, elset=ASSEMBLY_PART-1__CORTEX_S_S1
+  *Elset, elset=ASSEMBLY_PART-1__INTERFACE_S_S3
+  *Elset, elset=ASSEMBLY_PART-1__SIDE1_S_S4
+  *Elset, elset=ASSEMBLY_PART-1__SIDE1_S_S6
+  *Elset, elset=ASSEMBLY_PART-1__SIDE2_S_S3
+  *Elset, elset=ASSEMBLY_PART-1__SIDE2_S_S5
+  *Elset, elset=ASSEMBLY_PART-1__SIDE2_S_S6
+  *Elset, elset=ASSEMBLY_PART-1__SUBCORTEX_S_S1
+  *Elset, elset=ASSEMBLY_PART-1__TOP_S_S5
+  *Element, type=R3D4
+  *Elset, elset=ASSEMBLY_WALL-1_WALL
+  *Elset, elset=ASSEMBLY_WALL-1__S_WALL_SPOS
+  *Element, type=R3D4
+  *Elset, elset=ASSEMBLY_WALL-2_WALL
+  *Elset, elset=ASSEMBLY_WALL-2__S_WALL_SPOS
+  *material, name=GRAY
+  *density
+  *depvar
+  *usermaterial, constants=6
+  *material, name=WHIT
+  *density
+  *depvar
+  *usermaterial, constants=13
+  *solidsection, elset=ASSEMBLY_PART-1_CORTEX, controls=EC-1, material=GRAY
+  *solidsection, elset=ASSEMBLY_PART-1_SUBCORTEX, controls=EC-1, material=WHIT
+  *sectioncontrols, name=EC-1, hourglass=ENHANCED
+
+ ***WARNING: THE PARAMETER HOURGLASS ON THE *SECTION CONTROLS OPTION IS 
+             RELEVANT FOR SOLID, MEMBRANE, AND SHELL ELEMENTS WITH REDUCED 
+             INTEGRATION WHEREVER APPLICABLE. THIS WARNING CAN BE IGNORED IF 
+             THE FEATURE IS APPLIED TO THESE ELEMENT TYPES ONLY.
+  *solidsection, elset=ASSEMBLY_PART-1_CORTEX, controls=EC-1, material=GRAY
+  *solidsection, elset=ASSEMBLY_PART-1_SUBCORTEX, controls=EC-1, material=WHIT
+  *rigidbody, refnode=ASSEMBLY_WALL-1_WALL-REFPT_, elset=ASSEMBLY_WALL-1_WALL
+  *rigidbody, refnode=ASSEMBLY_WALL-2_WALL-REFPT_, elset=ASSEMBLY_WALL-2_WALL
+  *rigidbody, refnode=ASSEMBLY_WALL-1_WALL-REFPT_, elset=ASSEMBLY_WALL-1_WALL
+  *rigidbody, refnode=ASSEMBLY_WALL-2_WALL-REFPT_, elset=ASSEMBLY_WALL-2_WALL
+  *rigidbody, refnode=ASSEMBLY_WALL-1_WALL-REFPT_, elset=ASSEMBLY_WALL-1_WALL
+  *rigidbody, refnode=ASSEMBLY_WALL-2_WALL-REFPT_, elset=ASSEMBLY_WALL-2_WALL
+  *rigidbody, refnode=ASSEMBLY_WALL-1_WALL-REFPT_, elset=ASSEMBLY_WALL-1_WALL
+  *rigidbody, refnode=ASSEMBLY_WALL-2_WALL-REFPT_, elset=ASSEMBLY_WALL-2_WALL
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_TOP_S
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_CORTEX_S
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_SUBCORTEX_S
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_SIDE1_S
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_SIDE2_S
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_INTERFACE_S
+  *surface, type=ELEMENT, name=ASSEMBLY_WALL-1_S_WALL
+  *surface, type=ELEMENT, name=ASSEMBLY_WALL-2_S_WALL
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_TOP_S
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_CORTEX_S
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_SUBCORTEX_S
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_SIDE1_S
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_SIDE2_S
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_INTERFACE_S
+  *surface, type=ELEMENT, name=ASSEMBLY_WALL-1_S_WALL
+  *surface, type=ELEMENT, name=ASSEMBLY_WALL-2_S_WALL
+  *rigidbody, refnode=ASSEMBLY_WALL-1_WALL-REFPT_, elset=ASSEMBLY_WALL-1_WALL
+  *rigidbody, refnode=ASSEMBLY_WALL-2_WALL-REFPT_, elset=ASSEMBLY_WALL-2_WALL
+  *surfaceinteraction, name=INTPROP-1, padthickness=0.1
+  *friction
+  *surfaceinteraction, name=INTPROP-2
+  *friction
+  *rigidbody, refnode=ASSEMBLY_WALL-1_WALL-REFPT_, elset=ASSEMBLY_WALL-1_WALL
+  *rigidbody, refnode=ASSEMBLY_WALL-2_WALL-REFPT_, elset=ASSEMBLY_WALL-2_WALL
+  *rigidbody, refnode=ASSEMBLY_WALL-1_WALL-REFPT_, elset=ASSEMBLY_WALL-1_WALL
+  *rigidbody, refnode=ASSEMBLY_WALL-2_WALL-REFPT_, elset=ASSEMBLY_WALL-2_WALL
+  *boundary, amplitude=AMP-1
+  *boundary, amplitude=AMP-1
+  *boundary, amplitude=AMP-1
+  *boundary
+  *boundary
+  *boundary, amplitude=AMP-1
+  *boundary, amplitude=AMP-1
+  *solidsection, elset=ASSEMBLY_PART-1_CORTEX, controls=EC-1, material=GRAY
+  *solidsection, elset=ASSEMBLY_PART-1_SUBCORTEX, controls=EC-1, material=WHIT
+  *rigidbody, refnode=ASSEMBLY_WALL-1_WALL-REFPT_, elset=ASSEMBLY_WALL-1_WALL
+  *rigidbody, refnode=ASSEMBLY_WALL-2_WALL-REFPT_, elset=ASSEMBLY_WALL-2_WALL
+  *friction
+  *friction
+  *elementoutput, elset=ASSEMBLY_PART-1_CORTEX, directions=YES
+  *elementoutput, elset=ASSEMBLY_PART-1_SUBCORTEX, directions=YES
+  *elementoutput, elset=ASSEMBLY_PART-1_WHOLE-DOMAIN, directions=YES
+  
+                               E L E M E N T   Q U A L I T Y  C H E C K S        
+  
+  
+ ***NOTES: DISTORTED ISOPARAMETRIC ELEMENTS: ANGLE BETWEEN ISOPARAMETRIC LINES 
+           IS LESS THAN 45 DEGREES OR GREATER THAN 135 DEGREES.
+  
+           TETRAHEDRAL QUALITY MEASURE: VOLUME OF TETRAHEDRON DIVIDED BY THE 
+           VOLUME OF EQUILATERAL TETRAHEDRON WITH SAME CIRCUMSPHERE RADIUS; 
+           0 FOR DEGENERATE TETRAHEDRON AND 1 FOR EQUILATERIAL TETRAHEDRON. IT 
+           IS RECOMMENDED THAT THE TETRAHEDRAL QUALITY MEASURE BE GREATER THAN 
+           0.02, THE MIN INTERIOR (DIHEDRAL) ANGLE BE GREATER THAN 10 DEGREES, 
+           AND THE MAX INTERIOR (DIHEDRAL) ANGLE BE LESS THAN 160 DEGREES. 
+  
+           MODIFIED TETRAHEDRAL QUALITY MEASURE: ANGLES BETWEEN THE TWO LINE 
+           SEGMENTS ON EACH EDGE; THE EDGES OF MODIFIED TETRAHEDRAL SHOULD BE 
+           AS STRAIGHT AS POSSIBLE. IT IS RECOMMENDED THAT THE ANGLE BETWEEN 
+           THE TWO LINE SEGMENTS ON EACH EDGE IS BETWEEN 160 AND 180 DEGREES. 
+  
+           TRIANGULAR QUALITY MEASURE: AREA OF TRIANGLE DIVIDED BY THE AREA OF 
+           EQUILATERAL TRIANGLE WITH SAME CIRCUMCIRCLE RADIUS; 0 FOR DEGENERATE 
+           TRIANGLE AND 1 FOR EQUILATERAL TRIANGLE. IT IS RECOMMENDED THAT THE
+           TRIANGULAR QUALITY MEASURE BE GREATER THAN 0.01, THE MIN INTERIOR 
+           ANGLE BE GREATER THAN 10 DEGREES, AND THE MAX INTERIOR ANGLE BE LESS 
+           THAN 160 DEGREES. 
+  
+           NODAL ADJUSTMENTS ARISING FROM CONTACT INTERACTIONS AND/OR TIE 
+           CONSTRAINTS CAN CAUSE SEVERE ELEMENT DISTORTION. IT MAY BE NECESSARY 
+           TO REMESH IN ORDER TO REDUCE THE AMOUNT OF ADJUSTMENT. 
+
+ ***WARNING: 138 elements are distorted. Either the isoparametric angles are 
+             out of the suggested limits or the triangular or tetrahedral 
+             quality measure is bad. The elements have been identified in 
+             element set WarnElemDistorted.
+  
+ --------------------------------------------------------------------------------
+ Distorted isoparametric elements
+  
+     Element       Min/max angle   Adjusted nodes 
+ ---------------- ---------------- -------------- 
+     PART-1.19338          44.9822       NO       
+     PART-1.19339          44.3501       NO       
+     PART-1.19342          44.7486       NO       
+     PART-1.19343           44.977       NO       
+     PART-1.19345          44.8875       NO       
+     PART-1.19347          44.7829       NO       
+     PART-1.19349          44.6476       NO       
+     PART-1.19350          44.6718       NO       
+     PART-1.19351          44.7546       NO       
+     PART-1.19352          44.3707       NO       
+     PART-1.19382          44.7841       NO       
+     PART-1.19401          44.8582       NO       
+     PART-1.19403          44.8901       NO       
+     PART-1.19405          44.8516       NO       
+     PART-1.19513          44.9828       NO       
+     PART-1.19520          44.8121       NO       
+     PART-1.19544          44.9759       NO       
+     PART-1.19545          44.9431       NO       
+     PART-1.19591          44.9574       NO       
+     PART-1.19592          44.8516       NO       
+     PART-1.19593          44.8184       NO       
+     PART-1.19596          44.7245       NO       
+     PART-1.19597          44.3529       NO       
+     PART-1.19599          44.2557       NO       
+     PART-1.19600          44.2282       NO       
+     PART-1.19603          44.0371       NO       
+     PART-1.19604          43.8247       NO       
+     PART-1.19620          44.9933       NO       
+     PART-1.19622          44.8222       NO       
+     PART-1.19623          44.8156       NO       
+     PART-1.19625            44.91       NO       
+     PART-1.19627          44.9926       NO       
+     PART-1.19632          44.9273       NO       
+     PART-1.19634          44.8165       NO       
+     PART-1.19636          44.7814       NO       
+     PART-1.19637          44.7835       NO       
+     PART-1.19639          44.7923       NO       
+     PART-1.19642          44.8161       NO       
+     PART-1.19644          44.7741       NO       
+     PART-1.19646          44.7246       NO       
+     PART-1.19647          44.7486       NO       
+     PART-1.19648          44.7119       NO       
+     PART-1.19650          44.8263       NO       
+     PART-1.19651          44.8022       NO       
+     PART-1.19655          44.9526       NO       
+     PART-1.19656          44.9932       NO       
+     PART-1.19658          44.8075       NO       
+     PART-1.19660          44.6861       NO       
+     PART-1.19662          44.5934       NO       
+     PART-1.19664          44.8094       NO       
+     PART-1.19665          44.8611       NO       
+     PART-1.19667          44.8877       NO       
+     PART-1.19668          44.8311       NO       
+     PART-1.19669          44.7673       NO       
+     PART-1.19671          44.4937       NO       
+     PART-1.19672          44.3743       NO       
+     PART-1.19673          44.6992       NO       
+     PART-1.19674          44.8967       NO       
+     PART-1.19677          44.8742       NO       
+     PART-1.19678          44.8403       NO       
+     PART-1.19680          44.8125       NO       
+     PART-1.19681          44.7833       NO       
+     PART-1.19682          44.8052       NO       
+     PART-1.19684          44.9801       NO       
+     PART-1.19685          44.9998       NO       
+     PART-1.19686          44.9725       NO       
+     PART-1.19688           44.937       NO       
+     PART-1.19690          44.9009       NO       
+     PART-1.19691          44.8294       NO       
+     PART-1.19692           44.811       NO       
+     PART-1.19693          44.8388       NO       
+     PART-1.19698          44.9541       NO       
+     PART-1.19699          44.6738       NO       
+     PART-1.19701          44.5008       NO       
+     PART-1.19702          44.5617       NO       
+     PART-1.19703          44.6631       NO       
+     PART-1.19704          44.7544       NO       
+     PART-1.19706           44.951       NO       
+     PART-1.19708           44.961       NO       
+     PART-1.19709          44.9739       NO       
+     PART-1.19710          44.9894       NO       
+     PART-1.19777          44.1713       NO       
+     PART-1.19782          43.7951       NO       
+     PART-1.19786          44.3327       NO       
+     PART-1.19793             44.9       NO       
+     PART-1.19795          44.9919       NO       
+     PART-1.19811          44.5333       NO       
+     PART-1.19813          44.4075       NO       
+     PART-1.19815          44.8604       NO       
+     PART-1.19817          44.1236       NO       
+     PART-1.19818          44.2214       NO       
+     PART-1.19826          44.8871       NO       
+     PART-1.19831          44.8646       NO       
+     PART-1.19834          44.7565       NO       
+     PART-1.19837          44.7885       NO       
+     PART-1.19839          44.7355       NO       
+     PART-1.19841          44.7822       NO       
+     PART-1.19843          44.9991       NO       
+     PART-1.19846          44.8116       NO       
+     PART-1.19847          44.9546       NO       
+     PART-1.19850          44.7465       NO       
+     PART-1.19852           44.768       NO       
+     PART-1.19853          44.7967       NO       
+     PART-1.19855          44.7368       NO       
+     PART-1.19857          44.7428       NO       
+     PART-1.19862          44.7127       NO       
+     PART-1.19864          44.7559       NO       
+     PART-1.19867          44.8899       NO       
+     PART-1.19869          44.9529       NO       
+     PART-1.19872           44.962       NO       
+     PART-1.19874          44.9019       NO       
+     PART-1.19877          44.9523       NO       
+     PART-1.19879          44.4457       NO       
+     PART-1.19881          44.7389       NO       
+     PART-1.19884          44.8408       NO       
+     PART-1.19890           44.889       NO       
+     PART-1.19898           44.562       NO       
+     PART-1.19901          44.7949       NO       
+     PART-1.19903          44.6221       NO       
+     PART-1.19912          44.6867       NO       
+     PART-1.19918          44.8136       NO       
+     PART-1.19929          44.8528       NO       
+     PART-1.19931          44.7708       NO       
+     PART-1.19934           44.849       NO       
+     PART-1.19939          44.9774       NO       
+     PART-1.19941          44.6345       NO       
+     PART-1.19943          44.5567       NO       
+     PART-1.19949          44.4969       NO       
+     PART-1.19950          44.3328       NO       
+     PART-1.19952          44.8433       NO       
+     PART-1.19953          44.8086       NO       
+     PART-1.19963          44.9095       NO       
+     PART-1.19964          44.9238       NO       
+     PART-1.19967          44.8056       NO       
+     PART-1.19968          44.9823       NO       
+     PART-1.19971          44.9028       NO       
+     PART-1.19974          44.8106       NO       
+     PART-1.19990          44.9779       NO       
+  
+  
+  *output, field, variable=PRESELECT
+  *output, field, numberinterval=500
+  *output, history, timeinterval=0.001
+  *Step, name=growth, nlgeom=YES
+  *Step, name=growth, nlgeom=YES
+  *dynamic, explicit
+  *fixedmassscaling, factor=150
+  *dsload, amplitude=AMP-1
+  *output, field, variable=PRESELECT
+  *output, field, numberinterval=500
+  *nodeoutput, nset=ASSEMBLY_PART-1_CORTEX
+  *elementoutput, elset=ASSEMBLY_PART-1_CORTEX, directions=YES
+  *nodeoutput, nset=ASSEMBLY_PART-1_SUBCORTEX
+  *elementoutput, elset=ASSEMBLY_PART-1_SUBCORTEX, directions=YES
+  *nodeoutput, nset=ASSEMBLY_PART-1_WHOLE-DOMAIN
+  *elementoutput, elset=ASSEMBLY_PART-1_WHOLE-DOMAIN, directions=YES
+  *output, history, timeinterval=0.001
+  *energyoutput, elset=ASSEMBLY_PART-1_WHOLE-DOMAIN
+  *endstep
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_TOP_S
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_CORTEX_S
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_SUBCORTEX_S
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_SIDE1_S
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_SIDE2_S
+  *surface, type=ELEMENT, name=ASSEMBLY_PART-1_INTERFACE_S
+  *surface, type=ELEMENT, name=ASSEMBLY_WALL-1_S_WALL
+  *surface, type=ELEMENT, name=ASSEMBLY_WALL-2_S_WALL
+  *surfaceinteraction, name=INTPROP-1, padthickness=0.1
+  *friction
+  *surfacebehavior, pressure-overclosure=HARD
+  *surfaceinteraction, name=INTPROP-2
+  *friction
+  *surfacebehavior, pressure-overclosure=HARD
+  *boundary, amplitude=AMP-1
+
+ ***WARNING: THE AMPLITUDE PARAMETER IS NOT VALID IN THE MODEL DEFINITION AND 
+             WILL BE IGNORED.
+  *boundary, amplitude=AMP-1
+
+ ***WARNING: THE AMPLITUDE PARAMETER IS NOT VALID IN THE MODEL DEFINITION AND 
+             WILL BE IGNORED.
+  *boundary, amplitude=AMP-1
+
+ ***WARNING: THE AMPLITUDE PARAMETER IS NOT VALID IN THE MODEL DEFINITION AND 
+             WILL BE IGNORED.
+  *boundary
+  *boundary
+  *boundary, amplitude=AMP-1
+
+ ***WARNING: THE AMPLITUDE PARAMETER IS NOT VALID IN THE MODEL DEFINITION AND 
+             WILL BE IGNORED.
+  *boundary, amplitude=AMP-1
+
+ ***WARNING: THE AMPLITUDE PARAMETER IS NOT VALID IN THE MODEL DEFINITION AND 
+             WILL BE IGNORED.
+  *Step, name=growth, nlgeom=YES
+  *dynamic, explicit
+  *contactpair, interaction=INTPROP-1, mechanicalconstraint=KINEMATIC, cpset=INT-1
+  *contactpair, interaction=INTPROP-2, mechanicalconstraint=KINEMATIC, cpset=INT-2
+  *contactpair, interaction=INTPROP-2, mechanicalconstraint=KINEMATIC, cpset=INT-3
+  *endstep
+
+
+
+                            P R O B L E M   S I Z E
+
+
+          NUMBER OF ELEMENTS IS                                 36730
+          NUMBER OF NODES IS                                    45100
+          NUMBER OF NODES DEFINED BY THE USER                   45100
+          TOTAL NUMBER OF VARIABLES IN THE MODEL               135306
+          (DEGREES OF FREEDOM PLUS MAX NO. OF ANY LAGRANGE MULTIPLIER
+           VARIABLES. INCLUDE *PRINT,SOLVE=YES TO GET THE ACTUAL NUMBER.)
+
+
+
+                              END OF USER INPUT PROCESSING
+
+
+
+     JOB TIME SUMMARY
+       USER TIME (SEC)      =      1.7    
+       SYSTEM TIME (SEC)    =     8.00E-02
+       TOTAL CPU TIME (SEC) =      1.8    
+       WALLCLOCK TIME (SEC) =            2

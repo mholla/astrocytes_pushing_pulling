@@ -112,8 +112,10 @@
       maj_axis = props(8) ! WM major axis (mm)
       min_axis = props(9) ! WM minor axis (mm)
 
+
+
       ! pour initial coordinates into the global variable matrix 
-      if (totalTime.lt.dt) then
+      if (totalTime.lt.0.1) then
          do km=1,nblock
             inicoord(nElement(km),1) = coordMp(km,1)
             inicoord(nElement(km),2) = coordMp(km,2)
@@ -172,13 +174,15 @@
          coordy = inicoord(nElement(km),2)
          coordz = inicoord(nElement(km),3)
 
+
+
          !-------------------------------------------------------------
          ! perform the time integration and compute the
          ! constitutive response based on the material model
 
          if((totalTime.eq.zero).and.(stepTime.eq.zero)) then
             ! initialization (dummy) step: pass zero timestep
-            call integ_white(props, nprops, F_tau, zero, totalTime,
+            call integ_white(props, nprops, F_tau, -1.0d0, totalTime,
      +                       coordx, coordy, coordz, thetag_t,
      +                       theta_dot_1, f_2, thetag_tau, sigma_tau)
          else
@@ -213,9 +217,10 @@
 
          ! rotate stress tensor and get radial and tangential outputs
          ! S' = R.S.R^T
-         N_R(1,1) = two*coordx/maj_axis**two
-         N_R(2,1) = two*coordy/min_axis**two
+         N_R(1,1) = 2.0*coordx/maj_axis**2.0
+         N_R(2,1) = 2.0*coordy/min_axis**2.0
          zeta = atan(N_R(2,1)/N_R(1,1))
+         ! write(6, *) 'zeta: ',zeta
 
          rot_matrix = zero
          rot_matrix(1,1) =  cos(zeta)
@@ -306,7 +311,7 @@
      +     half=0.5d0, third=1.d0/3.d0)
 
       ! pour initial coordinates into the global variable
-      if (totalTime.lt.dt) then
+      if (totalTime.lt.0.1) then
          do km=1,nblock
             inicoord(nElement(km),1) = coordMp(km,1)
             inicoord(nElement(km),2) = coordMp(km,2)
@@ -371,7 +376,7 @@
 
          if((totalTime.eq.zero).and.(stepTime.eq.zero)) then
             ! initialization (dummy) step: pass zero timestep
-            call integ_gray(props, nprops, F_tau, zero, totalTime,
+            call integ_gray(props, nprops, F_tau, -1.0d0, totalTime,
      +                      coordx, coordy, coordz, thetag_t,
      +                      thetag_tau, sigma_tau)
          else
@@ -446,7 +451,7 @@
      +                       theta_dot_1, f_2, thetag_tau, sigma_tau
      +                       )
 
-     implicit none
+      implicit none
 
       integer nitl, nprops
 
@@ -489,22 +494,49 @@
       alpha     = props(12) ! standard deviation of Gauss function
       delta     = props(13) ! scaled threshold for Gauss function
 
+      !  if (totalTime.lt.1.0d-6) then
+      !     write(6,*) 'PROPS CHECK: mu=',mu,' lambda=',lambda,
+      ! +   ' G_GM=',G_GM,' gamma_1=',gamma_1,' gamma_hat=',gamma_hat,
+      ! +   ' T_1=',T_1,' T_2=',T_2,' maj_axis=',maj_axis,
+      ! +   ' min_axis=',min_axis,' b_tilde=',b_tilde,
+      ! +   ' N_gyri=',N_gyri,' alpha=',alpha,' delta=',delta
+      !     flush(6)
+      !  endif
+
+      ! calculate growth rate in Phase 3 (pulling)
+      call mdet(F_tau,detF)
+!!!!!!!!!!!!!!!!!!!!!!!!!!! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      if (dtime.lt.zero) then
+         thetag_tau = thetag_t
+         Fg_tau  = (thetag_tau**third)*Iden
+         ! Fg_tau(3,3) = one
+         call m3inv(Fg_tau, Fginv)
+         Fe_tau = matmul(F_tau, Fginv)
+         Be_tau = matmul(Fe_tau, transpose(Fe_tau))
+         call mdet(Fg_tau, Jg)
+         Je = detF/Jg
+         sigma_tau = ((lambda*dlog(Je) - mu)*Iden + mu*Be_tau)/Je
+         theta_dot_1 = zero
+         f_2 = zero
+         return
+      endif
+!!!!!!!!!!!!!!!!!!!!!!!!!!! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
       ! calculate other dimensions
       a_tilde = b_tilde*(maj_axis/min_axis)
 
       psi = atan(coordy/coordx)
-      rad = sqrt(coordx**two + coordy**two)
+      ! write(6, *) 'psi: ',psi
+      rad = sqrt(coordx**2.0 + coordy**2.0)
       r_tilde = rad/sqrt(
-     +     ((maj_axis - a_tilde)*cos(psi))**two 
-     +   + ((min_axis - b_tilde)*sin(psi))**two )
+     +     ((maj_axis - a_tilde)*cos(psi))**2.0 
+     +   + ((min_axis - b_tilde)*sin(psi))**2.0 )
 
       ! calculate growth rate in Phase 1
       call gauss(r_tilde,delta,alpha,f_phi)
       f_2 = sin(four*psi*(N_gyri - half)) + one
       theta_dot_1 = (G_GM*gamma_1)*half*f_phi*f_2 
 
-      ! calculate growth rate in Phase 3 (pulling)
-      call mdet(F_tau,detF)
       theta_dot_3_fac = gamma_hat*G_GM/mu 
 
       if (totalTime.le.T_1) then ! Phase 1
@@ -601,13 +633,27 @@
       min_axis = props(6) ! WM minor axis (b)
 
       ! obtain referential surface outnormal of an elliptical surface
-      N_R(1,1) = two*coordx/maj_axis**two
-      N_R(2,1) = two*coordy/min_axis**two
+      N_R(1,1) = two*coordx/maj_axis**2.0
+      N_R(2,1) = two*coordy/min_axis**2.0
       N_R(3,1) = zero
-      tmp = sqrt(N_R(1,1)**two + N_R(2,1)**two + N_R(3,1)**two)
+      tmp = sqrt(N_R(1,1)**2.0 + N_R(2,1)**2.0 + N_R(3,1)**2.0)
       N_R = N_R/tmp
 
       call mdet(F_tau,detF)
+!!!!!!!!!!!!!!!!!!!!!!!!!!! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      if (dtime.lt.zero) then
+         thetag_tau = thetag_t
+         Fg_tau = thetag_tau**third*Iden
+         ! Fg_tau(3,3) = one
+         call m3inv(Fg_tau, Fginv)
+         Fe_tau = matmul(F_tau, Fginv)
+         Be_tau = matmul(Fe_tau, transpose(Fe_tau))
+         call mdet(Fg_tau, Jg)
+         Je = detF/Jg
+         sigma_tau = ((lambda*dlog(Je) - mu)*Iden + mu*Be_tau)/Je
+         return
+      endif
+!!!!!!!!!!!!!!!!!!!!!!!!!!! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       if (totalTime.le.T_1) then ! Phase 1 (no GM growth)
          thetag_tau = one

@@ -46,6 +46,7 @@
 
       ! call particular user material to perform the analysis 
       if (cmname(1:4) .eq. 'WHIT') then
+         ! write(6, *) 'Material: ', cmname(1:8), totalTime, dt
          call  vumat_white (jblock(i_umt_nblock),
      +      ndir, nshr, nstatev, nprops, 
      +      stepTime, totalTime, dt, coordMp,
@@ -55,6 +56,7 @@
      +      stressNew, stateNew, enerInternNew, enerInelasNew,
      +      jblock(i_umt_noel))
       else if(cmname(1:4) .eq. 'GRAY') then
+         ! write(6, *) 'Material: ', cmname(1:8), totalTime, dt
          call  vumat_gray (jblock(i_umt_nblock),
      +      ndir, nshr, nstatev, nprops, 
      +      stepTime, totalTime, dt, coordMp,
@@ -112,8 +114,23 @@
       maj_axis = props(8) ! WM major axis (mm)
       min_axis = props(9) ! WM minor axis (mm)
 
+
+      !  if (totalTime.lt.0.1) then
+      !     do km=1,nblock
+      !        inicoord(nElement(km),1) = coordMp(km,1)
+      !        inicoord(nElement(km),2) = coordMp(km,2)
+      !        inicoord(nElement(km),3) = coordMp(km,3)
+      !        if (km.eq.1 .or. km.eq.nblock) then
+      !           write(6,*) 'POPULATE: nElement=',nElement(km),
+      ! +              ' coordMp=',coordMp(km,1),coordMp(km,2),coordMp(km,3)
+      !           flush(6)
+      !        endif
+      !     enddo
+      !  end if
+
+
       ! pour initial coordinates into the global variable matrix 
-      if (totalTime.lt.dt) then
+      if (totalTime.lt.0.1) then
          do km=1,nblock
             inicoord(nElement(km),1) = coordMp(km,1)
             inicoord(nElement(km),2) = coordMp(km,2)
@@ -171,7 +188,7 @@
          coordx = inicoord(nElement(km),1)
          coordy = inicoord(nElement(km),2)
          coordz = inicoord(nElement(km),3)
-
+         
          !-------------------------------------------------------------
          ! perform the time integration and compute the
          ! constitutive response based on the material model
@@ -187,7 +204,7 @@
      +                       coordx, coordy, coordz, thetag_t,
      +                       theta_dot_1, f_2, thetag_tau, sigma_tau)
          endif
-         !-------------------------------------------------------------
+
 
          ! define stress at end of current increment
          ! (ABAQUS/Explicit uses Cauchy stress in corotational frame, R^T . sigma . R
@@ -213,10 +230,10 @@
 
          ! rotate stress tensor and get radial and tangential outputs
          ! S' = R.S.R^T
-         N_R(1,1) = two*coordx/maj_axis**two
-         N_R(2,1) = two*coordy/min_axis**two
+         N_R(1,1) = 2.0*coordx/maj_axis**2.0
+         N_R(2,1) = 2.0*coordy/min_axis**2.0
          zeta = atan(N_R(2,1)/N_R(1,1))
-
+         ! write(6, *) 'zeta: ',coordx
          rot_matrix = zero
          rot_matrix(1,1) =  cos(zeta)
          rot_matrix(1,2) =  sin(zeta)
@@ -306,7 +323,7 @@
      +     half=0.5d0, third=1.d0/3.d0)
 
       ! pour initial coordinates into the global variable
-      if (totalTime.lt.dt) then
+      if (totalTime.lt.0.1) then
          do km=1,nblock
             inicoord(nElement(km),1) = coordMp(km,1)
             inicoord(nElement(km),2) = coordMp(km,2)
@@ -488,12 +505,19 @@
       delta_bar = props(15) ! scaled threshold for Heaviside function
 
 
+      ! write(6,*) 'PROPS CHECK: mu=',mu,' lambda=',lambda,' G_GM=',G_GM
+      ! write(6,*) '  gamma_1=',gamma_1,' T_1=',T_1,' T_2=',T_2
+      ! write(6,*) '  maj_axis=',maj_axis,' min_axis=',min_axis,' b_tilde=',b_tilde
+      ! write(6,*) '  N_gyri=',N_gyri,' alpha=',alpha,' delta=',delta
+      ! flush(6)
+
       call mdet(F_tau,detF)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
       if (dtime.lt.zero) then
          thetag_tau = thetag_t
          Fg_tau  = (thetag_tau**third)*Iden
+         ! Fg_tau(3,3) = one
          call m3inv(Fg_tau, Fginv)
          Fe_tau = matmul(F_tau, Fginv)
          Be_tau = matmul(Fe_tau, transpose(Fe_tau))
@@ -510,10 +534,10 @@
       a_tilde = b_tilde*(maj_axis/min_axis)
 
       psi = atan(coordy/coordx)
-      rad = sqrt(coordx**two + coordy**two)
+      rad = sqrt(coordx**2.0 + coordy**2.0)
       r_tilde = rad/sqrt(
-     +     ((maj_axis - a_tilde)*cos(psi))**two 
-     +   + ((min_axis - b_tilde)*sin(psi))**two )
+     +     ((maj_axis - a_tilde)*cos(psi))**2.0 
+     +   + ((min_axis - b_tilde)*sin(psi))**2.0 )
 
       ! calculate growth rate in Phase 1
       call gauss(r_tilde,delta,alpha,f_phi)
@@ -538,6 +562,7 @@
       if (thetag_tau .le. 1.0d-6) thetag_tau = 1.0d-6 
       ! update kinematics
       Fg_tau  = (thetag_tau**third)*Iden
+      ! Fg_tau(3,3) = one
       call m3inv(Fg_tau, Fginv)
       Fe_tau = matmul(F_tau, Fginv)
       Be_tau = matmul(Fe_tau, transpose(Fe_tau))
@@ -589,6 +614,7 @@
       if (dtime.lt.zero) then
          thetag_tau = thetag_t
          Fg_tau = thetag_tau**third*Iden
+         ! Fg_tau(3,3) = one
          call m3inv(Fg_tau, Fginv)
          Fe_tau = matmul(F_tau, Fginv)
          Be_tau = matmul(Fe_tau, transpose(Fe_tau))
@@ -600,10 +626,10 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!! dummy step !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       ! obtain referential surface outnormal of an elliptical surface
-      N_R(1,1) = two*coordx/maj_axis**two
-      N_R(2,1) = two*coordy/min_axis**two
+      N_R(1,1) = 2.0*coordx/maj_axis**2.0
+      N_R(2,1) = 2.0*coordy/min_axis**2.0
       N_R(3,1) = zero
-      tmp = sqrt(N_R(1,1)**two + N_R(2,1)**two + N_R(3,1)**two)
+      tmp = sqrt(N_R(1,1)**2.0 + N_R(2,1)**2.0 + N_R(3,1)**2.0)
       N_R = N_R/tmp
 
       if (totalTime.le.T_1) then ! Phase 1 (no GM growth)
@@ -615,6 +641,7 @@
       ! update kinematics
       Fg_tau = dsqrt(thetag_tau)*Iden
      +         +(one - dsqrt(thetag_tau))*matmul(N_R,transpose(N_R))
+      ! Fg_tau(3,3) = one
       call m3inv(Fg_tau, Fginv)
       Fe_tau = matmul(F_tau, Fginv)
       Be_tau = matmul(Fe_tau, transpose(Fe_tau))
@@ -633,7 +660,7 @@
       implicit none
       real*8 x,alpha,y
 
-      y = (exp(alpha*x))/(1.0d0 + exp(alpha*x))
+      y = (exp(alpha*x))/(1.0 + exp(alpha*x))
 
       end subroutine Hhat
 
@@ -647,7 +674,7 @@
       real*8 half, two, Pi
       parameter(half=0.5d0, two=2.d0, Pi=3.1415926d0)
 
-      y = exp(-half * ((x - mean) / sigma)**two) / (sigma * dsqrt(two*Pi))
+      y = exp(-half * ((x - mean) / sigma)**2) / (sigma * dsqrt(two*Pi))
 
       end subroutine gauss      
 

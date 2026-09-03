@@ -1,0 +1,512 @@
+Analysis initiated from SIMULIA established products
+Abaqus JOB QuarterEllipse_push_gammahat5em2
+Abaqus 2024
+USING MEMORY DOUG-LEA ALLOCATOR
+Abaqus License Manager checked out the following licenses:
+Abaqus/Explicit checked out 5 tokens from Flexnet server linux5-lic.crc.nd.edu.
+<68 out of 73 licenses remain available>.
+Begin Analysis Input File Processor
+Fri 21 Aug 2026 10:30:15 AM EDT
+Run pre
+Fri 21 Aug 2026 10:30:17 AM EDT
+End Analysis Input File Processor
+Begin Abaqus/Explicit Packager
+Fri 21 Aug 2026 10:30:17 AM EDT
+PAC_NUM_THREADS VALUE: 1
+Run package
+Abaqus/Explicit 2024                             DATE 21-Aug-2026  TIME 10:30:18
+-------------------------------------------------------------------------------
+ PREPROCESSOR WARNING MESSAGES
+-------------------------------------------------------------------------------
+
+
+***WARNING: There are 7 warning messages in the data (.dat) file.  Please
+            check the data file for possible errors in the input file.
+
+
+
+***WARNING: Each of the nodes listed below (and included in node set
+            "WarnNodeBcIntersectKinCon") participates in a boundary condition
+            definition (*BOUNDARY) as well as being part of a kinematic
+            contact definition (*CONTACT PAIR, MECHANICAL CONSTRAINT =
+            KINEMATIC). If a degree-of-freedom participates in both types of
+            constraints, the boundary condition will override the kinematic
+            contact constraint. In case of a conflict, it is suggested that
+            the penalty contact algorithm be used instead.
+
+
+Intersecting Nodes:
+node: 3     instance: PART-1
+node: 4     instance: PART-1
+node: 6     instance: PART-1
+node: 7     instance: PART-1
+node: 238     instance: PART-1
+node: 239     instance: PART-1
+node: 240     instance: PART-1
+node: 241     instance: PART-1
+node: 242     instance: PART-1
+node: 243     instance: PART-1
+node: 244     instance: PART-1
+node: 245     instance: PART-1
+node: 246     instance: PART-1
+node: 247     instance: PART-1
+node: 248     instance: PART-1
+node: 249     instance: PART-1
+node: 250     instance: PART-1
+node: 251     instance: PART-1
+node: 252     instance: PART-1
+node: 253     instance: PART-1
+node: 254     instance: PART-1
+node: 255     instance: PART-1
+node: 256     instance: PART-1
+node: 257     instance: PART-1
+node: 258     instance: PART-1
+node: 259     instance: PART-1
+node: 260     instance: PART-1
+node: 261     instance: PART-1
+node: 262     instance: PART-1
+node: 263     instance: PART-1
+node: 264     instance: PART-1
+node: 265     instance: PART-1
+node: 266     instance: PART-1
+node: 267     instance: PART-1
+node: 268     instance: PART-1
+node: 269     instance: PART-1
+node: 270     instance: PART-1
+node: 271     instance: PART-1
+node: 272     instance: PART-1
+node: 273     instance: PART-1
+node: 274     instance: PART-1
+node: 275     instance: PART-1
+node: 276     instance: PART-1
+node: 277     instance: PART-1
+node: 278     instance: PART-1
+node: 279     instance: PART-1
+node: 280     instance: PART-1
+node: 281     instance: PART-1
+node: 282     instance: PART-1
+node: 283     instance: PART-1
+node: 284     instance: PART-1
+node: 285     instance: PART-1
+node: 286     instance: PART-1
+node: 287     instance: PART-1
+node: 288     instance: PART-1
+node: 289     instance: PART-1
+node: 290     instance: PART-1
+node: 291     instance: PART-1
+node: 292     instance: PART-1
+node: 293     instance: PART-1
+node: 294     instance: PART-1
+node: 295     instance: PART-1
+node: 296     instance: PART-1
+node: 297     instance: PART-1
+node: 298     instance: PART-1
+node: 299     instance: PART-1
+node: 300     instance: PART-1
+node: 301     instance: PART-1
+node: 302     instance: PART-1
+node: 303     instance: PART-1
+node: 304     instance: PART-1
+node: 305     instance: PART-1
+node: 306     instance: PART-1
+node: 307     instance: PART-1
+node: 308     instance: PART-1
+node: 309     instance: PART-1
+node: 310     instance: PART-1
+node: 311     instance: PART-1
+node: 312     instance: PART-1
+node: 313     instance: PART-1
+node: 314     instance: PART-1
+node: 315     instance: PART-1
+node: 316     instance: PART-1
+node: 317     instance: PART-1
+node: 318     instance: PART-1
+node: 319     instance: PART-1
+node: 320     instance: PART-1
+node: 321     instance: PART-1
+node: 322     instance: PART-1
+node: 323     instance: PART-1
+node: 324     instance: PART-1
+node: 325     instance: PART-1
+node: 326     instance: PART-1
+node: 327     instance: PART-1
+node: 328     instance: PART-1
+node: 329     instance: PART-1
+node: 330     instance: PART-1
+node: 331     instance: PART-1
+node: 332     instance: PART-1
+node: 333     instance: PART-1
+node: 334     instance: PART-1
+node: 335     instance: PART-1
+node: 336     instance: PART-1
+node: 337     instance: PART-1
+node: 338     instance: PART-1
+node: 339     instance: PART-1
+node: 340     instance: PART-1
+node: 341     instance: PART-1
+node: 342     instance: PART-1
+node: 343     instance: PART-1
+node: 344     instance: PART-1
+node: 345     instance: PART-1
+node: 346     instance: PART-1
+node: 347     instance: PART-1
+node: 348     instance: PART-1
+node: 349     instance: PART-1
+node: 350     instance: PART-1
+node: 351     instance: PART-1
+node: 352     instance: PART-1
+node: 353     instance: PART-1
+node: 354     instance: PART-1
+node: 355     instance: PART-1
+node: 356     instance: PART-1
+node: 357     instance: PART-1
+node: 358     instance: PART-1
+node: 359     instance: PART-1
+node: 360     instance: PART-1
+node: 361     instance: PART-1
+node: 362     instance: PART-1
+node: 363     instance: PART-1
+node: 364     instance: PART-1
+node: 365     instance: PART-1
+node: 366     instance: PART-1
+node: 367     instance: PART-1
+node: 368     instance: PART-1
+node: 369     instance: PART-1
+node: 370     instance: PART-1
+node: 371     instance: PART-1
+node: 372     instance: PART-1
+node: 373     instance: PART-1
+node: 374     instance: PART-1
+node: 375     instance: PART-1
+node: 376     instance: PART-1
+node: 377     instance: PART-1
+node: 378     instance: PART-1
+node: 379     instance: PART-1
+node: 380     instance: PART-1
+node: 381     instance: PART-1
+node: 382     instance: PART-1
+node: 383     instance: PART-1
+node: 384     instance: PART-1
+node: 385     instance: PART-1
+node: 386     instance: PART-1
+node: 387     instance: PART-1
+node: 388     instance: PART-1
+node: 389     instance: PART-1
+node: 390     instance: PART-1
+node: 391     instance: PART-1
+node: 392     instance: PART-1
+node: 393     instance: PART-1
+node: 394     instance: PART-1
+node: 395     instance: PART-1
+node: 396     instance: PART-1
+node: 397     instance: PART-1
+node: 398     instance: PART-1
+node: 399     instance: PART-1
+node: 400     instance: PART-1
+node: 401     instance: PART-1
+node: 402     instance: PART-1
+node: 403     instance: PART-1
+node: 404     instance: PART-1
+node: 405     instance: PART-1
+node: 406     instance: PART-1
+node: 407     instance: PART-1
+node: 408     instance: PART-1
+node: 409     instance: PART-1
+node: 410     instance: PART-1
+node: 411     instance: PART-1
+node: 412     instance: PART-1
+node: 413     instance: PART-1
+node: 414     instance: PART-1
+node: 415     instance: PART-1
+node: 416     instance: PART-1
+node: 417     instance: PART-1
+node: 418     instance: PART-1
+node: 419     instance: PART-1
+node: 420     instance: PART-1
+node: 421     instance: PART-1
+node: 422     instance: PART-1
+node: 423     instance: PART-1
+node: 424     instance: PART-1
+node: 425     instance: PART-1
+node: 426     instance: PART-1
+node: 427     instance: PART-1
+node: 428     instance: PART-1
+node: 429     instance: PART-1
+node: 430     instance: PART-1
+node: 431     instance: PART-1
+node: 432     instance: PART-1
+node: 433     instance: PART-1
+node: 434     instance: PART-1
+node: 435     instance: PART-1
+node: 436     instance: PART-1
+node: 437     instance: PART-1
+node: 438     instance: PART-1
+node: 439     instance: PART-1
+node: 440     instance: PART-1
+node: 441     instance: PART-1
+node: 442     instance: PART-1
+node: 443     instance: PART-1
+node: 444     instance: PART-1
+node: 445     instance: PART-1
+node: 446     instance: PART-1
+node: 447     instance: PART-1
+node: 448     instance: PART-1
+node: 449     instance: PART-1
+node: 450     instance: PART-1
+node: 451     instance: PART-1
+node: 452     instance: PART-1
+node: 453     instance: PART-1
+node: 454     instance: PART-1
+node: 455     instance: PART-1
+node: 456     instance: PART-1
+node: 457     instance: PART-1
+node: 458     instance: PART-1
+node: 692     instance: PART-1
+node: 693     instance: PART-1
+node: 694     instance: PART-1
+node: 695     instance: PART-1
+node: 696     instance: PART-1
+node: 697     instance: PART-1
+node: 698     instance: PART-1
+node: 699     instance: PART-1
+node: 700     instance: PART-1
+node: 701     instance: PART-1
+node: 702     instance: PART-1
+node: 703     instance: PART-1
+node: 704     instance: PART-1
+node: 705     instance: PART-1
+node: 706     instance: PART-1
+node: 707     instance: PART-1
+node: 708     instance: PART-1
+node: 709     instance: PART-1
+node: 710     instance: PART-1
+node: 711     instance: PART-1
+node: 712     instance: PART-1
+node: 713     instance: PART-1
+node: 714     instance: PART-1
+node: 715     instance: PART-1
+node: 716     instance: PART-1
+node: 717     instance: PART-1
+node: 718     instance: PART-1
+node: 719     instance: PART-1
+node: 720     instance: PART-1
+node: 721     instance: PART-1
+node: 722     instance: PART-1
+node: 723     instance: PART-1
+node: 724     instance: PART-1
+node: 725     instance: PART-1
+node: 726     instance: PART-1
+node: 727     instance: PART-1
+node: 728     instance: PART-1
+node: 729     instance: PART-1
+node: 730     instance: PART-1
+node: 731     instance: PART-1
+node: 732     instance: PART-1
+node: 733     instance: PART-1
+node: 734     instance: PART-1
+node: 735     instance: PART-1
+node: 736     instance: PART-1
+node: 737     instance: PART-1
+node: 738     instance: PART-1
+node: 739     instance: PART-1
+node: 740     instance: PART-1
+node: 741     instance: PART-1
+node: 742     instance: PART-1
+node: 743     instance: PART-1
+node: 744     instance: PART-1
+node: 745     instance: PART-1
+node: 746     instance: PART-1
+node: 747     instance: PART-1
+node: 748     instance: PART-1
+node: 749     instance: PART-1
+node: 750     instance: PART-1
+node: 751     instance: PART-1
+node: 752     instance: PART-1
+node: 753     instance: PART-1
+node: 754     instance: PART-1
+node: 755     instance: PART-1
+node: 756     instance: PART-1
+node: 757     instance: PART-1
+node: 758     instance: PART-1
+node: 759     instance: PART-1
+node: 760     instance: PART-1
+node: 761     instance: PART-1
+node: 762     instance: PART-1
+node: 763     instance: PART-1
+node: 764     instance: PART-1
+node: 765     instance: PART-1
+node: 766     instance: PART-1
+node: 767     instance: PART-1
+node: 768     instance: PART-1
+node: 769     instance: PART-1
+node: 770     instance: PART-1
+node: 771     instance: PART-1
+node: 772     instance: PART-1
+node: 773     instance: PART-1
+node: 774     instance: PART-1
+node: 775     instance: PART-1
+node: 776     instance: PART-1
+node: 777     instance: PART-1
+node: 778     instance: PART-1
+node: 779     instance: PART-1
+node: 780     instance: PART-1
+node: 781     instance: PART-1
+node: 782     instance: PART-1
+node: 783     instance: PART-1
+node: 784     instance: PART-1
+node: 785     instance: PART-1
+node: 786     instance: PART-1
+node: 787     instance: PART-1
+node: 788     instance: PART-1
+node: 789     instance: PART-1
+node: 790     instance: PART-1
+node: 791     instance: PART-1
+node: 792     instance: PART-1
+node: 793     instance: PART-1
+node: 794     instance: PART-1
+node: 795     instance: PART-1
+node: 796     instance: PART-1
+node: 797     instance: PART-1
+node: 798     instance: PART-1
+node: 799     instance: PART-1
+node: 800     instance: PART-1
+node: 801     instance: PART-1
+node: 802     instance: PART-1
+node: 803     instance: PART-1
+node: 804     instance: PART-1
+node: 805     instance: PART-1
+node: 806     instance: PART-1
+node: 807     instance: PART-1
+node: 808     instance: PART-1
+node: 809     instance: PART-1
+node: 810     instance: PART-1
+node: 811     instance: PART-1
+node: 812     instance: PART-1
+node: 813     instance: PART-1
+node: 814     instance: PART-1
+node: 815     instance: PART-1
+node: 816     instance: PART-1
+node: 817     instance: PART-1
+node: 818     instance: PART-1
+node: 819     instance: PART-1
+node: 820     instance: PART-1
+node: 821     instance: PART-1
+node: 822     instance: PART-1
+node: 823     instance: PART-1
+node: 824     instance: PART-1
+node: 825     instance: PART-1
+node: 826     instance: PART-1
+node: 827     instance: PART-1
+node: 828     instance: PART-1
+node: 829     instance: PART-1
+node: 830     instance: PART-1
+node: 831     instance: PART-1
+node: 832     instance: PART-1
+node: 833     instance: PART-1
+node: 834     instance: PART-1
+node: 835     instance: PART-1
+node: 836     instance: PART-1
+node: 837     instance: PART-1
+node: 838     instance: PART-1
+node: 839     instance: PART-1
+node: 840     instance: PART-1
+node: 841     instance: PART-1
+node: 842     instance: PART-1
+node: 843     instance: PART-1
+node: 844     instance: PART-1
+node: 845     instance: PART-1
+node: 846     instance: PART-1
+node: 847     instance: PART-1
+node: 848     instance: PART-1
+node: 849     instance: PART-1
+node: 850     instance: PART-1
+node: 851     instance: PART-1
+node: 852     instance: PART-1
+node: 853     instance: PART-1
+node: 854     instance: PART-1
+node: 855     instance: PART-1
+node: 856     instance: PART-1
+node: 857     instance: PART-1
+node: 858     instance: PART-1
+node: 859     instance: PART-1
+node: 860     instance: PART-1
+node: 861     instance: PART-1
+node: 862     instance: PART-1
+node: 863     instance: PART-1
+node: 864     instance: PART-1
+node: 865     instance: PART-1
+node: 866     instance: PART-1
+node: 867     instance: PART-1
+node: 868     instance: PART-1
+node: 869     instance: PART-1
+node: 870     instance: PART-1
+node: 871     instance: PART-1
+node: 872     instance: PART-1
+node: 873     instance: PART-1
+node: 874     instance: PART-1
+node: 875     instance: PART-1
+node: 876     instance: PART-1
+node: 877     instance: PART-1
+node: 878     instance: PART-1
+node: 879     instance: PART-1
+node: 880     instance: PART-1
+node: 881     instance: PART-1
+node: 882     instance: PART-1
+node: 883     instance: PART-1
+node: 884     instance: PART-1
+node: 885     instance: PART-1
+node: 886     instance: PART-1
+node: 887     instance: PART-1
+node: 888     instance: PART-1
+node: 889     instance: PART-1
+node: 890     instance: PART-1
+node: 891     instance: PART-1
+node: 892     instance: PART-1
+node: 893     instance: PART-1
+node: 894     instance: PART-1
+node: 895     instance: PART-1
+node: 896     instance: PART-1
+node: 897     instance: PART-1
+node: 898     instance: PART-1
+node: 899     instance: PART-1
+node: 900     instance: PART-1
+node: 901     instance: PART-1
+node: 902     instance: PART-1
+node: 903     instance: PART-1
+node: 904     instance: PART-1
+node: 905     instance: PART-1
+node: 906     instance: PART-1
+node: 907     instance: PART-1
+node: 908     instance: PART-1
+node: 909     instance: PART-1
+node: 910     instance: PART-1
+node: 911     instance: PART-1
+node: 912     instance: PART-1
+node: 919     instance: PART-1
+node: 920     instance: PART-1
+node: 921     instance: PART-1
+node: 922     instance: PART-1
+node: 927     instance: PART-1
+node: 928     instance: PART-1
+node: 929     instance: PART-1
+node: 930     instance: PART-1
+
+-------------------------------------------------------------------------------
+  USER SUBROUTINE VUMAT
+-------------------------------------------------------------------------------
+
+
+***WARNING: A material defined in user subroutine VUMAT must be defined as
+            purely elastic (using the initial elastic modulus) at the
+            beginning of the analysis (stepTime=0). This is an informative
+            message. It does not necessarily indicate that user subroutine
+            VUMAT is incorrectly defined.
+
+
+
+***ERROR: NO VUMAT SUBROUTINE WAS SUPPLIED FOR THE USER MATERIAL NAMED: GRAY
+
+Fri 21 Aug 2026 10:30:18 AM EDT
+Abaqus Error: Abaqus/Explicit Packager exited with an error - Please see the 
+status file for possible error messages if the file exists.
+Abaqus/Analysis exited with errors

@@ -1,0 +1,837 @@
+# -*- coding: mbcs -*-
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.Model(modelType=STANDARD_EXPLICIT, name='QuarterEllipse_pull_gammahat5em2')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].ConstrainedSketch(name=
+    '__profile__', sheetSize=100.0)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].EllipseByCenterPerimeter(
+    axisPoint1=(36, 0.0), axisPoint2=(0.0, 30), center=(0.0, 0.0))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].Part(dimensionality=THREE_D, 
+    name='Part-1', type=DEFORMABLE_BODY)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].BaseSolidExtrude(
+    depth=1.0, sketch=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'])
+mdb.models['QuarterEllipse_pull_gammahat5em2'].ConstrainedSketch(gridSpacing=
+    4.68, name='__profile__', sheetSize=187.48, transform=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].MakeSketchTransform(
+    sketchPlane=mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    (35.538846, 0.0, 1.0), ), sketchPlaneSide=SIDE1, 
+    sketchUpEdge=mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].edges.findAt(
+    (0.0, -30.0, 1.0), ), sketchOrientation=RIGHT, origin=(0.0, 0.0, 2.0)))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].projectReferencesOntoSketch(
+    filter=COPLANAR_EDGES, sketch=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'])
+mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].Line(
+    point1=(36.0, 0.0), point2=(0.0, 0.0))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].HorizontalConstraint(
+    addUndoState=False, entity=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].geometry.findAt(
+    (18.0, 0.0), ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].PerpendicularConstraint(
+    addUndoState=False, entity1=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].geometry.findAt(
+    (-36.0, -3.67394039744206e-15), ), entity2=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].geometry.findAt(
+    (18.0, 0.0), ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].Line(
+    point1=(0.0, 0.0), point2=(0.0, 30.0))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].VerticalConstraint(
+    addUndoState=False, entity=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].geometry.findAt(
+    (0.0, 15.0), ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].PerpendicularConstraint(
+    addUndoState=False, entity1=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].geometry.findAt(
+    (18.0, 0.0), ), entity2=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].geometry.findAt(
+    (0.0, 15.0), ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].CoincidentConstraint(
+    addUndoState=False, entity1=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].vertices.findAt(
+    (0.0, 30.0), ), entity2=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].geometry.findAt(
+    (-36.0, -3.67394039744206e-15), ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].EllipseByCenterPerimeter(
+    axisPoint1=(34.5, 0.0), axisPoint2=(0.0, 28.5), center=(0.0, 0.0))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].PartitionFaceBySketch(
+    faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((35.538846, 0.0, 1.0), ), ), sketch=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'], 
+    sketchUpEdge=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].edges.findAt(
+    (0.0, -30.0, 1.0), ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].PartitionCellByPlaneThreePoints(
+    cells=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].cells.findAt(
+    ((22.779031, 1.853358, 1.0), ), ), point1=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].vertices.findAt(
+    (36.0, 0.0, 1.0), ), point2=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].vertices.findAt(
+    (0.0, 0.0, 1.0), ), point3=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].vertices.findAt(
+    (36.0, 0.0, 0.0), ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].PartitionCellByPlaneThreePoints(
+    cells=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].cells.findAt(
+    ((22.779031, 1.853358, 1.0), ), ), point1=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].vertices.findAt(
+    (0.0, 0.0, 1.0), ), point2=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].vertices.findAt(
+    (0.0, 30.0, 1.0), ), point3=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].InterestingPoint(
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].edges.findAt(
+    (24.284326, 22.146474, 0.0), ), MIDDLE))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].PartitionCellByExtrudeEdge(
+    cells=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].cells.findAt(
+    ((22.779031, 1.853358, 1.0), ), ), edges=(
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].edges.findAt(
+    (31.371084, 11.859602, 1.0), ), ), line=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].edges.findAt(
+    (0.0, 30.0, 0.75), ), sense=FORWARD)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].RemoveFaces(
+    deleteCells=False, faceList=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((-2.34807, 29.936119, 0.333333), ), ((-22.779031, -1.853358, 1.0), ), ((
+    -35.269423, 1.950903, 1.0), ), ((-35.269423, -1.950903, 1.0), ), ((
+    35.922852, -1.962976, 0.666667), ), ((-22.779031, 1.853358, 1.0), ), ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].RemoveFaces(
+    deleteCells=False, faceList=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((-2.341084, 19.807853, 0.0), (0.0, 0.0, -1.0)), ((-11.5, 0.0, 0.666667), (
+    0.0, 1.0, 0.0)), ((18.933285, -19.046649, 0.0), (0.0, 0.0, -1.0)), ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].ConstrainedSketch(name=
+    '__profile__', sheetSize=100.0)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'].rectangle(
+    point1=(0.0, -20.0), point2=(-2.0, 40.0))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].Part(dimensionality=THREE_D, 
+    name='wall', type=DISCRETE_RIGID_SURFACE)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['wall'].BaseShell(sketch=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].sketches['__profile__'])
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['wall'].ReferencePoint(
+    point=(-1.0, 10.0, 0.0))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].ExplicitDynamicsStep(
+    massScaling=((SEMI_AUTOMATIC, MODEL, AT_BEGINNING, 120, 0.0, None, 0, 0, 
+    0.0, 0.0, 0, None), ), name='growth', previous='Initial', timePeriod=1)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].steps['growth'].setValues(
+    improvedDtMethod=ON, linearBulkViscosity=0.0, quadBulkViscosity=0.0, 
+    scaleFactor=1.0, timePeriod=1)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].TabularAmplitude(data=((0.0, 
+    0.0), (1.0, 1.0)), name='Amp-1', smooth=SOLVER_DEFAULT, timeSpan=STEP)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].Material(name='WHIT')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].materials['WHIT'].Density(table=
+    ((1e-11, ), ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].materials['WHIT'].Depvar(n=10)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].materials['WHIT'].UserMaterial(
+    mechanicalConstants=(0.001, 0.1, 1.5, 0.415, 10.0, 1.0, 0.1, 4.0, 0.05, 
+    4.0, 0.45))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].Material(name='GRAY')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].materials['GRAY'].Density(table=
+    ((1e-11, ), ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].materials['GRAY'].Depvar(n=7)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].materials['GRAY'].UserMaterial(
+    mechanicalConstants=(0.002, 0.2, 1.5, 0.1))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].HomogeneousSolidSection(
+    material='WHIT', name='Subcortex', thickness=None)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Set(cells=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].cells.findAt(
+    ((17.25, 0.0, 1.0), )), name='Subcortex')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].SectionAssignment(
+    offset=0.0, offsetField='', offsetType=MIDDLE_SURFACE, region=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].sets['Subcortex']
+    , sectionName='Subcortex', thicknessAssignment=FROM_SECTION)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].HomogeneousSolidSection(
+    material='GRAY', name='Cortex', thickness=None)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Set(cells=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].cells.findAt(
+    ((35.9, 0.0, 1.0), )), name='Cortex')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].SectionAssignment(
+    offset=0.0, offsetField='', offsetType=MIDDLE_SURFACE, region=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].sets['Cortex']
+    , sectionName='Cortex', thicknessAssignment=FROM_SECTION)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.DatumCsysByDefault(
+    CARTESIAN)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.Instance(dependent=
+    ON, name='Part-1', part=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'])
+mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.Instance(dependent=
+    ON, name='wall-1', part=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['wall'])
+mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.Instance(dependent=
+    ON, name='wall-2', part=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['wall'])
+mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.rotate(angle=-90.0, 
+    axisDirection=(0.0, -2.0, 0.0), axisPoint=(0.0, 0.0, 0.1), instanceList=(
+    'wall-1', ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.rotate(angle=-90.0, 
+    axisDirection=(0.0, -2.0, 0.0), axisPoint=(0.0, 0.0, 0.1), instanceList=(
+    'wall-2', ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.rotate(angle=-90.0, 
+    axisDirection=(0.0, 0.0, -2.0), axisPoint=(0.0, 0.0, 0.1), instanceList=(
+    'wall-2', ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.translate(
+    instanceList=('wall-1', ), vector=(0.0, 14.25, 0.0))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.translate(
+    instanceList=('wall-1', ), vector=(0.0, 0.0, -0.5))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.translate(
+    instanceList=('wall-2', ), vector=(34.5, 0.0, 0.0))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.translate(
+    instanceList=('wall-2', ), vector=(0.0, 0.0, -0.5))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((0.1, 15.0, 0.0), ), ((35.9, 2.13451461296533, 0.0), ), ), name='back')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((17.25, 0.0, 0.5), ), ((35.9, 0.0, 0.5), ), ), name='bottom')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((0, 15.0, 0.5), ), ((0, 29.9, 0.5), ), ), name='side-1')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((17.25, 0.0, 0.5), ), ((35.9, 0.0, 0.5), ), ), name='side-2')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((35.9, 0.0, 1.0), )), name='cortex_front')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((17.25, 0.1, 1.0), )), name='subcortex_front')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((36, 0.0, 0.5), )), name='cortex_top')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((34.5, 0.0, 0.5), )), name='interface')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Set(edges=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].edges.findAt(
+    ((24.28432599996, 22.146474367136, 1.0), )), name='top-edge')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Set(edges=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].edges.findAt(
+    ((17.25, 24.6817240078565, 1.0), ), ((17.25, 24.6817240078565, 0.5), ), ), 
+    name='interface')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Set(edges=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].edges.findAt(
+    ((22.8402886133295, 21.3599190488257, 1.0), )), name='interface-edge')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Surface(name=
+    'top_s', side1Faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((24.28432599996, 22.146474367136, 0.5), )))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Surface(name=
+    'cortex_s', side1Faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((35.9, 0.0, 1.0), )))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Surface(name=
+    'subcortex_s', side1Faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((17.25, 0.1, 1.0), )))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Surface(name=
+    'side1_s', side1Faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((0, 15.0, 0.5), ), ((0, 29.9, 0.5), ), ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Surface(name=
+    'side2_s', side1Faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((17.25, 0.0, 0.5), ), ((35.9, 0.0, 0.5), ), ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Surface(name=
+    'interface_s', side1Faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].faces.findAt(
+    ((17.25, 24.6817240078565, 0.5), )))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['wall'].Surface(name=
+    's_wall', side1Faces=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['wall'].faces.findAt((
+    (-1, 10, 0.0), )))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Set(cells=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].cells.findAt(
+    ((17.25, 14.25, 0.5), ), ((0.1, 29.9, 0.0), ), ), name='whole-domain')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].Set(name='node', 
+    vertices=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].vertices.findAt(
+    ((36, 0.0, 1.0), )))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['wall'].Set(name='ref', 
+    referencePoints=(
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['wall'].referencePoints[2], 
+    ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].DisplacementBC(amplitude='Amp-1'
+    , createStepName='growth', distributionType=UNIFORM, fieldName='', fixed=
+    OFF, localCsys=None, name='back', region=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.instances['Part-1'].sets['back']
+    , u1=UNSET, u2=UNSET, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].DisplacementBC(amplitude='Amp-1'
+    , createStepName='growth', distributionType=UNIFORM, fieldName='', fixed=
+    OFF, localCsys=None, name='bottom', region=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.instances['Part-1'].sets['bottom']
+    , u1=UNSET, u2=0.0, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].DisplacementBC(amplitude='Amp-1'
+    , createStepName='growth', distributionType=UNIFORM, fieldName='', fixed=
+    OFF, localCsys=None, name='side-1', region=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.instances['Part-1'].sets['side-1']
+    , u1=0.0, u2=UNSET, u3=UNSET, ur1=UNSET, ur2=UNSET, ur3=UNSET)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].DisplacementBC(amplitude='Amp-1'
+    , createStepName='growth', distributionType=UNIFORM, fieldName='', fixed=
+    OFF, localCsys=None, name='cortex_front', region=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.instances['Part-1'].sets['cortex_front']
+    , u1=UNSET, u2=UNSET, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].DisplacementBC(amplitude='Amp-1'
+    , createStepName='growth', distributionType=UNIFORM, fieldName='', fixed=
+    OFF, localCsys=None, name='subcortex_front', region=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.instances['Part-1'].sets['subcortex_front']
+    , u1=UNSET, u2=UNSET, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].EncastreBC(createStepName=
+    'growth', localCsys=None, name='ref-left', region=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.instances['wall-1'].sets['ref'])
+mdb.models['QuarterEllipse_pull_gammahat5em2'].EncastreBC(createStepName=
+    'growth', localCsys=None, name='ref-right', region=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.instances['wall-2'].sets['ref'])
+mdb.models['QuarterEllipse_pull_gammahat5em2'].boundaryConditions['back'].move(
+    'growth', 'Initial')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].boundaryConditions['bottom'].move(
+    'growth', 'Initial')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].boundaryConditions['cortex_front'].move(
+    'growth', 'Initial')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].boundaryConditions['ref-left'].move(
+    'growth', 'Initial')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].boundaryConditions['ref-right'].move(
+    'growth', 'Initial')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].boundaryConditions['side-1'].move(
+    'growth', 'Initial')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].boundaryConditions['subcortex_front'].move(
+    'growth', 'Initial')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].Pressure(amplitude='Amp-1', 
+    createStepName='growth', distributionType=VISCOUS, field='', magnitude=
+    1e-05, name='VP', region=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.instances['Part-1'].surfaces['top_s'])
+mdb.models['QuarterEllipse_pull_gammahat5em2'].ContactProperty('IntProp-1')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].interactionProperties['IntProp-1'].TangentialBehavior(
+    dependencies=0, directionality=ISOTROPIC, elasticSlipStiffness=None, 
+    formulation=PENALTY, fraction=0.005, maximumElasticSlip=FRACTION, 
+    pressureDependency=OFF, shearStressLimit=None, slipRateDependency=OFF, 
+    table=((10.0, ), ), temperatureDependency=OFF)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].interactionProperties['IntProp-1'].NormalBehavior(
+    allowSeparation=ON, constraintEnforcementMethod=DEFAULT, 
+    pressureOverclosure=HARD)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].interactionProperties['IntProp-1'].GeometricProperties(
+    contactArea=1.0, padThickness=0.1)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].ContactProperty('IntProp-2')
+mdb.models['QuarterEllipse_pull_gammahat5em2'].interactionProperties['IntProp-2'].TangentialBehavior(
+    dependencies=0, directionality=ISOTROPIC, elasticSlipStiffness=None, 
+    formulation=PENALTY, fraction=0.005, maximumElasticSlip=FRACTION, 
+    pressureDependency=OFF, shearStressLimit=None, slipRateDependency=OFF, 
+    table=((10.0, ), ), temperatureDependency=OFF)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].interactionProperties['IntProp-2'].NormalBehavior(
+    allowSeparation=ON, constraintEnforcementMethod=DEFAULT, 
+    pressureOverclosure=HARD)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].SelfContactExp(createStepName=
+    'growth', interactionProperty='IntProp-1', mechanicalConstraint=KINEMATIC, 
+    name='Int-1', surface=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.instances['Part-1'].surfaces['top_s'])
+mdb.models['QuarterEllipse_pull_gammahat5em2'].SurfaceToSurfaceContactExp(
+    clearanceRegion=None, createStepName='Initial', datumAxis=None, 
+    initialClearance=OMIT, interactionProperty='IntProp-2', main=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.instances['wall-1'].surfaces['s_wall']
+    , mechanicalConstraint=KINEMATIC, name='Int-2', secondary=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.instances['Part-1'].surfaces['top_s']
+    , sliding=FINITE)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].SurfaceToSurfaceContactExp(
+    clearanceRegion=None, createStepName='Initial', datumAxis=None, 
+    initialClearance=OMIT, interactionProperty='IntProp-2', main=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.instances['wall-2'].surfaces['s_wall']
+    , mechanicalConstraint=KINEMATIC, name='Int-3', secondary=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.instances['Part-1'].surfaces['top_s']
+    , sliding=FINITE)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['wall'].seedPart(
+    deviationFactor=0.1, minSizeFactor=0.1, size=1.5)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['wall'].generateMesh()
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].seedEdgeBySize(
+    constraint=FINER, deviationFactor=0.1, edges=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].edges.findAt(
+    ((12.097431, 26.376844, 0.0), ), ((31.092919, 11.744441, 1.0), ), ((
+    32.761622, 12.435281, 0.0), ), ((12.786489, 28.043935, 1.0), ), ), size=
+    0.25)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].seedEdgeBySize(
+    constraint=FINER, deviationFactor=0.1, edges=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].edges.findAt(
+    ((34.2, 0.0, 0.25), ), ((0.0, 28.2, 0.75), ), ((34.65, 0.0, 0.0), ), ((
+    36.0, 0.0, 0.25), ), ((35.55, 0.0, 1.0), ), ((0.0, 28.65, 1.0), ), ((0.0, 
+    30.0, 0.75), ), ((0.0, 29.55, 0.0), ), ), size=0.214285714285714)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].seedEdgeByBias(
+    biasMethod=SINGLE, constraint=FINER, end1Edges=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].edges.findAt(
+    ((0.0, 23.25, 0.0), ), ((0.0, 0.0, 0.25), ), ((26.25, 0.0, 1.0), ), ), 
+    end2Edges=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].edges.findAt(
+    ((0.0, 7.75, 1.0), ), ((8.75, 0.0, 0.0), ), ), maxSize=2.0, minSize=0.2)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].deleteMesh(
+    regions=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].cells.findAt(
+    ((22.580953, 1.833849, 1.0), )))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].setMeshControls(
+    algorithm=ADVANCING_FRONT, regions=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].cells.findAt(
+    ((22.580953, 1.833849, 1.0), )), technique=SWEEP)
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].setElementType(
+    elemTypes=(ElemType(elemCode=C3D8R, elemLibrary=EXPLICIT, 
+    secondOrderAccuracy=OFF, kinematicSplit=AVERAGE_STRAIN, 
+    hourglassControl=ENHANCED, distortionControl=DEFAULT), ElemType(
+    elemCode=C3D6, elemLibrary=EXPLICIT), ElemType(elemCode=C3D4, 
+    elemLibrary=EXPLICIT)), regions=(
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].cells.findAt(
+    ((17.25, 14.25, 0.5), ), ((0.1, 29.9, 0.0), ), ), ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].parts['Part-1'].generateMesh(
+    regions=(
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.instances['Part-1'], 
+    ))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].FieldOutputRequest(
+    createStepName='growth', name='F-Output-2', numIntervals=500, rebar=EXCLUDE
+    , region=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.allInstances['Part-1'].sets['whole-domain']
+    , sectionPoints=DEFAULT, variables=('S', 'PE', 'LE', 'U', 'ELSE', 'COORD', 
+    'SDV', 'EVOL'))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].FieldOutputRequest(
+    createStepName='growth', name='F-Output-3', numIntervals=500, rebar=EXCLUDE
+    , region=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.allInstances['Part-1'].sets['Cortex']
+    , sectionPoints=DEFAULT, variables=('ELSE', 'COORD', 'U', 'EVOL'))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].FieldOutputRequest(
+    createStepName='growth', name='F-Output-4', numIntervals=500, rebar=EXCLUDE
+    , region=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.allInstances['Part-1'].sets['Subcortex']
+    , sectionPoints=DEFAULT, variables=('ELSE', 'COORD', 'U', 'EVOL'))
+mdb.models['QuarterEllipse_pull_gammahat5em2'].HistoryOutputRequest(
+    createStepName='growth', name='H-Output-1', numIntervals=1000, rebar=
+    EXCLUDE, region=
+    mdb.models['QuarterEllipse_pull_gammahat5em2'].rootAssembly.allInstances['Part-1'].sets['whole-domain']
+    , sectionPoints=DEFAULT, variables=('ALLIE', 'ALLKE'))
+mdb.Job(activateLoadBalancing=False, atTime=None, contactPrint=OFF, 
+    description='', echoPrint=OFF, explicitPrecision=DOUBLE, historyPrint=OFF, 
+    memory=90, memoryUnits=PERCENTAGE, model='QuarterEllipse_pull_gammahat5em2'
+    , modelPrint=OFF, multiprocessingMode=DEFAULT, name=
+    'QuarterEllipse_pull_gammahat5em2', nodalOutputPrecision=SINGLE, numCpus=8, 
+    numDomains=8, numThreadsPerMpiProcess=1, parallelizationMethodExplicit=
+    DOMAIN, queue=None, resultsFormat=ODB, scratch='', type=ANALYSIS, 
+    userSubroutine='vumat_push.f', waitHours=0, waitMinutes=0)
+mdb.jobs['QuarterEllipse_pull_gammahat5em2'].submit(consistencyChecking=OFF)
+mdb.jobs['QuarterEllipse_pull_gammahat5em2'].waitForCompletion()
+#* Command successfully aborted.
+mdb.Model(modelType=STANDARD_EXPLICIT, name=
+    'QuarterEllipse_pull_gammahat10em2')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].ConstrainedSketch(name=
+    '__profile__', sheetSize=100.0)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].EllipseByCenterPerimeter(
+    axisPoint1=(36, 0.0), axisPoint2=(0.0, 30), center=(0.0, 0.0))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].Part(dimensionality=THREE_D, 
+    name='Part-1', type=DEFORMABLE_BODY)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].BaseSolidExtrude(
+    depth=1.0, sketch=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'])
+mdb.models['QuarterEllipse_pull_gammahat10em2'].ConstrainedSketch(gridSpacing=
+    4.68, name='__profile__', sheetSize=187.48, transform=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].MakeSketchTransform(
+    sketchPlane=mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    (35.538846, 0.0, 1.0), ), sketchPlaneSide=SIDE1, 
+    sketchUpEdge=mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].edges.findAt(
+    (0.0, -30.0, 1.0), ), sketchOrientation=RIGHT, origin=(0.0, 0.0, 2.0)))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].projectReferencesOntoSketch(
+    filter=COPLANAR_EDGES, sketch=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'])
+mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].Line(
+    point1=(36.0, 0.0), point2=(0.0, 0.0))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].HorizontalConstraint(
+    addUndoState=False, entity=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].geometry.findAt(
+    (18.0, 0.0), ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].PerpendicularConstraint(
+    addUndoState=False, entity1=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].geometry.findAt(
+    (-36.0, -3.67394039744206e-15), ), entity2=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].geometry.findAt(
+    (18.0, 0.0), ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].Line(
+    point1=(0.0, 0.0), point2=(0.0, 30.0))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].VerticalConstraint(
+    addUndoState=False, entity=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].geometry.findAt(
+    (0.0, 15.0), ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].PerpendicularConstraint(
+    addUndoState=False, entity1=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].geometry.findAt(
+    (18.0, 0.0), ), entity2=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].geometry.findAt(
+    (0.0, 15.0), ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].CoincidentConstraint(
+    addUndoState=False, entity1=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].vertices.findAt(
+    (0.0, 30.0), ), entity2=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].geometry.findAt(
+    (-36.0, -3.67394039744206e-15), ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].EllipseByCenterPerimeter(
+    axisPoint1=(34.5, 0.0), axisPoint2=(0.0, 28.5), center=(0.0, 0.0))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].PartitionFaceBySketch(
+    faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((35.538846, 0.0, 1.0), ), ), sketch=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'], 
+    sketchUpEdge=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].edges.findAt(
+    (0.0, -30.0, 1.0), ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].PartitionCellByPlaneThreePoints(
+    cells=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].cells.findAt(
+    ((22.779031, 1.853358, 1.0), ), ), point1=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].vertices.findAt(
+    (36.0, 0.0, 1.0), ), point2=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].vertices.findAt(
+    (0.0, 0.0, 1.0), ), point3=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].vertices.findAt(
+    (36.0, 0.0, 0.0), ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].PartitionCellByPlaneThreePoints(
+    cells=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].cells.findAt(
+    ((22.779031, 1.853358, 1.0), ), ), point1=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].vertices.findAt(
+    (0.0, 0.0, 1.0), ), point2=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].vertices.findAt(
+    (0.0, 30.0, 1.0), ), point3=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].InterestingPoint(
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].edges.findAt(
+    (24.284326, 22.146474, 0.0), ), MIDDLE))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].PartitionCellByExtrudeEdge(
+    cells=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].cells.findAt(
+    ((22.779031, 1.853358, 1.0), ), ), edges=(
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].edges.findAt(
+    (31.371084, 11.859602, 1.0), ), ), line=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].edges.findAt(
+    (0.0, 30.0, 0.75), ), sense=FORWARD)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].RemoveFaces(
+    deleteCells=False, faceList=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((-2.34807, 29.936119, 0.333333), ), ((-22.779031, -1.853358, 1.0), ), ((
+    -35.269423, 1.950903, 1.0), ), ((-35.269423, -1.950903, 1.0), ), ((
+    35.922852, -1.962976, 0.666667), ), ((-22.779031, 1.853358, 1.0), ), ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].RemoveFaces(
+    deleteCells=False, faceList=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((-2.341084, 19.807853, 0.0), (0.0, 0.0, -1.0)), ((-11.5, 0.0, 0.666667), (
+    0.0, 1.0, 0.0)), ((18.933285, -19.046649, 0.0), (0.0, 0.0, -1.0)), ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].ConstrainedSketch(name=
+    '__profile__', sheetSize=100.0)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'].rectangle(
+    point1=(0.0, -20.0), point2=(-2.0, 40.0))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].Part(dimensionality=THREE_D, 
+    name='wall', type=DISCRETE_RIGID_SURFACE)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['wall'].BaseShell(sketch=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].sketches['__profile__'])
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['wall'].ReferencePoint(
+    point=(-1.0, 10.0, 0.0))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].ExplicitDynamicsStep(
+    massScaling=((SEMI_AUTOMATIC, MODEL, AT_BEGINNING, 120, 0.0, None, 0, 0, 
+    0.0, 0.0, 0, None), ), name='growth', previous='Initial', timePeriod=1)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].steps['growth'].setValues(
+    improvedDtMethod=ON, linearBulkViscosity=0.0, quadBulkViscosity=0.0, 
+    scaleFactor=1.0, timePeriod=1)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].TabularAmplitude(data=((0.0, 
+    0.0), (1.0, 1.0)), name='Amp-1', smooth=SOLVER_DEFAULT, timeSpan=STEP)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].Material(name='WHIT')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].materials['WHIT'].Density(
+    table=((1e-11, ), ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].materials['WHIT'].Depvar(n=10)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].materials['WHIT'].UserMaterial(
+    mechanicalConstants=(0.001, 0.1, 1.5, 0.415, 10.0, 1.0, 0.1, 4.0, 0.1, 4.0, 
+    0.45))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].Material(name='GRAY')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].materials['GRAY'].Density(
+    table=((1e-11, ), ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].materials['GRAY'].Depvar(n=7)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].materials['GRAY'].UserMaterial(
+    mechanicalConstants=(0.002, 0.2, 1.5, 0.1))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].HomogeneousSolidSection(
+    material='WHIT', name='Subcortex', thickness=None)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Set(cells=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].cells.findAt(
+    ((17.25, 0.0, 1.0), )), name='Subcortex')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].SectionAssignment(
+    offset=0.0, offsetField='', offsetType=MIDDLE_SURFACE, region=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].sets['Subcortex']
+    , sectionName='Subcortex', thicknessAssignment=FROM_SECTION)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].HomogeneousSolidSection(
+    material='GRAY', name='Cortex', thickness=None)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Set(cells=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].cells.findAt(
+    ((35.9, 0.0, 1.0), )), name='Cortex')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].SectionAssignment(
+    offset=0.0, offsetField='', offsetType=MIDDLE_SURFACE, region=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].sets['Cortex']
+    , sectionName='Cortex', thicknessAssignment=FROM_SECTION)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.DatumCsysByDefault(
+    CARTESIAN)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.Instance(
+    dependent=ON, name='Part-1', part=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'])
+mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.Instance(
+    dependent=ON, name='wall-1', part=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['wall'])
+mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.Instance(
+    dependent=ON, name='wall-2', part=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['wall'])
+mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.rotate(angle=-90.0
+    , axisDirection=(0.0, -2.0, 0.0), axisPoint=(0.0, 0.0, 0.1), instanceList=(
+    'wall-1', ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.rotate(angle=-90.0
+    , axisDirection=(0.0, -2.0, 0.0), axisPoint=(0.0, 0.0, 0.1), instanceList=(
+    'wall-2', ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.rotate(angle=-90.0
+    , axisDirection=(0.0, 0.0, -2.0), axisPoint=(0.0, 0.0, 0.1), instanceList=(
+    'wall-2', ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.translate(
+    instanceList=('wall-1', ), vector=(0.0, 14.25, 0.0))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.translate(
+    instanceList=('wall-1', ), vector=(0.0, 0.0, -0.5))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.translate(
+    instanceList=('wall-2', ), vector=(34.5, 0.0, 0.0))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.translate(
+    instanceList=('wall-2', ), vector=(0.0, 0.0, -0.5))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((0.1, 15.0, 0.0), ), ((35.9, 2.13451461296533, 0.0), ), ), name='back')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((17.25, 0.0, 0.5), ), ((35.9, 0.0, 0.5), ), ), name='bottom')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((0, 15.0, 0.5), ), ((0, 29.9, 0.5), ), ), name='side-1')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((17.25, 0.0, 0.5), ), ((35.9, 0.0, 0.5), ), ), name='side-2')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((35.9, 0.0, 1.0), )), name='cortex_front')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((17.25, 0.1, 1.0), )), name='subcortex_front')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((36, 0.0, 0.5), )), name='cortex_top')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Set(faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((34.5, 0.0, 0.5), )), name='interface')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Set(edges=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].edges.findAt(
+    ((24.28432599996, 22.146474367136, 1.0), )), name='top-edge')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Set(edges=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].edges.findAt(
+    ((17.25, 24.6817240078565, 1.0), ), ((17.25, 24.6817240078565, 0.5), ), ), 
+    name='interface')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Set(edges=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].edges.findAt(
+    ((22.8402886133295, 21.3599190488257, 1.0), )), name='interface-edge')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Surface(name=
+    'top_s', side1Faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((24.28432599996, 22.146474367136, 0.5), )))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Surface(name=
+    'cortex_s', side1Faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((35.9, 0.0, 1.0), )))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Surface(name=
+    'subcortex_s', side1Faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((17.25, 0.1, 1.0), )))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Surface(name=
+    'side1_s', side1Faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((0, 15.0, 0.5), ), ((0, 29.9, 0.5), ), ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Surface(name=
+    'side2_s', side1Faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((17.25, 0.0, 0.5), ), ((35.9, 0.0, 0.5), ), ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Surface(name=
+    'interface_s', side1Faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].faces.findAt(
+    ((17.25, 24.6817240078565, 0.5), )))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['wall'].Surface(name=
+    's_wall', side1Faces=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['wall'].faces.findAt(
+    ((-1, 10, 0.0), )))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Set(cells=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].cells.findAt(
+    ((17.25, 14.25, 0.5), ), ((0.1, 29.9, 0.0), ), ), name='whole-domain')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].Set(name='node'
+    , vertices=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].vertices.findAt(
+    ((36, 0.0, 1.0), )))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['wall'].Set(name='ref', 
+    referencePoints=(
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['wall'].referencePoints[2], 
+    ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].DisplacementBC(amplitude=
+    'Amp-1', createStepName='growth', distributionType=UNIFORM, fieldName='', 
+    fixed=OFF, localCsys=None, name='back', region=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.instances['Part-1'].sets['back']
+    , u1=UNSET, u2=UNSET, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].DisplacementBC(amplitude=
+    'Amp-1', createStepName='growth', distributionType=UNIFORM, fieldName='', 
+    fixed=OFF, localCsys=None, name='bottom', region=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.instances['Part-1'].sets['bottom']
+    , u1=UNSET, u2=0.0, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].DisplacementBC(amplitude=
+    'Amp-1', createStepName='growth', distributionType=UNIFORM, fieldName='', 
+    fixed=OFF, localCsys=None, name='side-1', region=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.instances['Part-1'].sets['side-1']
+    , u1=0.0, u2=UNSET, u3=UNSET, ur1=UNSET, ur2=UNSET, ur3=UNSET)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].DisplacementBC(amplitude=
+    'Amp-1', createStepName='growth', distributionType=UNIFORM, fieldName='', 
+    fixed=OFF, localCsys=None, name='cortex_front', region=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.instances['Part-1'].sets['cortex_front']
+    , u1=UNSET, u2=UNSET, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].DisplacementBC(amplitude=
+    'Amp-1', createStepName='growth', distributionType=UNIFORM, fieldName='', 
+    fixed=OFF, localCsys=None, name='subcortex_front', region=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.instances['Part-1'].sets['subcortex_front']
+    , u1=UNSET, u2=UNSET, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].EncastreBC(createStepName=
+    'growth', localCsys=None, name='ref-left', region=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.instances['wall-1'].sets['ref'])
+mdb.models['QuarterEllipse_pull_gammahat10em2'].EncastreBC(createStepName=
+    'growth', localCsys=None, name='ref-right', region=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.instances['wall-2'].sets['ref'])
+mdb.models['QuarterEllipse_pull_gammahat10em2'].boundaryConditions['back'].move(
+    'growth', 'Initial')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].boundaryConditions['bottom'].move(
+    'growth', 'Initial')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].boundaryConditions['cortex_front'].move(
+    'growth', 'Initial')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].boundaryConditions['ref-left'].move(
+    'growth', 'Initial')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].boundaryConditions['ref-right'].move(
+    'growth', 'Initial')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].boundaryConditions['side-1'].move(
+    'growth', 'Initial')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].boundaryConditions['subcortex_front'].move(
+    'growth', 'Initial')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].Pressure(amplitude='Amp-1', 
+    createStepName='growth', distributionType=VISCOUS, field='', magnitude=
+    1e-05, name='VP', region=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.instances['Part-1'].surfaces['top_s'])
+mdb.models['QuarterEllipse_pull_gammahat10em2'].ContactProperty('IntProp-1')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].interactionProperties['IntProp-1'].TangentialBehavior(
+    dependencies=0, directionality=ISOTROPIC, elasticSlipStiffness=None, 
+    formulation=PENALTY, fraction=0.005, maximumElasticSlip=FRACTION, 
+    pressureDependency=OFF, shearStressLimit=None, slipRateDependency=OFF, 
+    table=((10.0, ), ), temperatureDependency=OFF)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].interactionProperties['IntProp-1'].NormalBehavior(
+    allowSeparation=ON, constraintEnforcementMethod=DEFAULT, 
+    pressureOverclosure=HARD)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].interactionProperties['IntProp-1'].GeometricProperties(
+    contactArea=1.0, padThickness=0.1)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].ContactProperty('IntProp-2')
+mdb.models['QuarterEllipse_pull_gammahat10em2'].interactionProperties['IntProp-2'].TangentialBehavior(
+    dependencies=0, directionality=ISOTROPIC, elasticSlipStiffness=None, 
+    formulation=PENALTY, fraction=0.005, maximumElasticSlip=FRACTION, 
+    pressureDependency=OFF, shearStressLimit=None, slipRateDependency=OFF, 
+    table=((10.0, ), ), temperatureDependency=OFF)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].interactionProperties['IntProp-2'].NormalBehavior(
+    allowSeparation=ON, constraintEnforcementMethod=DEFAULT, 
+    pressureOverclosure=HARD)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].SelfContactExp(createStepName=
+    'growth', interactionProperty='IntProp-1', mechanicalConstraint=KINEMATIC, 
+    name='Int-1', surface=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.instances['Part-1'].surfaces['top_s'])
+mdb.models['QuarterEllipse_pull_gammahat10em2'].SurfaceToSurfaceContactExp(
+    clearanceRegion=None, createStepName='Initial', datumAxis=None, 
+    initialClearance=OMIT, interactionProperty='IntProp-2', main=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.instances['wall-1'].surfaces['s_wall']
+    , mechanicalConstraint=KINEMATIC, name='Int-2', secondary=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.instances['Part-1'].surfaces['top_s']
+    , sliding=FINITE)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].SurfaceToSurfaceContactExp(
+    clearanceRegion=None, createStepName='Initial', datumAxis=None, 
+    initialClearance=OMIT, interactionProperty='IntProp-2', main=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.instances['wall-2'].surfaces['s_wall']
+    , mechanicalConstraint=KINEMATIC, name='Int-3', secondary=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.instances['Part-1'].surfaces['top_s']
+    , sliding=FINITE)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['wall'].seedPart(
+    deviationFactor=0.1, minSizeFactor=0.1, size=1.5)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['wall'].generateMesh()
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].seedEdgeBySize(
+    constraint=FINER, deviationFactor=0.1, edges=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].edges.findAt(
+    ((12.097431, 26.376844, 0.0), ), ((31.092919, 11.744441, 1.0), ), ((
+    32.761622, 12.435281, 0.0), ), ((12.786489, 28.043935, 1.0), ), ), size=
+    0.25)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].seedEdgeBySize(
+    constraint=FINER, deviationFactor=0.1, edges=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].edges.findAt(
+    ((34.2, 0.0, 0.25), ), ((0.0, 28.2, 0.75), ), ((34.65, 0.0, 0.0), ), ((
+    36.0, 0.0, 0.25), ), ((35.55, 0.0, 1.0), ), ((0.0, 28.65, 1.0), ), ((0.0, 
+    30.0, 0.75), ), ((0.0, 29.55, 0.0), ), ), size=0.214285714285714)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].seedEdgeByBias(
+    biasMethod=SINGLE, constraint=FINER, end1Edges=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].edges.findAt(
+    ((0.0, 23.25, 0.0), ), ((0.0, 0.0, 0.25), ), ((26.25, 0.0, 1.0), ), ), 
+    end2Edges=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].edges.findAt(
+    ((0.0, 7.75, 1.0), ), ((8.75, 0.0, 0.0), ), ), maxSize=2.0, minSize=0.2)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].deleteMesh(
+    regions=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].cells.findAt(
+    ((22.580953, 1.833849, 1.0), )))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].setMeshControls(
+    algorithm=ADVANCING_FRONT, regions=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].cells.findAt(
+    ((22.580953, 1.833849, 1.0), )), technique=SWEEP)
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].setElementType(
+    elemTypes=(ElemType(elemCode=C3D8R, elemLibrary=EXPLICIT, 
+    secondOrderAccuracy=OFF, kinematicSplit=AVERAGE_STRAIN, 
+    hourglassControl=ENHANCED, distortionControl=DEFAULT), ElemType(
+    elemCode=C3D6, elemLibrary=EXPLICIT), ElemType(elemCode=C3D4, 
+    elemLibrary=EXPLICIT)), regions=(
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].cells.findAt(
+    ((17.25, 14.25, 0.5), ), ((0.1, 29.9, 0.0), ), ), ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].parts['Part-1'].generateMesh(
+    regions=(
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.instances['Part-1'], 
+    ))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].FieldOutputRequest(
+    createStepName='growth', name='F-Output-2', numIntervals=500, rebar=EXCLUDE
+    , region=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.allInstances['Part-1'].sets['whole-domain']
+    , sectionPoints=DEFAULT, variables=('S', 'PE', 'LE', 'U', 'ELSE', 'COORD', 
+    'SDV', 'EVOL'))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].FieldOutputRequest(
+    createStepName='growth', name='F-Output-3', numIntervals=500, rebar=EXCLUDE
+    , region=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.allInstances['Part-1'].sets['Cortex']
+    , sectionPoints=DEFAULT, variables=('ELSE', 'COORD', 'U', 'EVOL'))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].FieldOutputRequest(
+    createStepName='growth', name='F-Output-4', numIntervals=500, rebar=EXCLUDE
+    , region=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.allInstances['Part-1'].sets['Subcortex']
+    , sectionPoints=DEFAULT, variables=('ELSE', 'COORD', 'U', 'EVOL'))
+mdb.models['QuarterEllipse_pull_gammahat10em2'].HistoryOutputRequest(
+    createStepName='growth', name='H-Output-1', numIntervals=1000, rebar=
+    EXCLUDE, region=
+    mdb.models['QuarterEllipse_pull_gammahat10em2'].rootAssembly.allInstances['Part-1'].sets['whole-domain']
+    , sectionPoints=DEFAULT, variables=('ALLIE', 'ALLKE'))
+mdb.Job(activateLoadBalancing=False, atTime=None, contactPrint=OFF, 
+    description='', echoPrint=OFF, explicitPrecision=DOUBLE, historyPrint=OFF, 
+    memory=90, memoryUnits=PERCENTAGE, model=
+    'QuarterEllipse_pull_gammahat10em2', modelPrint=OFF, multiprocessingMode=
+    DEFAULT, name='QuarterEllipse_pull_gammahat10em2', nodalOutputPrecision=
+    SINGLE, numCpus=8, numDomains=8, numThreadsPerMpiProcess=1, 
+    parallelizationMethodExplicit=DOMAIN, queue=None, resultsFormat=ODB, 
+    scratch='', type=ANALYSIS, userSubroutine='vumat_push.f', waitHours=0, 
+    waitMinutes=0)
+mdb.jobs['QuarterEllipse_pull_gammahat10em2'].submit(consistencyChecking=OFF)
+mdb.jobs['QuarterEllipse_pull_gammahat10em2'].waitForCompletion()
